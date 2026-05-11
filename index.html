@@ -4,7 +4,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="theme-color" content="#0b1220" />
+<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#f7f7f8" media="(prefers-color-scheme: light)" />
 <title>Foreman Sign-In · Webcor Concrete</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -17,12 +18,14 @@
   :root {
     --bg: #f7f7f8;
     --surface: #ffffff;
+    --surface-2: #fafafa;
     --line: #e4e4e7;
     --line-strong: #d4d4d8;
     --text: #18181b;
     --muted: #71717a;
     --accent: #2563eb;
     --accent-hover: #1d4ed8;
+    --accent-on: #ffffff;
     --accent-soft: #eff6ff;
     --success: #059669;
     --success-soft: #ecfdf5;
@@ -33,6 +36,28 @@
     --radius-sm: 8px;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
     --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --sig-line: #18181b;
+  }
+  html[data-theme="dark"] {
+    --bg: #0b0e14;
+    --surface: #15181f;
+    --surface-2: #1c2029;
+    --line: #2a2f3a;
+    --line-strong: #3f4654;
+    --text: #f4f4f5;
+    --muted: #9aa3b2;
+    --accent: #60a5fa;
+    --accent-hover: #93c5fd;
+    --accent-on: #0b1220;
+    --accent-soft: rgba(96, 165, 250, 0.14);
+    --success: #34d399;
+    --success-soft: rgba(52, 211, 153, 0.12);
+    --warn: #fbbf24;
+    --danger: #f87171;
+    --danger-soft: rgba(248, 113, 113, 0.12);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+    --sig-line: #f4f4f5;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -51,7 +76,7 @@
     position: sticky; top: 0; z-index: 30;
     background: var(--surface);
     border-bottom: 1px solid var(--line);
-    padding: 14px 16px calc(14px + env(safe-area-inset-top)) 16px;
+    padding: 14px 16px;
     padding-top: max(14px, env(safe-area-inset-top));
   }
   header.app .row {
@@ -63,6 +88,24 @@
   .greeting strong { display: block; font-weight: 600; }
   .greeting .switch { color: var(--accent); font-size: 12px; cursor: pointer; user-select: none; }
   .greeting .switch:hover { text-decoration: underline; }
+
+  /* Preference pills (lang + theme) */
+  .prefs-row {
+    display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end;
+  }
+  .pref-pill {
+    display: inline-flex; align-items: center; gap: 0;
+    padding: 2px; border: 1px solid var(--line-strong);
+    background: var(--surface); border-radius: 999px;
+    cursor: pointer; font-size: 11px; font-family: inherit;
+    color: var(--muted); user-select: none;
+  }
+  .pref-pill .opt {
+    padding: 4px 10px; border-radius: 999px;
+    transition: background 120ms, color 120ms;
+    font-weight: 600; letter-spacing: 0.02em;
+  }
+  .pref-pill .opt.active { background: var(--accent); color: var(--accent-on); }
 
   /* Tabs */
   nav.tabs {
@@ -76,9 +119,10 @@
     color: var(--muted); font-weight: 600; font-size: 14px;
     border-radius: var(--radius-sm); cursor: pointer;
     transition: background 120ms, color 120ms;
+    font-family: inherit;
   }
   nav.tabs button.active { background: var(--accent-soft); color: var(--accent); }
-  nav.tabs button:not(.active):hover { background: #f4f4f5; }
+  nav.tabs button:not(.active):hover { background: var(--surface-2); }
 
   /* Layout */
   main { max-width: 720px; margin: 0 auto; padding: 16px; }
@@ -104,10 +148,10 @@
     font-family: inherit;
   }
   label.field input:focus, label.field select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
-  label.field input[readonly] { background: #fafafa; color: var(--text); }
+  label.field input[readonly] { background: var(--surface-2); color: var(--text); }
   .readout {
     padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    background: #fafafa; font-size: 15px; color: var(--text);
+    background: var(--surface-2); font-size: 15px; color: var(--text);
   }
   .readout .muted { color: var(--muted); font-size: 13px; }
 
@@ -120,10 +164,10 @@
     min-height: 44px; font-family: inherit;
   }
   .btn:active { transform: scale(0.98); }
-  .btn.primary { background: var(--accent); color: white; }
+  .btn.primary { background: var(--accent); color: var(--accent-on); }
   .btn.primary:hover { background: var(--accent-hover); }
   .btn.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--line-strong); }
-  .btn.secondary:hover { background: #f4f4f5; }
+  .btn.secondary:hover { background: var(--surface-2); }
   .btn.success { background: var(--success); color: white; }
   .btn.warn { background: var(--warn); color: white; }
   .btn.danger { background: var(--danger); color: white; }
@@ -139,7 +183,7 @@
     flex: 1; padding: 12px; border: 1px solid var(--line-strong);
     background: var(--surface); border-radius: var(--radius-sm);
     font-weight: 600; font-size: 14px; cursor: pointer; color: var(--muted);
-    min-height: 48px;
+    min-height: 48px; font-family: inherit;
   }
   .toggle-row button.on-no { background: var(--success-soft); border-color: var(--success); color: var(--success); }
   .toggle-row button.on-yes { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
@@ -183,6 +227,7 @@
     border-radius: var(--radius-sm); cursor: pointer; text-align: left;
     font-size: 15px; font-weight: 600; color: var(--text);
     display: flex; justify-content: space-between; align-items: center;
+    font-family: inherit;
   }
   .name-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
   .name-btn .cls { font-size: 12px; color: var(--muted); font-weight: 500; }
@@ -202,7 +247,7 @@
   .week-totals { display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; }
   .week-totals .wt {
     flex: 0 0 auto; padding: 8px 12px; border: 1px solid var(--line);
-    border-radius: var(--radius-sm); background: #fafafa; font-size: 12px;
+    border-radius: var(--radius-sm); background: var(--surface-2); font-size: 12px;
     min-width: 120px;
   }
   .week-totals .wt .lbl { color: var(--muted); }
@@ -228,12 +273,12 @@
     border: 1px solid var(--line); padding: 6px 8px;
     text-align: center; font-size: 12px; min-width: 60px;
   }
-  .week-grid th { background: #fafafa; font-weight: 600; }
+  .week-grid th { background: var(--surface-2); font-weight: 600; }
   .week-grid td.name { text-align: left; font-weight: 600; min-width: 160px; position: sticky; left: 0; background: var(--surface); z-index: 1; }
   .week-grid td.cell { cursor: pointer; }
   .week-grid td.cell:hover { background: var(--accent-soft); }
   .week-grid td.cell.signed { background: var(--success-soft); color: var(--success); font-weight: 600; }
-  .week-grid td.cell.off { background: #f4f4f5; color: var(--muted); }
+  .week-grid td.cell.off { background: var(--surface-2); color: var(--muted); }
 
   /* Toast */
   #toast {
@@ -249,14 +294,6 @@
   #toast.error { background: var(--danger); }
   #toast.success { background: var(--success); }
 
-  /* Spinner */
-  .spinner {
-    display: inline-block; width: 16px; height: 16px;
-    border: 2px solid currentColor; border-top-color: transparent;
-    border-radius: 50%; animation: spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
   .hidden { display: none !important; }
   .center { text-align: center; }
   .muted { color: var(--muted); }
@@ -270,73 +307,81 @@
 <header class="app">
   <div class="row">
     <div class="brand">
-      Foreman Sign-In
+      <span data-i18n="brand">Foreman Sign-In</span>
       <small id="brand-sub">Webcor Concrete · LA Convention Center</small>
     </div>
     <div class="greeting" id="greeting">
       <strong id="g-name">—</strong>
-      <span class="switch" id="g-switch">switch user</span>
+      <span class="switch" id="g-switch" data-i18n="switch_user">switch user</span>
     </div>
+  </div>
+  <div class="prefs-row">
+    <button class="pref-pill" id="pref-lang" type="button" aria-label="Language">
+      <span class="opt" data-lang="en">EN</span><span class="opt" data-lang="es">ES</span>
+    </button>
+    <button class="pref-pill" id="pref-theme" type="button" aria-label="Theme">
+      <span class="opt" data-theme="light" data-i18n="theme_light">Light</span><span class="opt" data-theme="dark" data-i18n="theme_dark">Dark</span>
+    </button>
   </div>
 </header>
 
 <nav class="tabs" id="tabs">
-  <button data-tab="signin" class="active">Sign In</button>
-  <button data-tab="history">History</button>
-  <button data-tab="manager">Manager</button>
+  <button data-tab="signin" class="active" data-i18n="tab_signin">Sign In</button>
+  <button data-tab="history" data-i18n="tab_history">History</button>
+  <button data-tab="manager" data-i18n="tab_manager">Manager</button>
 </nav>
 
 <main>
   <!-- SIGN IN TAB -->
   <section class="panel active" id="panel-signin">
     <div class="card">
-      <h2>Daily Sign-In</h2>
-      <p class="sub">Sign in for today, or backfill up to 7 days back.</p>
+      <h2 data-i18n="signin_title">Daily Sign-In</h2>
+      <p class="sub" data-i18n="signin_sub">Sign in for today, or backfill up to 7 days back.</p>
 
       <label class="field">
-        <div class="lbl-row"><span>Date</span><span class="small muted" id="dow-label"></span></div>
+        <div class="lbl-row"><span data-i18n="date">Date</span><span class="small muted" id="dow-label"></span></div>
         <input type="date" id="signin-date" />
       </label>
 
       <div class="row-flex" style="gap: 0; flex-direction: column;">
         <div class="readout mb-3" style="width: 100%;">
-          <div class="muted small">Name</div>
+          <div class="muted small" data-i18n="name">Name</div>
           <div id="signin-name">—</div>
         </div>
         <div class="readout mb-3" style="width: 100%;">
-          <div class="muted small">Classification</div>
+          <div class="muted small" data-i18n="classification">Classification</div>
           <div id="signin-cls">—</div>
         </div>
       </div>
 
       <div class="row-flex">
         <label class="field" style="flex: 1; margin-bottom: 12px;">
-          <div class="lbl-row"><span>Time In</span></div>
+          <div class="lbl-row"><span data-i18n="time_in">Time In</span></div>
           <input type="time" id="time-in" />
         </label>
         <label class="field" style="flex: 1; margin-bottom: 12px;">
-          <div class="lbl-row"><span>Time Out</span></div>
+          <div class="lbl-row"><span data-i18n="time_out">Time Out</span></div>
           <input type="time" id="time-out" />
         </label>
       </div>
 
       <div class="readout mb-3">
-        <div class="muted small">Total Hours</div>
+        <div class="muted small" data-i18n="total_hours">Total Hours</div>
         <div id="total-hours" style="font-size: 18px; font-weight: 700;">—</div>
       </div>
 
       <label class="field">
-        <div class="lbl-row"><span>Were you injured today at work?</span></div>
+        <div class="lbl-row"><span data-i18n="injured_q">Were you injured today at work?</span></div>
         <div class="toggle-row">
-          <button id="injured-no" class="on-no" type="button">No</button>
-          <button id="injured-yes" type="button">Yes</button>
+          <button id="injured-no" class="on-no" type="button" data-i18n="no">No</button>
+          <button id="injured-yes" type="button" data-i18n="yes">Yes</button>
         </div>
       </label>
 
       <label class="field">
         <div class="lbl-row">
-          <span>Signature</span>
-          <span class="switch ghost-link" id="sig-mode-toggle" style="color: var(--accent); cursor: pointer; font-size: 12px;">Type instead</span>
+          <span data-i18n="signature">Signature</span>
+          <span class="switch" id="sig-mode-toggle" style="color: var(--accent); cursor: pointer; font-size: 12px;" data-i18n="type_instead">Type instead</span>
         </div>
         <div class="sig-wrap" id="sig-wrap">
           <canvas id="sig-canvas"></canvas>
@@ -344,15 +389,15 @@
         </div>
         <div class="sig-controls">
           <div class="left">
-            <button type="button" class="btn ghost" id="sig-clear">Clear</button>
+            <button type="button" class="btn ghost" id="sig-clear" data-i18n="clear">Clear</button>
           </div>
-          <div class="muted" id="sig-hint">Sign with your finger</div>
+          <div class="muted" id="sig-hint" data-i18n="sig_hint_draw">Sign with your finger</div>
         </div>
       </label>
 
       <div class="row-flex mt-3" style="gap: 8px;">
-        <button class="btn primary block lg" id="btn-sign-submit" style="flex: 2;">Sign &amp; Submit</button>
-        <button class="btn secondary" id="btn-mark-off" style="flex: 1;">Mark Off</button>
+        <button class="btn primary block lg" id="btn-sign-submit" style="flex: 2;" data-i18n="sign_submit">Sign &amp; Submit</button>
+        <button class="btn secondary" id="btn-mark-off" style="flex: 1;" data-i18n="mark_off">Mark Off</button>
       </div>
 
       <p class="small muted center mt-3" id="signin-status"></p>
@@ -362,13 +407,13 @@
   <!-- HISTORY TAB -->
   <section class="panel" id="panel-history">
     <div class="card">
-      <h2>My Attendance</h2>
-      <p class="sub" id="history-sub">Last 30 days</p>
+      <h2 data-i18n="history_title">My Attendance</h2>
+      <p class="sub" id="history-sub" data-i18n="history_sub">Last 30 days</p>
 
       <div class="week-totals" id="week-totals"></div>
 
       <div class="hist-list mt-3" id="hist-list">
-        <p class="muted center small">Loading…</p>
+        <p class="muted center small" data-i18n="loading">Loading…</p>
       </div>
     </div>
   </section>
@@ -377,13 +422,13 @@
   <section class="panel" id="panel-manager">
     <!-- Locked state -->
     <div class="card" id="mgr-locked">
-      <h2>Manager Access</h2>
-      <p class="sub">Enter PIN to manage the roster, edit attendance, and export PDFs.</p>
+      <h2 data-i18n="mgr_access_title">Manager Access</h2>
+      <p class="sub" data-i18n="mgr_access_sub">Enter PIN to manage the roster, edit attendance, and export PDFs.</p>
       <label class="field">
-        <div class="lbl-row"><span>PIN</span></div>
-        <input type="password" inputmode="numeric" id="mgr-pin" placeholder="••••" />
+        <div class="lbl-row"><span data-i18n="pin">PIN</span></div>
+        <input type="password" inputmode="numeric" id="mgr-pin" placeholder="••••••" />
       </label>
-      <button class="btn primary block" id="mgr-unlock">Unlock</button>
+      <button class="btn primary block" id="mgr-unlock" data-i18n="unlock">Unlock</button>
     </div>
 
     <!-- Unlocked state -->
@@ -391,51 +436,51 @@
 
       <div class="card mgr-section">
         <div class="row-flex between mb-3">
-          <h3 style="margin:0;">Export</h3>
+          <h3 style="margin:0;" data-i18n="export">Export</h3>
         </div>
         <label class="field">
-          <div class="lbl-row"><span>Week ending date</span></div>
+          <div class="lbl-row"><span data-i18n="week_end_date">Week ending date</span></div>
           <input type="date" id="export-week-end" />
         </label>
         <div class="row-flex">
-          <button class="btn primary" id="btn-export-week" style="flex: 1;">Export week as PDF</button>
-          <button class="btn secondary" id="btn-export-day" style="flex: 1;">Export single day</button>
+          <button class="btn primary" id="btn-export-week" style="flex: 1;" data-i18n="export_week">Export week as PDF</button>
+          <button class="btn secondary" id="btn-export-day" style="flex: 1;" data-i18n="export_day">Export single day</button>
         </div>
       </div>
 
       <div class="card mgr-section">
         <div class="row-flex between mb-3">
-          <h3 style="margin:0;">Week View</h3>
+          <h3 style="margin:0;" data-i18n="week_view">Week View</h3>
           <span class="small muted" id="week-view-label"></span>
         </div>
         <div class="week-grid" id="week-grid">
-          <p class="muted center small" style="padding: 20px;">Pick a week-ending date above to load.</p>
+          <p class="muted center small" style="padding: 20px;" data-i18n="pick_week">Pick a week-ending date above to load.</p>
         </div>
       </div>
 
       <div class="card mgr-section">
         <div class="row-flex between mb-3">
-          <h3 style="margin:0;">Roster</h3>
-          <button class="btn primary" id="btn-add-foreman">+ Add Foreman</button>
+          <h3 style="margin:0;" data-i18n="roster">Roster</h3>
+          <button class="btn primary" id="btn-add-foreman" data-i18n="add_foreman">+ Add Foreman</button>
         </div>
         <div id="roster-list"></div>
       </div>
 
       <div class="card mgr-section">
-        <h3>Project Config</h3>
-        <label class="field"><div class="lbl-row"><span>Prime Contractor</span></div>
+        <h3 data-i18n="project_config">Project Config</h3>
+        <label class="field"><div class="lbl-row"><span data-i18n="prime_contractor">Prime Contractor</span></div>
           <input type="text" id="cfg-prime" /></label>
-        <label class="field"><div class="lbl-row"><span>Project Name</span></div>
+        <label class="field"><div class="lbl-row"><span data-i18n="project_name">Project Name</span></div>
           <input type="text" id="cfg-project" /></label>
-        <label class="field"><div class="lbl-row"><span>Subcontractor Name</span></div>
+        <label class="field"><div class="lbl-row"><span data-i18n="subcontractor">Subcontractor Name</span></div>
           <input type="text" id="cfg-sub" /></label>
-        <label class="field"><div class="lbl-row"><span>Manager PIN</span></div>
+        <label class="field"><div class="lbl-row"><span data-i18n="mgr_pin">Manager PIN</span></div>
           <input type="text" inputmode="numeric" id="cfg-pin" /></label>
-        <button class="btn primary" id="btn-save-config">Save config</button>
+        <button class="btn primary" id="btn-save-config" data-i18n="save_config">Save config</button>
       </div>
 
       <p class="center small muted">
-        <button class="btn ghost" id="btn-mgr-lock">Lock manager</button>
+        <button class="btn ghost" id="btn-mgr-lock" data-i18n="lock_mgr">Lock manager</button>
       </p>
     </div>
   </section>
@@ -444,10 +489,10 @@
 <!-- NAME PICKER OVERLAY -->
 <div class="overlay" id="overlay-namepicker">
   <div class="modal">
-    <h3>Who's signing in?</h3>
-    <p class="sub">Tap your name to begin. The manager controls this list.</p>
+    <h3 data-i18n="who_signing">Who's signing in?</h3>
+    <p class="sub" data-i18n="who_sub">Tap your name to begin. The manager controls this list.</p>
     <div class="name-grid" id="name-grid">
-      <p class="muted center small">Loading roster…</p>
+      <p class="muted center small" data-i18n="loading_roster">Loading roster…</p>
     </div>
   </div>
 </div>
@@ -455,18 +500,21 @@
 <!-- EDIT FOREMAN OVERLAY -->
 <div class="overlay" id="overlay-foreman">
   <div class="modal">
-    <h3 id="fm-title">Edit Foreman</h3>
-    <p class="sub">Set how this foreman appears in the picker and on the PDF.</p>
-    <label class="field"><div class="lbl-row"><span>Name (printed)</span></div>
+    <h3 id="fm-title" data-i18n="edit_foreman_title">Edit Foreman</h3>
+    <p class="sub" data-i18n="fm_sub">Set how this foreman appears in the picker and on the PDF.</p>
+    <label class="field"><div class="lbl-row"><span data-i18n="name_printed">Name (printed)</span></div>
       <input type="text" id="fm-name" /></label>
-    <label class="field"><div class="lbl-row"><span>Work Classification</span></div>
-      <input type="text" id="fm-cls" placeholder="e.g. Carpenter Journeyman" /></label>
-    <label class="field"><div class="lbl-row"><span>Active</span></div>
-      <select id="fm-active"><option value="true">Yes — show in picker</option><option value="false">No — hide</option></select></label>
+    <label class="field"><div class="lbl-row"><span data-i18n="work_classification">Work Classification</span></div>
+      <input type="text" id="fm-cls" data-i18n-ph="cls_placeholder" placeholder="e.g. Carpenter Journeyman" /></label>
+    <label class="field"><div class="lbl-row"><span data-i18n="active">Active</span></div>
+      <select id="fm-active">
+        <option value="true" data-i18n="active_yes">Yes — show in picker</option>
+        <option value="false" data-i18n="active_no">No — hide</option>
+      </select></label>
     <div class="row-flex mt-3">
-      <button class="btn danger" id="fm-delete" style="flex: 1;">Delete</button>
-      <button class="btn secondary" id="fm-cancel" style="flex: 1;">Cancel</button>
-      <button class="btn primary" id="fm-save" style="flex: 1;">Save</button>
+      <button class="btn danger" id="fm-delete" style="flex: 1;" data-i18n="delete_btn">Delete</button>
+      <button class="btn secondary" id="fm-cancel" style="flex: 1;" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" id="fm-save" style="flex: 1;" data-i18n="save">Save</button>
     </div>
   </div>
 </div>
@@ -477,27 +525,27 @@
     <h3 id="entry-title">Edit Entry</h3>
     <p class="sub" id="entry-sub"></p>
     <div class="row-flex">
-      <label class="field" style="flex: 1;"><div class="lbl-row"><span>Time In</span></div>
+      <label class="field" style="flex: 1;"><div class="lbl-row"><span data-i18n="time_in">Time In</span></div>
         <input type="time" id="entry-tin" /></label>
-      <label class="field" style="flex: 1;"><div class="lbl-row"><span>Time Out</span></div>
+      <label class="field" style="flex: 1;"><div class="lbl-row"><span data-i18n="time_out">Time Out</span></div>
         <input type="time" id="entry-tout" /></label>
     </div>
-    <label class="field"><div class="lbl-row"><span>Hours</span></div>
+    <label class="field"><div class="lbl-row"><span data-i18n="hours_label">Hours</span></div>
       <input type="number" step="0.25" id="entry-hours" /></label>
-    <label class="field"><div class="lbl-row"><span>Status</span></div>
+    <label class="field"><div class="lbl-row"><span data-i18n="status_label">Status</span></div>
       <select id="entry-status">
-        <option value="signed">Signed in</option>
-        <option value="off">Off</option>
+        <option value="signed" data-i18n="signed_in">Signed in</option>
+        <option value="off" data-i18n="status_off_opt">Off</option>
       </select></label>
-    <label class="field"><div class="lbl-row"><span>Injured</span></div>
+    <label class="field"><div class="lbl-row"><span data-i18n="injured_label">Injured</span></div>
       <select id="entry-injured">
-        <option value="false">No</option>
-        <option value="true">Yes</option>
+        <option value="false" data-i18n="no">No</option>
+        <option value="true" data-i18n="yes">Yes</option>
       </select></label>
     <div class="row-flex mt-3">
-      <button class="btn danger" id="entry-delete" style="flex: 1;">Delete</button>
-      <button class="btn secondary" id="entry-cancel" style="flex: 1;">Cancel</button>
-      <button class="btn primary" id="entry-save" style="flex: 1;">Save</button>
+      <button class="btn danger" id="entry-delete" style="flex: 1;" data-i18n="delete_btn">Delete</button>
+      <button class="btn secondary" id="entry-cancel" style="flex: 1;" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" id="entry-save" style="flex: 1;" data-i18n="save">Save</button>
     </div>
   </div>
 </div>
@@ -505,6 +553,142 @@
 <div id="toast"></div>
 
 <script>
+// ── I18N ────────────────────────────────────────────────────────────────────
+const T = {
+  en: {
+    brand: 'Foreman Sign-In', switch_user: 'switch user',
+    tab_signin: 'Sign In', tab_history: 'History', tab_manager: 'Manager',
+    theme_light: 'Light', theme_dark: 'Dark',
+    signin_title: 'Daily Sign-In',
+    signin_sub: 'Sign in for today, or backfill up to 7 days back.',
+    date: 'Date', name: 'Name', classification: 'Classification',
+    time_in: 'Time In', time_out: 'Time Out', total_hours: 'Total Hours',
+    injured_q: 'Were you injured today at work?',
+    no: 'No', yes: 'Yes',
+    signature: 'Signature',
+    type_instead: 'Type instead', draw_instead: 'Draw instead',
+    sig_hint_draw: 'Sign with your finger',
+    sig_hint_typed: 'Tap "Sign & Submit" to stamp your name',
+    clear: 'Clear', sign_submit: 'Sign & Submit', mark_off: 'Mark Off',
+    saving: 'Saving…', saved: 'Saved.', hrs: 'hrs',
+    history_title: 'My Attendance', history_sub: 'Last 30 days',
+    loading: 'Loading…',
+    no_history: 'No history yet. Sign in today to start.',
+    week_ending: 'Week ending', current_tag: 'current',
+    off_upper: 'OFF', off_lower: 'Off', injury_reported: 'injury reported',
+    who_signing: "Who's signing in?",
+    who_sub: 'Tap your name to begin. The manager controls this list.',
+    loading_roster: 'Loading roster…',
+    no_foremen_user: 'No foremen yet. Ask your manager.',
+    mgr_access_title: 'Manager Access',
+    mgr_access_sub: 'Enter PIN to manage the roster, edit attendance, and export PDFs.',
+    pin: 'PIN', unlock: 'Unlock', export: 'Export',
+    week_end_date: 'Week ending date',
+    export_week: 'Export week as PDF', export_day: 'Export single day',
+    week_view: 'Week View',
+    pick_week: 'Pick a week-ending date above to load.',
+    no_active_foremen: 'No active foremen.',
+    week_ending_short: 'Week ending',
+    foreman_col: 'Foreman',
+    roster: 'Roster', add_foreman: '+ Add Foreman',
+    no_foremen_mgr: 'No foremen yet. Add one above.',
+    project_config: 'Project Config',
+    prime_contractor: 'Prime Contractor', project_name: 'Project Name',
+    subcontractor: 'Subcontractor Name', mgr_pin: 'Manager PIN',
+    save_config: 'Save config', lock_mgr: 'Lock manager',
+    edit_foreman_title: 'Edit Foreman', add_foreman_title: 'Add Foreman',
+    fm_sub: 'Set how this foreman appears in the picker and on the PDF.',
+    name_printed: 'Name (printed)', work_classification: 'Work Classification',
+    cls_placeholder: 'e.g. Carpenter Journeyman',
+    active: 'Active', active_yes: 'Yes — show in picker', active_no: 'No — hide',
+    delete_btn: 'Delete', cancel: 'Cancel', save: 'Save',
+    edit_entry: 'Edit Entry', hours_label: 'Hours', status_label: 'Status',
+    signed_in: 'Signed in', status_off_opt: 'Off', injured_label: 'Injured',
+    pick_name_first: 'Pick your name first',
+    enter_times: 'Enter time in and time out',
+    time_out_after: 'Time out must be after time in',
+    please_sign: 'Please sign before submitting',
+    signed_success: 'Signed in successfully', marked_off: 'Marked off',
+    error_saving: 'Error saving: ',
+    overwrite_q: 'You already have an entry for this date. Overwrite?',
+    pick_week_first: 'Pick a week-ending date first',
+    pick_day_prompt: 'Pick a day (1-7):',
+    shared_toast: 'Shared', pdf_downloaded: 'PDF downloaded',
+    firebase_err: 'Firebase unavailable',
+    incorrect_pin: 'Incorrect PIN', config_saved: 'Config saved',
+    delete_fm_confirm: 'Delete this foreman? Historical attendance entries will remain.',
+    deleted: 'Deleted', saved_toast: 'Saved', name_required: 'Name required',
+    entry_saved: 'Entry saved', entry_deleted: 'Entry deleted',
+    delete_entry_confirm: 'Delete this entry?'
+  },
+  es: {
+    brand: 'Registro de Foreman', switch_user: 'cambiar usuario',
+    tab_signin: 'Registrar', tab_history: 'Historial', tab_manager: 'Gerente',
+    theme_light: 'Claro', theme_dark: 'Oscuro',
+    signin_title: 'Registro Diario',
+    signin_sub: 'Regístrese hoy, o complete hasta 7 días atrás.',
+    date: 'Fecha', name: 'Nombre', classification: 'Clasificación',
+    time_in: 'Hora de Entrada', time_out: 'Hora de Salida', total_hours: 'Horas Totales',
+    injured_q: '¿Se lastimó hoy en el trabajo?',
+    no: 'No', yes: 'Sí',
+    signature: 'Firma',
+    type_instead: 'Escribir en su lugar', draw_instead: 'Dibujar en su lugar',
+    sig_hint_draw: 'Firme con su dedo',
+    sig_hint_typed: 'Toque "Firmar y Enviar" para sellar su nombre',
+    clear: 'Borrar', sign_submit: 'Firmar y Enviar', mark_off: 'Marcar Ausente',
+    saving: 'Guardando…', saved: 'Guardado.', hrs: 'hrs',
+    history_title: 'Mi Asistencia', history_sub: 'Últimos 30 días',
+    loading: 'Cargando…',
+    no_history: 'Sin historial. Regístrese hoy para empezar.',
+    week_ending: 'Semana terminando', current_tag: 'actual',
+    off_upper: 'AUSENTE', off_lower: 'Ausente', injury_reported: 'lesión reportada',
+    who_signing: '¿Quién se está registrando?',
+    who_sub: 'Toque su nombre para comenzar. El gerente controla esta lista.',
+    loading_roster: 'Cargando equipo…',
+    no_foremen_user: 'Aún no hay foremen. Pregunte a su gerente.',
+    mgr_access_title: 'Acceso de Gerente',
+    mgr_access_sub: 'Ingrese el PIN para administrar el equipo, editar asistencia y exportar PDFs.',
+    pin: 'PIN', unlock: 'Desbloquear', export: 'Exportar',
+    week_end_date: 'Fecha de fin de semana',
+    export_week: 'Exportar semana como PDF', export_day: 'Exportar un día',
+    week_view: 'Vista Semanal',
+    pick_week: 'Seleccione una fecha de fin de semana arriba para cargar.',
+    no_active_foremen: 'No hay foremen activos.',
+    week_ending_short: 'Semana terminando',
+    foreman_col: 'Foreman',
+    roster: 'Equipo', add_foreman: '+ Agregar Foreman',
+    no_foremen_mgr: 'Aún no hay foremen. Agregue uno arriba.',
+    project_config: 'Configuración del Proyecto',
+    prime_contractor: 'Contratista Principal', project_name: 'Nombre del Proyecto',
+    subcontractor: 'Nombre del Subcontratista', mgr_pin: 'PIN del Gerente',
+    save_config: 'Guardar configuración', lock_mgr: 'Bloquear gerente',
+    edit_foreman_title: 'Editar Foreman', add_foreman_title: 'Agregar Foreman',
+    fm_sub: 'Configure cómo aparece este foreman en el selector y en el PDF.',
+    name_printed: 'Nombre (impreso)', work_classification: 'Clasificación de Trabajo',
+    cls_placeholder: 'ej. Carpintero Journeyman',
+    active: 'Activo', active_yes: 'Sí — mostrar en selector', active_no: 'No — ocultar',
+    delete_btn: 'Eliminar', cancel: 'Cancelar', save: 'Guardar',
+    edit_entry: 'Editar Registro', hours_label: 'Horas', status_label: 'Estado',
+    signed_in: 'Registrado', status_off_opt: 'Ausente', injured_label: 'Lesionado',
+    pick_name_first: 'Seleccione su nombre primero',
+    enter_times: 'Ingrese hora de entrada y salida',
+    time_out_after: 'La hora de salida debe ser después de la entrada',
+    please_sign: 'Por favor firme antes de enviar',
+    signed_success: 'Registrado con éxito', marked_off: 'Marcado ausente',
+    error_saving: 'Error al guardar: ',
+    overwrite_q: 'Ya tiene un registro para esta fecha. ¿Sobrescribir?',
+    pick_week_first: 'Seleccione una fecha de fin de semana primero',
+    pick_day_prompt: 'Seleccione un día (1-7):',
+    shared_toast: 'Compartido', pdf_downloaded: 'PDF descargado',
+    firebase_err: 'Firebase no disponible',
+    incorrect_pin: 'PIN incorrecto', config_saved: 'Configuración guardada',
+    delete_fm_confirm: '¿Eliminar a este foreman? Los registros de asistencia históricos se conservarán.',
+    deleted: 'Eliminado', saved_toast: 'Guardado', name_required: 'Nombre requerido',
+    entry_saved: 'Registro guardado', entry_deleted: 'Registro eliminado',
+    delete_entry_confirm: '¿Eliminar este registro?'
+  }
+};
+
 // ── FIREBASE ────────────────────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
   databaseURL: 'https://gen-lang-client-0119642855-default-rtdb.firebaseio.com'
@@ -527,21 +711,23 @@ function fbRemove(path)     { return db.ref(`${NS}/${path}`).remove(); }
 
 // ── STATE ───────────────────────────────────────────────────────────────────
 const state = {
-  profile: null,              // { id, name, classification }
-  foremen: {},                // { id: foremanObj }
+  lang: localStorage.getItem('lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
+  theme: localStorage.getItem('theme') || (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+  profile: null,
+  foremen: {},
   config: {
     primeContractor: 'PCL — WEBCOR',
     projectName: 'LA Convention Center',
     subcontractor: 'Webcor Concrete',
-    managerPin: '8888'
+    managerPin: '050103'
   },
   signin: {
     date: ymd(new Date()),
     timeIn: '', timeOut: '', totalHours: 0,
     injured: false,
-    sigMode: 'drawn'   // 'drawn' | 'typed'
+    sigMode: 'drawn'
   },
-  attendanceCache: {},        // { date: { foremanId: entry } } — loaded on demand
+  attendanceCache: {},
   manager: {
     unlocked: false,
     weekEnd: null,
@@ -553,28 +739,29 @@ const state = {
   sigPad: null
 };
 
+function t(key, fallback) {
+  return (T[state.lang]?.[key]) ?? (T.en[key]) ?? (fallback ?? key);
+}
+
 // ── HELPERS ─────────────────────────────────────────────────────────────────
 function ymd(d) {
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
 }
-function parseYmd(s) {
-  const [y,m,d] = s.split('-').map(Number);
-  return new Date(y, m-1, d);
-}
+function parseYmd(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
 function dayOfWeek(date) {
-  return ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][date.getDay()];
+  const en = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
+  const es = ['DOMINGO','LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO'];
+  return state.lang === 'es' ? es[date.getDay()] : en[date.getDay()];
 }
-function dayOfWeekEs(date) {
-  return ['DOMINGO','LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO'][date.getDay()];
+function dayOfWeekEs(date) { return ['DOMINGO','LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO'][date.getDay()]; }
+function dayOfWeekEn(date) { return ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][date.getDay()]; }
+function dayShort(date) {
+  const en = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const es = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  return (state.lang === 'es' ? es : en)[date.getDay()];
 }
-function dayShortEn(date) {
-  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][date.getDay()];
-}
-function fmtDateUS(s) {
-  const d = parseYmd(s);
-  return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
-}
+function fmtDateUS(s) { const d = parseYmd(s); return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`; }
 function hoursBetween(tIn, tOut) {
   if (!tIn || !tOut) return 0;
   const [hi, mi] = tIn.split(':').map(Number);
@@ -592,32 +779,70 @@ function toast(msg, kind='') {
 }
 function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return [...document.querySelectorAll(sel)]; }
-
-// Default week ends on Friday (matches the paper form sample at LACC).
-// The form actually supports any week-ending date — manager can change it in Export.
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 function weekEndingFor(date) {
   const d = new Date(date);
   const dow = d.getDay();
-  // Find this week's Friday (5). If today is Sat/Sun, jump forward to next Friday.
-  const diff = (5 - dow + 7) % 7;
+  const diff = (5 - dow + 7) % 7; // Friday default
   d.setDate(d.getDate() + diff);
   return d;
 }
-// Get array of 7 dates Sun→Sat ending on the given weekEnd Saturday
-function weekDates(weekEndSat) {
+function weekDates(weekEnd) {
   const out = [];
   for (let i = 6; i >= 0; i--) {
-    const d = new Date(weekEndSat);
-    d.setDate(d.getDate() - i);
-    out.push(d);
+    const d = new Date(weekEnd); d.setDate(d.getDate() - i); out.push(d);
   }
   return out;
 }
 
+// ── PREFS (lang + theme) ────────────────────────────────────────────────────
+function applyLang(lang) {
+  state.lang = lang;
+  localStorage.setItem('lang', lang);
+  document.documentElement.lang = lang;
+  $$('#pref-lang .opt').forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
+  $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+  $$('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
+  // Re-render dynamic content
+  updateDowLabel(state.signin.date);
+  recalcHours();
+  renderNamePicker();
+  if (state.profile) loadHistory();
+  if (state.manager.unlocked) {
+    renderRoster();
+    if (state.manager.weekData) {
+      $('#week-view-label').textContent = `${t('week_ending_short')} ${fmtDateUS(state.manager.weekEndStr)}`;
+      renderWeekGrid();
+    }
+  }
+  // Toggle sig-hint based on current mode
+  $('#sig-hint').textContent = state.signin.sigMode === 'typed' ? t('sig_hint_typed') : t('sig_hint_draw');
+  $('#sig-mode-toggle').textContent = state.signin.sigMode === 'typed' ? t('draw_instead') : t('type_instead');
+}
+function applyTheme(theme) {
+  state.theme = theme;
+  localStorage.setItem('theme', theme);
+  document.documentElement.setAttribute('data-theme', theme);
+  $$('#pref-theme .opt').forEach(o => o.classList.toggle('active', o.dataset.theme === theme));
+  // Re-init signature pad pen color to match theme
+  if (state.sigPad) {
+    state.sigPad.penColor = theme === 'dark' ? '#f4f4f5' : '#18181b';
+  }
+}
+function initPrefs() {
+  applyTheme(state.theme);
+  applyLang(state.lang);
+  $('#pref-lang').onclick = () => applyLang(state.lang === 'en' ? 'es' : 'en');
+  $('#pref-theme').onclick = () => applyTheme(state.theme === 'light' ? 'dark' : 'light');
+}
+
 // ── BOOT ────────────────────────────────────────────────────────────────────
 async function boot() {
+  initPrefs();
   if (!initFirebase()) {
-    toast('Firebase unavailable', 'error');
+    toast(t('firebase_err'), 'error');
     return;
   }
   await ensureSeed();
@@ -634,10 +859,7 @@ async function boot() {
   });
 
   const saved = localStorage.getItem('foreman_profile');
-  if (saved) {
-    try { state.profile = JSON.parse(saved); } catch(e) {}
-  }
-  // Wait for foremen to load — if profile foreman still exists/active, use it
+  if (saved) { try { state.profile = JSON.parse(saved); } catch(e) {} }
   setTimeout(() => {
     if (state.profile && state.foremen[state.profile.id]) {
       const fm = state.foremen[state.profile.id];
@@ -658,23 +880,19 @@ async function boot() {
 
 async function ensureSeed() {
   const cfg = await fbGet('config');
-  if (!cfg) {
-    await fbSet('config', state.config);
-  }
+  if (!cfg) await fbSet('config', state.config);
   const fm = await fbGet('foremen');
   if (!fm || Object.keys(fm).length === 0) {
     const seed = [
-      { name: 'Juan Sanchez',              classification: 'Carpenter Foreman',     order: 1 },
-      { name: 'Alejandro Gutierrez',       classification: 'Carpenter Journeyman',  order: 2 },
-      { name: 'Claudio Rosas Hernandez',   classification: 'Carpenter Journeyman',  order: 3 },
+      { name: 'Juan Sanchez',              classification: 'Carpenter Foreman',       order: 1 },
+      { name: 'Alejandro Gutierrez',       classification: 'Carpenter Journeyman',    order: 2 },
+      { name: 'Claudio Rosas Hernandez',   classification: 'Carpenter Journeyman',    order: 3 },
       { name: 'Jesus Juarez',              classification: 'Carpenter Apprentice L3', order: 4 },
       { name: 'Claudio Hernandez Victoria',classification: 'Carpenter Apprentice L1', order: 5 },
-      { name: 'Alpidio Hernandez',         classification: 'Carpenter Journeyman',  order: 6 },
-      { name: 'Luis Hernandez',            classification: 'Carpenter Journeyman',  order: 7 }
+      { name: 'Alpidio Hernandez',         classification: 'Carpenter Journeyman',    order: 6 },
+      { name: 'Luis Hernandez',            classification: 'Carpenter Journeyman',    order: 7 }
     ];
-    for (const s of seed) {
-      await fbPush('foremen', { ...s, active: true });
-    }
+    for (const s of seed) await fbPush('foremen', { ...s, active: true });
   }
 }
 
@@ -683,13 +901,8 @@ function renderBrand() {
 }
 
 // ── NAME PICKER ─────────────────────────────────────────────────────────────
-function showNamePicker() {
-  renderNamePicker();
-  $('#overlay-namepicker').classList.add('show');
-}
-function hideNamePicker() {
-  $('#overlay-namepicker').classList.remove('show');
-}
+function showNamePicker() { renderNamePicker(); $('#overlay-namepicker').classList.add('show'); }
+function hideNamePicker() { $('#overlay-namepicker').classList.remove('show'); }
 function showApp() {
   hideNamePicker();
   $('#g-name').textContent = state.profile.name.split(' ')[0];
@@ -703,7 +916,7 @@ function renderNamePicker() {
     .filter(([_, f]) => f.active)
     .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
   if (list.length === 0) {
-    grid.innerHTML = '<p class="muted center small">No foremen yet. Ask your manager.</p>';
+    grid.innerHTML = `<p class="muted center small">${escapeHtml(t('no_foremen_user'))}</p>`;
     return;
   }
   grid.innerHTML = list.map(([id, f]) => `
@@ -724,21 +937,17 @@ function renderNamePicker() {
 }
 $('#g-switch').onclick = () => showNamePicker();
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-
 // ── TABS ────────────────────────────────────────────────────────────────────
 function initTabs() {
   $$('#tabs button').forEach(b => {
     b.onclick = () => {
       $$('#tabs button').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
-      const t = b.dataset.tab;
+      const tab = b.dataset.tab;
       $$('.panel').forEach(p => p.classList.remove('active'));
-      $(`#panel-${t}`).classList.add('active');
-      if (t === 'history') loadHistory();
-      if (t === 'manager') refreshManagerView();
+      $(`#panel-${tab}`).classList.add('active');
+      if (tab === 'history') loadHistory();
+      if (tab === 'manager') refreshManagerView();
     };
   });
 }
@@ -746,41 +955,31 @@ function initTabs() {
 // ── SIGN-IN FORM ────────────────────────────────────────────────────────────
 function initSignInForm() {
   const today = ymd(new Date());
-  const max = today;
-  const minDate = new Date();
-  minDate.setDate(minDate.getDate() - 6);
+  const minDate = new Date(); minDate.setDate(minDate.getDate() - 6);
   const min = ymd(minDate);
-
   const dateInput = $('#signin-date');
-  dateInput.min = min;
-  dateInput.max = max;
-  dateInput.value = today;
+  dateInput.min = min; dateInput.max = today; dateInput.value = today;
   state.signin.date = today;
   updateDowLabel(today);
-  dateInput.onchange = e => {
-    state.signin.date = e.target.value;
-    updateDowLabel(e.target.value);
-  };
-
+  dateInput.onchange = e => { state.signin.date = e.target.value; updateDowLabel(e.target.value); };
   $('#time-in').oninput = e => { state.signin.timeIn = e.target.value; recalcHours(); };
   $('#time-out').oninput = e => { state.signin.timeOut = e.target.value; recalcHours(); };
-
   $('#injured-no').onclick = () => setInjured(false);
   $('#injured-yes').onclick = () => setInjured(true);
-
   $('#sig-mode-toggle').onclick = toggleSigMode;
   $('#sig-clear').onclick = clearSig;
-
   $('#btn-sign-submit').onclick = submitSignIn;
   $('#btn-mark-off').onclick = markOff;
 }
 function updateDowLabel(dateStr) {
-  $('#dow-label').textContent = dayOfWeek(parseYmd(dateStr)) + ' / ' + dayOfWeekEs(parseYmd(dateStr));
+  if (!dateStr) return;
+  const d = parseYmd(dateStr);
+  $('#dow-label').textContent = `${dayOfWeekEn(d)} / ${dayOfWeekEs(d)}`;
 }
 function recalcHours() {
   const h = hoursBetween(state.signin.timeIn, state.signin.timeOut);
   state.signin.totalHours = h;
-  $('#total-hours').textContent = h ? `${h.toFixed(2)} hrs` : '—';
+  $('#total-hours').textContent = h ? `${h.toFixed(2)} ${t('hrs')}` : '—';
 }
 function setInjured(yes) {
   state.signin.injured = yes;
@@ -793,7 +992,8 @@ function initSignaturePad() {
   const canvas = $('#sig-canvas');
   resizeCanvas(canvas);
   state.sigPad = new SignaturePad(canvas, {
-    penColor: '#18181b', minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
+    penColor: state.theme === 'dark' ? '#f4f4f5' : '#18181b',
+    minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
   });
   window.addEventListener('resize', () => resizeCanvas(canvas));
 }
@@ -807,50 +1007,43 @@ function resizeCanvas(c) {
 function toggleSigMode() {
   state.signin.sigMode = state.signin.sigMode === 'drawn' ? 'typed' : 'drawn';
   const wrap = $('#sig-wrap');
-  const typedEl = $('#sig-typed');
   if (state.signin.sigMode === 'typed') {
     wrap.classList.add('mode-typed');
-    typedEl.textContent = state.profile?.name || '—';
-    $('#sig-mode-toggle').textContent = 'Draw instead';
-    $('#sig-hint').textContent = 'Tap "Sign & Submit" to stamp your name';
+    $('#sig-typed').textContent = state.profile?.name || '—';
+    $('#sig-mode-toggle').textContent = t('draw_instead');
+    $('#sig-hint').textContent = t('sig_hint_typed');
     $('#sig-clear').style.display = 'none';
   } else {
     wrap.classList.remove('mode-typed');
-    $('#sig-mode-toggle').textContent = 'Type instead';
-    $('#sig-hint').textContent = 'Sign with your finger';
+    $('#sig-mode-toggle').textContent = t('type_instead');
+    $('#sig-hint').textContent = t('sig_hint_draw');
     $('#sig-clear').style.display = '';
   }
 }
-function clearSig() {
-  if (state.sigPad) state.sigPad.clear();
-}
+function clearSig() { if (state.sigPad) state.sigPad.clear(); }
 
-// ── SUBMIT SIGN-IN ──────────────────────────────────────────────────────────
 async function submitSignIn() {
-  if (!state.profile) { toast('Pick your name first', 'error'); return; }
-  if (!state.signin.timeIn || !state.signin.timeOut) { toast('Enter time in and time out', 'error'); return; }
-  if (state.signin.totalHours <= 0) { toast('Time out must be after time in', 'error'); return; }
+  if (!state.profile) { toast(t('pick_name_first'), 'error'); return; }
+  if (!state.signin.timeIn || !state.signin.timeOut) { toast(t('enter_times'), 'error'); return; }
+  if (state.signin.totalHours <= 0) { toast(t('time_out_after'), 'error'); return; }
   let signatureType, signatureDataUrl, signatureText;
   if (state.signin.sigMode === 'drawn') {
-    if (state.sigPad.isEmpty()) { toast('Please sign before submitting', 'error'); return; }
+    if (state.sigPad.isEmpty()) { toast(t('please_sign'), 'error'); return; }
     signatureType = 'drawn';
     signatureDataUrl = state.sigPad.toDataURL('image/png');
   } else {
-    signatureType = 'typed';
-    signatureText = state.profile.name;
+    signatureType = 'typed'; signatureText = state.profile.name;
   }
   await writeEntry({
-    timeIn: state.signin.timeIn,
-    timeOut: state.signin.timeOut,
-    totalHours: state.signin.totalHours,
-    injured: state.signin.injured,
+    timeIn: state.signin.timeIn, timeOut: state.signin.timeOut,
+    totalHours: state.signin.totalHours, injured: state.signin.injured,
     signatureType, signatureDataUrl: signatureDataUrl || null,
     signatureText: signatureText || null,
     signedAt: Date.now(), signedBy: 'self'
   });
 }
 async function markOff() {
-  if (!state.profile) { toast('Pick your name first', 'error'); return; }
+  if (!state.profile) { toast(t('pick_name_first'), 'error'); return; }
   await writeEntry({
     timeIn: null, timeOut: null, totalHours: 0,
     injured: false, signatureType: 'off',
@@ -861,18 +1054,16 @@ async function markOff() {
 async function writeEntry(entry) {
   const path = `attendance/${state.signin.date}/${state.profile.id}`;
   const existing = await fbGet(path);
-  if (existing) {
-    if (!confirm('You already have an entry for this date. Overwrite?')) return;
-  }
-  $('#signin-status').textContent = 'Saving…';
+  if (existing) { if (!confirm(t('overwrite_q'))) return; }
+  $('#signin-status').textContent = t('saving');
   try {
     await fbSet(path, entry);
-    toast(entry.signatureType === 'off' ? 'Marked off' : 'Signed in successfully', 'success');
-    $('#signin-status').textContent = 'Saved.';
+    toast(entry.signatureType === 'off' ? t('marked_off') : t('signed_success'), 'success');
+    $('#signin-status').textContent = t('saved');
     clearSig();
     loadHistory();
   } catch (e) {
-    toast('Error saving: ' + e.message, 'error');
+    toast(t('error_saving') + e.message, 'error');
     $('#signin-status').textContent = '';
   }
 }
@@ -881,14 +1072,11 @@ async function writeEntry(entry) {
 async function loadHistory() {
   if (!state.profile) return;
   const list = $('#hist-list');
-  list.innerHTML = '<p class="muted center small">Loading…</p>';
-  // Pull last 30 days of attendance
+  list.innerHTML = `<p class="muted center small">${escapeHtml(t('loading'))}</p>`;
   const today = new Date();
   const dates = [];
   for (let i = 0; i < 30; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    dates.push(ymd(d));
+    const d = new Date(today); d.setDate(today.getDate() - i); dates.push(ymd(d));
   }
   const entries = [];
   await Promise.all(dates.map(async date => {
@@ -897,38 +1085,38 @@ async function loadHistory() {
   }));
   entries.sort((a, b) => b.date.localeCompare(a.date));
   if (entries.length === 0) {
-    list.innerHTML = '<p class="muted center small">No history yet. Sign in today to start.</p>';
+    list.innerHTML = `<p class="muted center small">${escapeHtml(t('no_history'))}</p>`;
   } else {
     list.innerHTML = entries.map(e => {
       const d = parseYmd(e.date);
       const isOff = e.signatureType === 'off';
+      const hrsLabel = (e.totalHours || 0).toFixed(2) + ' ' + t('hrs');
+      const injLabel = e.injured ? ` · ${t('injury_reported')}` : '';
+      const timeRange = isOff ? t('off_lower') : `${e.timeIn} – ${e.timeOut}${injLabel}`;
       return `<div class="hist-item ${isOff ? 'off' : ''}">
         <div class="left">
-          <div class="date">${fmtDateUS(e.date)} <span class="dow">${dayShortEn(d)}</span></div>
-          <div class="small muted">${isOff ? 'Off' : `${e.timeIn} – ${e.timeOut}`}${e.injured ? ' · injury reported' : ''}</div>
+          <div class="date">${fmtDateUS(e.date)} <span class="dow">${dayShort(d)}</span></div>
+          <div class="small muted">${escapeHtml(timeRange)}</div>
         </div>
-        <div class="hrs">${isOff ? 'OFF' : (e.totalHours||0).toFixed(2) + ' hrs'}</div>
+        <div class="hrs">${isOff ? t('off_upper') : hrsLabel}</div>
       </div>`;
     }).join('');
   }
-  // Weekly totals (last 4 weeks)
   const totalsWrap = $('#week-totals');
   const weeks = [];
-  const todaySat = weekEndingFor(today);
+  const todayEnd = weekEndingFor(today);
   for (let w = 0; w < 4; w++) {
-    const sat = new Date(todaySat);
-    sat.setDate(sat.getDate() - 7*w);
-    const days = weekDates(sat);
+    const end = new Date(todayEnd); end.setDate(end.getDate() - 7*w);
+    const days = weekDates(end);
     const total = entries
       .filter(e => days.some(d => ymd(d) === e.date))
       .reduce((sum, e) => sum + (e.totalHours || 0), 0);
-    const sun = days[0];
-    weeks.push({ sun, sat, total });
+    weeks.push({ end, total });
   }
   totalsWrap.innerHTML = weeks.map((w,i) => `
     <div class="wt">
-      <div class="lbl">Week ending ${fmtDateUS(ymd(w.sat))}${i === 0 ? ' · current' : ''}</div>
-      <div class="val">${w.total.toFixed(2)} hrs</div>
+      <div class="lbl">${escapeHtml(t('week_ending'))} ${fmtDateUS(ymd(w.end))}${i === 0 ? ' · ' + escapeHtml(t('current_tag')) : ''}</div>
+      <div class="val">${w.total.toFixed(2)} ${escapeHtml(t('hrs'))}</div>
     </div>
   `).join('');
 }
@@ -942,13 +1130,10 @@ function initManager() {
       $('#mgr-locked').classList.add('hidden');
       $('#mgr-unlocked').classList.remove('hidden');
       $('#mgr-pin').value = '';
-      const today = new Date();
-      const sat = weekEndingFor(today);
+      const sat = weekEndingFor(new Date());
       $('#export-week-end').value = ymd(sat);
       onWeekEndChange();
-    } else {
-      toast('Incorrect PIN', 'error');
-    }
+    } else { toast(t('incorrect_pin'), 'error'); }
   };
   $('#mgr-pin').onkeydown = e => { if (e.key === 'Enter') $('#mgr-unlock').click(); };
   $('#btn-mgr-lock').onclick = lockManager;
@@ -987,18 +1172,17 @@ async function saveConfig() {
     primeContractor: $('#cfg-prime').value.trim(),
     projectName: $('#cfg-project').value.trim(),
     subcontractor: $('#cfg-sub').value.trim(),
-    managerPin: $('#cfg-pin').value.trim() || '8888'
+    managerPin: $('#cfg-pin').value.trim() || '050103'
   };
   await fbSet('config', cfg);
-  toast('Config saved', 'success');
+  toast(t('config_saved'), 'success');
 }
 function renderRoster() {
   const wrap = $('#roster-list');
   if (!wrap) return;
-  const list = Object.entries(state.foremen)
-    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+  const list = Object.entries(state.foremen).sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
   if (list.length === 0) {
-    wrap.innerHTML = '<p class="muted center small">No foremen yet. Add one above.</p>';
+    wrap.innerHTML = `<p class="muted center small">${escapeHtml(t('no_foremen_mgr'))}</p>`;
     return;
   }
   wrap.innerHTML = list.map(([id, f], idx) => `
@@ -1010,7 +1194,7 @@ function renderRoster() {
       <div class="actions">
         <button class="btn ghost" data-act="up" data-id="${id}" ${idx === 0 ? 'disabled' : ''}>↑</button>
         <button class="btn ghost" data-act="down" data-id="${id}" ${idx === list.length-1 ? 'disabled' : ''}>↓</button>
-        <button class="btn secondary" data-act="edit" data-id="${id}">Edit</button>
+        <button class="btn secondary" data-act="edit" data-id="${id}">${escapeHtml(state.lang === 'es' ? 'Editar' : 'Edit')}</button>
       </div>
     </div>
   `).join('');
@@ -1037,7 +1221,7 @@ async function handleRosterAction(act, id) {
 function openForemanEditor(id) {
   state.manager.editingForemanId = id;
   const f = id ? state.foremen[id] : { name: '', classification: '', active: true };
-  $('#fm-title').textContent = id ? 'Edit Foreman' : 'Add Foreman';
+  $('#fm-title').textContent = id ? t('edit_foreman_title') : t('add_foreman_title');
   $('#fm-name').value = f.name || '';
   $('#fm-cls').value = f.classification || '';
   $('#fm-active').value = String(f.active ?? true);
@@ -1052,7 +1236,7 @@ async function saveForemanEditor() {
   const name = $('#fm-name').value.trim();
   const cls = $('#fm-cls').value.trim();
   const active = $('#fm-active').value === 'true';
-  if (!name) { toast('Name required', 'error'); return; }
+  if (!name) { toast(t('name_required'), 'error'); return; }
   if (state.manager.editingForemanId) {
     await fbUpdate(`foremen/${state.manager.editingForemanId}`, { name, classification: cls, active });
   } else {
@@ -1061,15 +1245,15 @@ async function saveForemanEditor() {
     await fbPush('foremen', { name, classification: cls, active, order: nextOrder });
   }
   closeForemanEditor();
-  toast('Saved', 'success');
+  toast(t('saved_toast'), 'success');
 }
 async function deleteForeman() {
   const id = state.manager.editingForemanId;
   if (!id) return;
-  if (!confirm('Delete this foreman? Historical attendance entries will remain.')) return;
+  if (!confirm(t('delete_fm_confirm'))) return;
   await fbRemove(`foremen/${id}`);
   closeForemanEditor();
-  toast('Deleted', 'success');
+  toast(t('deleted'), 'success');
 }
 
 // ── WEEK VIEW ───────────────────────────────────────────────────────────────
@@ -1078,7 +1262,7 @@ async function onWeekEndChange() {
   if (!v) return;
   state.manager.weekEndStr = v;
   state.manager.weekEnd = parseYmd(v);
-  $('#week-view-label').textContent = `Week ending ${fmtDateUS(v)}`;
+  $('#week-view-label').textContent = `${t('week_ending_short')} ${fmtDateUS(v)}`;
   await loadWeekData();
   renderWeekGrid();
 }
@@ -1098,15 +1282,18 @@ function renderWeekGrid() {
   const foremen = Object.entries(state.foremen)
     .filter(([_, f]) => f.active)
     .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
-  if (foremen.length === 0) { grid.innerHTML = '<p class="muted center small" style="padding:20px;">No active foremen.</p>'; return; }
-  const headerCols = days.map(d => `<th>${dayShortEn(d)}<br><span class="small muted">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
+  if (foremen.length === 0) {
+    grid.innerHTML = `<p class="muted center small" style="padding:20px;">${escapeHtml(t('no_active_foremen'))}</p>`;
+    return;
+  }
+  const headerCols = days.map(d => `<th>${dayShort(d)}<br><span class="small muted">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
   const rows = foremen.map(([fid, f]) => {
     const cells = days.map(d => {
       const k = ymd(d);
       const e = state.manager.weekData[k]?.[fid];
       let cls = 'cell', label = '—';
       if (e) {
-        if (e.signatureType === 'off') { cls += ' off'; label = 'OFF'; }
+        if (e.signatureType === 'off') { cls += ' off'; label = t('off_upper'); }
         else { cls += ' signed'; label = (e.totalHours || 0).toFixed(1); }
       }
       return `<td class="${cls}" data-fid="${fid}" data-date="${k}">${label}</td>`;
@@ -1114,7 +1301,7 @@ function renderWeekGrid() {
     return `<tr><td class="name">${escapeHtml(f.name)}<br><span class="small muted">${escapeHtml(f.classification||'')}</span></td>${cells}</tr>`;
   }).join('');
   grid.innerHTML = `<table>
-    <thead><tr><th style="text-align:left;">Foreman</th>${headerCols}</tr></thead>
+    <thead><tr><th style="text-align:left;">${escapeHtml(t('foreman_col'))}</th>${headerCols}</tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
   grid.querySelectorAll('td.cell').forEach(td => {
@@ -1148,8 +1335,7 @@ async function saveEntryEditor() {
     signatureType: status === 'off' ? 'off' : 'typed',
     signatureDataUrl: null,
     signatureText: status === 'off' ? null : state.foremen[fid]?.name || '',
-    signedAt: Date.now(),
-    signedBy: 'manager'
+    signedAt: Date.now(), signedBy: 'manager'
   };
   if (status === 'signed' && entry.timeIn && entry.timeOut && !$('#entry-hours').value) {
     entry.totalHours = hoursBetween(entry.timeIn, entry.timeOut);
@@ -1158,27 +1344,25 @@ async function saveEntryEditor() {
   $('#overlay-entry').classList.remove('show');
   await loadWeekData();
   renderWeekGrid();
-  toast('Entry saved', 'success');
+  toast(t('entry_saved'), 'success');
 }
 async function deleteEntry() {
   const fid = state.manager.editingForemanId;
   const date = state.manager.editingEntry.date;
-  if (!confirm('Delete this entry?')) return;
+  if (!confirm(t('delete_entry_confirm'))) return;
   await fbRemove(`attendance/${date}/${fid}`);
   $('#overlay-entry').classList.remove('show');
   await loadWeekData();
   renderWeekGrid();
-  toast('Entry deleted', 'success');
+  toast(t('entry_deleted'), 'success');
 }
 
 // ── PDF EXPORT ──────────────────────────────────────────────────────────────
 async function exportPDF(mode) {
-  if (!state.manager.weekEnd) { toast('Pick a week-ending date first', 'error'); return; }
+  if (!state.manager.weekEnd) { toast(t('pick_week_first'), 'error'); return; }
   await loadWeekData();
   const days = weekDates(state.manager.weekEnd);
-  const targetDays = mode === 'day'
-    ? await pickDayFromWeek(days)
-    : days;
+  const targetDays = mode === 'day' ? await pickDayFromWeek(days) : days;
   if (!targetDays || targetDays.length === 0) return;
 
   const { jsPDF } = window.jspdf;
@@ -1196,8 +1380,8 @@ async function exportPDF(mode) {
   await sharePdf(blob, fname);
 }
 async function pickDayFromWeek(days) {
-  const labels = days.map(d => `${dayShortEn(d)} ${d.getMonth()+1}/${d.getDate()}`);
-  const choice = prompt(`Pick a day (1-7):\n${labels.map((l,i)=>`${i+1}. ${l}`).join('\n')}`);
+  const labels = days.map(d => `${dayShort(d)} ${d.getMonth()+1}/${d.getDate()}`);
+  const choice = prompt(`${t('pick_day_prompt')}\n${labels.map((l,i)=>`${i+1}. ${l}`).join('\n')}`);
   const n = parseInt(choice, 10);
   if (n >= 1 && n <= 7) return [days[n-1]];
   return null;
@@ -1210,14 +1394,13 @@ function renderPdfPage(doc, date) {
   const weekEnd = state.manager.weekEnd;
   const dateStr = ymd(date);
 
-  // Title
+  // Title (always bilingual on PDF — matches the paper form)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
   doc.text('SUBCONTRACTOR DAILY EMPLOYEE SIGN-IN SHEET', pageW/2, 32, { align: 'center' });
   doc.setFontSize(10);
   doc.text('EACH EMPLOYEE MUST SIGN IN AND OUT AT THE PROJECT FOR EACH DAY WORKED', pageW/2, 48, { align: 'center' });
 
-  // Header fields
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(9);
   let y = 70;
@@ -1231,7 +1414,6 @@ function renderPdfPage(doc, date) {
   doc.setFontSize(11);
   doc.text('Foreman', 36, 116);
 
-  // Build table data
   const foremen = Object.entries(state.foremen)
     .filter(([_, f]) => f.active)
     .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
@@ -1249,10 +1431,9 @@ function renderPdfPage(doc, date) {
       isOff ? '' : (e?.timeOut || ''),
       isOff ? '' : (e?.totalHours ? e.totalHours.toFixed(2) : ''),
       e ? (e.injured ? 'Yes' : 'No') : '',
-      e || ''   // signature placeholder (rendered by didDrawCell)
+      e || ''
     ];
   });
-  // Pad to at least 14 rows to match paper form
   while (rows.length < 14) {
     rows.push([String(rows.length + 1), fmtDateUS(dateStr), '', '', '', '', '', '', '']);
   }
@@ -1270,7 +1451,7 @@ function renderPdfPage(doc, date) {
       'Were you injured today at work?\nTe lastimaste en el trabajo hoy?',
       'EMPLOYEE SIGNATURE\nFIRMA DEL EMPLEADO'
     ]],
-    body: rows.map(r => r.slice(0, 8).concat([''])),  // last col rendered by didDrawCell
+    body: rows.map(r => r.slice(0, 8).concat([''])),
     theme: 'grid',
     headStyles: { fillColor: [240,240,240], textColor: 30, fontSize: 7, fontStyle: 'bold', halign: 'center', valign: 'middle', lineColor: [120,120,120] },
     bodyStyles: { fontSize: 9, cellPadding: 4, minCellHeight: 28, valign: 'middle', lineColor: [180,180,180] },
@@ -1289,15 +1470,12 @@ function renderPdfPage(doc, date) {
     didDrawCell: (data) => {
       if (data.section !== 'body' || data.column.index !== 8) return;
       const rowIdx = data.row.index;
-      const original = rows[rowIdx]?.[8];
-      if (!original) return;
-      const e = original;
+      const e = rows[rowIdx]?.[8];
+      if (!e) return;
       if (e.signatureType === 'drawn' && e.signatureDataUrl) {
         try {
-          const cell = data.cell;
-          const pad = 2;
-          const w = cell.width - pad*2;
-          const h = cell.height - pad*2;
+          const cell = data.cell, pad = 2;
+          const w = cell.width - pad*2, h = cell.height - pad*2;
           doc.addImage(e.signatureDataUrl, 'PNG', cell.x + pad, cell.y + pad, w, h);
         } catch (err) { console.warn('sig img error', err); }
       } else if (e.signatureType === 'typed' && e.signatureText) {
@@ -1310,10 +1488,9 @@ function renderPdfPage(doc, date) {
     }
   });
 
-  // Day-of-week footer
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(28);
-  doc.text(`${dayOfWeek(date)} / ${dayOfWeekEs(date)}`, pageW/2, pageH - 28, { align: 'center' });
+  doc.text(`${dayOfWeekEn(date)} / ${dayOfWeekEs(date)}`, pageW/2, pageH - 28, { align: 'center' });
 }
 
 async function sharePdf(blob, filename) {
@@ -1321,22 +1498,20 @@ async function sharePdf(blob, filename) {
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: filename });
-      toast('Shared', 'success');
+      toast(t('shared_toast'), 'success');
       return;
     } catch (e) {
       if (e.name !== 'AbortError') console.warn(e);
     }
   }
-  // Fallback: download
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = filename;
   document.body.appendChild(a); a.click();
   setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
-  toast('PDF downloaded', 'success');
+  toast(t('pdf_downloaded'), 'success');
 }
 
-// ── BOOT ────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', boot);
 </script>
 </body>
