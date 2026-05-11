@@ -231,6 +231,14 @@
   }
   .name-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
   .name-btn .cls { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .name-btn.manager { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .name-btn.manager:hover { background: var(--accent); color: var(--accent-on); }
+  .name-btn.manager .cls { color: inherit; opacity: 0.85; }
+  .name-divider { height: 1px; background: var(--line); margin: 6px 0; }
+
+  /* Manager mode hides foreman-only tabs */
+  body.manager-mode nav.tabs button[data-tab="signin"],
+  body.manager-mode nav.tabs button[data-tab="history"] { display: none; }
 
   /* History */
   .hist-list { display: flex; flex-direction: column; gap: 8px; }
@@ -619,7 +627,8 @@ const T = {
     delete_fm_confirm: 'Delete this foreman? Historical attendance entries will remain.',
     deleted: 'Deleted', saved_toast: 'Saved', name_required: 'Name required',
     entry_saved: 'Entry saved', entry_deleted: 'Entry deleted',
-    delete_entry_confirm: 'Delete this entry?'
+    delete_entry_confirm: 'Delete this entry?',
+    manager_login: 'Manager', manager_role: 'Manager access · PIN required'
   },
   es: {
     brand: 'Registro de Foreman', switch_user: 'cambiar usuario',
@@ -685,7 +694,8 @@ const T = {
     delete_fm_confirm: '¿Eliminar a este foreman? Los registros de asistencia históricos se conservarán.',
     deleted: 'Eliminado', saved_toast: 'Guardado', name_required: 'Nombre requerido',
     entry_saved: 'Registro guardado', entry_deleted: 'Registro eliminado',
-    delete_entry_confirm: '¿Eliminar este registro?'
+    delete_entry_confirm: '¿Eliminar este registro?',
+    manager_login: 'Gerente', manager_role: 'Acceso de gerente · PIN requerido'
   }
 };
 
@@ -861,7 +871,12 @@ async function boot() {
   const saved = localStorage.getItem('foreman_profile');
   if (saved) { try { state.profile = JSON.parse(saved); } catch(e) {} }
   setTimeout(() => {
-    if (state.profile && state.foremen[state.profile.id]) {
+    if (state.profile?.id === MANAGER_PROFILE_ID) {
+      // Refresh the display name in case the language changed since last login.
+      state.profile.name = t('manager_login');
+      localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
+      showApp();
+    } else if (state.profile && state.foremen[state.profile.id]) {
       const fm = state.foremen[state.profile.id];
       state.profile.name = fm.name;
       state.profile.classification = fm.classification;
@@ -906,35 +921,57 @@ function hideNamePicker() { $('#overlay-namepicker').classList.remove('show'); }
 function showApp() {
   hideNamePicker();
   $('#g-name').textContent = state.profile.name.split(' ')[0];
-  $('#signin-name').textContent = state.profile.name;
-  $('#signin-cls').textContent = state.profile.classification;
-  loadHistory();
+  if (isManagerMode()) {
+    document.body.classList.add('manager-mode');
+    // Jump straight to the Manager tab (the PIN gate still applies).
+    $$('#tabs button').forEach(x => x.classList.remove('active'));
+    $('#tabs button[data-tab="manager"]').classList.add('active');
+    $$('.panel').forEach(p => p.classList.remove('active'));
+    $('#panel-manager').classList.add('active');
+  } else {
+    document.body.classList.remove('manager-mode');
+    $('#signin-name').textContent = state.profile.name;
+    $('#signin-cls').textContent = state.profile.classification;
+    loadHistory();
+  }
 }
+const MANAGER_PROFILE_ID = '__manager__';
 function renderNamePicker() {
   const grid = $('#name-grid');
   const list = Object.entries(state.foremen)
     .filter(([_, f]) => f.active)
     .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
-  if (list.length === 0) {
-    grid.innerHTML = `<p class="muted center small">${escapeHtml(t('no_foremen_user'))}</p>`;
-    return;
-  }
-  grid.innerHTML = list.map(([id, f]) => `
-    <button class="name-btn" data-id="${id}">
-      <span>${escapeHtml(f.name)}</span>
-      <span class="cls">${escapeHtml(f.classification || '')}</span>
+  const managerBtn = `
+    <button class="name-btn manager" data-id="${MANAGER_PROFILE_ID}">
+      <span>${escapeHtml(t('manager_login'))}</span>
+      <span class="cls">${escapeHtml(t('manager_role'))}</span>
     </button>
-  `).join('');
+    <div class="name-divider"></div>`;
+  if (list.length === 0) {
+    grid.innerHTML = managerBtn + `<p class="muted center small">${escapeHtml(t('no_foremen_user'))}</p>`;
+  } else {
+    grid.innerHTML = managerBtn + list.map(([id, f]) => `
+      <button class="name-btn" data-id="${id}">
+        <span>${escapeHtml(f.name)}</span>
+        <span class="cls">${escapeHtml(f.classification || '')}</span>
+      </button>
+    `).join('');
+  }
   grid.querySelectorAll('.name-btn').forEach(btn => {
     btn.onclick = () => {
       const id = btn.dataset.id;
-      const f = state.foremen[id];
-      state.profile = { id, name: f.name, classification: f.classification };
+      if (id === MANAGER_PROFILE_ID) {
+        state.profile = { id: MANAGER_PROFILE_ID, name: t('manager_login'), classification: '' };
+      } else {
+        const f = state.foremen[id];
+        state.profile = { id, name: f.name, classification: f.classification };
+      }
       localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
       showApp();
     };
   });
 }
+function isManagerMode() { return state.profile?.id === MANAGER_PROFILE_ID; }
 $('#g-switch').onclick = () => showNamePicker();
 
 // ── TABS ────────────────────────────────────────────────────────────────────
@@ -988,6 +1025,7 @@ function setInjured(yes) {
 }
 
 // ── SIGNATURE ───────────────────────────────────────────────────────────────
+let _sigLastDims = null;
 function initSignaturePad() {
   const canvas = $('#sig-canvas');
   resizeCanvas(canvas);
@@ -995,14 +1033,25 @@ function initSignaturePad() {
     penColor: state.theme === 'dark' ? '#f4f4f5' : '#18181b',
     minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
   });
+  // Only re-init the canvas if the rendered size actually changed. Browser
+  // resize events fire for many reasons (scrollbar appearing, focus changes,
+  // viewport keyboard, etc.) — clearing on every one wipes the user's signature
+  // mid-flow on desktop.
   window.addEventListener('resize', () => resizeCanvas(canvas));
 }
 function resizeCanvas(c) {
+  const w = c.offsetWidth, h = c.offsetHeight;
+  if (_sigLastDims && _sigLastDims.w === w && _sigLastDims.h === h) return;
   const ratio = Math.max(window.devicePixelRatio || 1, 1);
-  c.width  = c.offsetWidth  * ratio;
-  c.height = c.offsetHeight * ratio;
+  const data = state.sigPad ? state.sigPad.toData() : null;
+  c.width  = w * ratio;
+  c.height = h * ratio;
   c.getContext('2d').scale(ratio, ratio);
-  if (state.sigPad) state.sigPad.clear();
+  _sigLastDims = { w, h };
+  if (state.sigPad) {
+    if (data && data.length) state.sigPad.fromData(data);
+    else state.sigPad.clear();
+  }
 }
 function toggleSigMode() {
   state.signin.sigMode = state.signin.sigMode === 'drawn' ? 'typed' : 'drawn';
@@ -1493,15 +1542,23 @@ function renderPdfPage(doc, date) {
   doc.text(`${dayOfWeekEn(date)} / ${dayOfWeekEs(date)}`, pageW/2, pageH - 28, { align: 'center' });
 }
 
+function isTouchDevice() {
+  return (navigator.maxTouchPoints || 0) > 0 ||
+         /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+}
 async function sharePdf(blob, filename) {
   const file = new File([blob], filename, { type: 'application/pdf' });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+  // Only use the share sheet on touch devices (iOS/Android). On macOS/Windows
+  // desktop, navigator.share() either dismisses silently or has no useful
+  // destinations — download is what the user actually expects.
+  if (isTouchDevice() && navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: filename });
       toast(t('shared_toast'), 'success');
       return;
     } catch (e) {
-      if (e.name !== 'AbortError') console.warn(e);
+      if (e.name === 'AbortError') return; // user cancelled, don't also download
+      console.warn(e);
     }
   }
   const url = URL.createObjectURL(blob);
