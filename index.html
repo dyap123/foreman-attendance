@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#0b1220" />
+<title>Foreman Sign-In · Webcor Concrete</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+  :root {
+    --bg: #f7f7f8;
+    --surface: #ffffff;
+    --line: #e4e4e7;
+    --line-strong: #d4d4d8;
+    --text: #18181b;
+    --muted: #71717a;
+    --accent: #2563eb;
+    --accent-hover: #1d4ed8;
+    --accent-soft: #eff6ff;
+    --success: #059669;
+    --success-soft: #ecfdf5;
+    --warn: #d97706;
+    --danger: #dc2626;
+    --danger-soft: #fef2f2;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
+
+  /* Header */
+  header.app {
+    position: sticky; top: 0; z-index: 30;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 16px calc(14px + env(safe-area-inset-top)) 16px;
+    padding-top: max(14px, env(safe-area-inset-top));
+  }
+  header.app .row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+  .brand small { color: var(--muted); font-weight: 500; font-size: 12px; display: block; margin-top: 1px; }
+  .greeting { text-align: right; font-size: 14px; }
+  .greeting strong { display: block; font-weight: 600; }
+  .greeting .switch { color: var(--accent); font-size: 12px; cursor: pointer; user-select: none; }
+  .greeting .switch:hover { text-decoration: underline; }
+
+  /* Tabs */
+  nav.tabs {
+    display: flex; gap: 4px; padding: 4px;
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  nav.tabs button {
+    flex: 1 1 auto; min-width: 100px;
+    padding: 10px 14px; border: 0; background: transparent;
+    color: var(--muted); font-weight: 600; font-size: 14px;
+    border-radius: var(--radius-sm); cursor: pointer;
+    transition: background 120ms, color 120ms;
+  }
+  nav.tabs button.active { background: var(--accent-soft); color: var(--accent); }
+  nav.tabs button:not(.active):hover { background: #f4f4f5; }
+
+  /* Layout */
+  main { max-width: 720px; margin: 0 auto; padding: 16px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px;
+    box-shadow: var(--shadow-sm); margin-bottom: 16px;
+  }
+  .card h2 { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; }
+  .card .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  .row-flex { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .row-flex.between { justify-content: space-between; }
+
+  /* Form fields */
+  label.field { display: block; margin-bottom: 12px; font-size: 13px; color: var(--muted); font-weight: 500; }
+  label.field .lbl-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  label.field input, label.field select, label.field textarea {
+    width: 100%; padding: 10px 12px;
+    border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
+    font-size: 16px; background: var(--surface); color: var(--text);
+    font-family: inherit;
+  }
+  label.field input:focus, label.field select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+  label.field input[readonly] { background: #fafafa; color: var(--text); }
+  .readout {
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: #fafafa; font-size: 15px; color: var(--text);
+  }
+  .readout .muted { color: var(--muted); font-size: 13px; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 11px 16px; border: 0; border-radius: var(--radius-sm);
+    font-weight: 600; font-size: 14px; cursor: pointer;
+    transition: background 120ms, transform 80ms;
+    min-height: 44px; font-family: inherit;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn.primary { background: var(--accent); color: white; }
+  .btn.primary:hover { background: var(--accent-hover); }
+  .btn.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--line-strong); }
+  .btn.secondary:hover { background: #f4f4f5; }
+  .btn.success { background: var(--success); color: white; }
+  .btn.warn { background: var(--warn); color: white; }
+  .btn.danger { background: var(--danger); color: white; }
+  .btn.ghost { background: transparent; color: var(--accent); padding: 6px 10px; min-height: auto; }
+  .btn.ghost:hover { text-decoration: underline; }
+  .btn.block { width: 100%; }
+  .btn.lg { padding: 14px 18px; font-size: 15px; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  /* Toggle (injured y/n) */
+  .toggle-row { display: flex; gap: 8px; }
+  .toggle-row button {
+    flex: 1; padding: 12px; border: 1px solid var(--line-strong);
+    background: var(--surface); border-radius: var(--radius-sm);
+    font-weight: 600; font-size: 14px; cursor: pointer; color: var(--muted);
+    min-height: 48px;
+  }
+  .toggle-row button.on-no { background: var(--success-soft); border-color: var(--success); color: var(--success); }
+  .toggle-row button.on-yes { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+
+  /* Signature */
+  .sig-wrap {
+    border: 1.5px dashed var(--line-strong); border-radius: var(--radius-sm);
+    background: var(--surface); position: relative; touch-action: none;
+  }
+  .sig-wrap canvas { display: block; width: 100%; height: 180px; border-radius: var(--radius-sm); }
+  .sig-typed {
+    display: none; padding: 20px; text-align: center;
+    font-family: "Snell Roundhand", "Brush Script MT", cursive;
+    font-size: 32px; color: var(--text);
+  }
+  .sig-wrap.mode-typed canvas { display: none; }
+  .sig-wrap.mode-typed .sig-typed { display: block; }
+  .sig-controls { display: flex; gap: 8px; justify-content: space-between; margin-top: 8px; font-size: 13px; }
+  .sig-controls .left { display: flex; gap: 8px; }
+
+  /* Overlay */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    z-index: 60; display: none; align-items: center; justify-content: center;
+    padding: 16px; padding-top: max(16px, env(safe-area-inset-top));
+    overflow-y: auto;
+  }
+  .overlay.show { display: flex; }
+  .overlay .modal {
+    background: var(--surface); border-radius: 16px;
+    max-width: 480px; width: 100%; padding: 20px;
+    box-shadow: var(--shadow-md);
+    max-height: calc(100dvh - 32px); overflow-y: auto;
+  }
+  .overlay .modal h3 { margin: 0 0 4px 0; font-size: 18px; }
+  .overlay .modal .sub { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+
+  .name-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .name-btn {
+    padding: 14px 16px; border: 1px solid var(--line-strong); background: var(--surface);
+    border-radius: var(--radius-sm); cursor: pointer; text-align: left;
+    font-size: 15px; font-weight: 600; color: var(--text);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .name-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
+  .name-btn .cls { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+  /* History */
+  .hist-list { display: flex; flex-direction: column; gap: 8px; }
+  .hist-item {
+    padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--surface);
+  }
+  .hist-item .left { font-size: 14px; }
+  .hist-item .date { font-weight: 600; }
+  .hist-item .dow { color: var(--muted); font-size: 12px; }
+  .hist-item .hrs { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .hist-item.off .hrs { color: var(--muted); }
+  .week-totals { display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; }
+  .week-totals .wt {
+    flex: 0 0 auto; padding: 8px 12px; border: 1px solid var(--line);
+    border-radius: var(--radius-sm); background: #fafafa; font-size: 12px;
+    min-width: 120px;
+  }
+  .week-totals .wt .lbl { color: var(--muted); }
+  .week-totals .wt .val { font-size: 16px; font-weight: 700; }
+
+  /* Manager */
+  .mgr-section { margin-bottom: 24px; }
+  .mgr-section h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 10px 0; }
+  .roster-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface); margin-bottom: 8px;
+  }
+  .roster-item .info { flex: 1; min-width: 0; }
+  .roster-item .name { font-weight: 600; font-size: 14px; }
+  .roster-item .cls { font-size: 12px; color: var(--muted); }
+  .roster-item .actions { display: flex; gap: 6px; }
+  .roster-item.inactive .name { color: var(--muted); text-decoration: line-through; }
+
+  .week-grid { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); }
+  .week-grid table { width: 100%; border-collapse: collapse; min-width: 720px; }
+  .week-grid th, .week-grid td {
+    border: 1px solid var(--line); padding: 6px 8px;
+    text-align: center; font-size: 12px; min-width: 60px;
+  }
+  .week-grid th { background: #fafafa; font-weight: 600; }
+  .week-grid td.name { text-align: left; font-weight: 600; min-width: 160px; position: sticky; left: 0; background: var(--surface); z-index: 1; }
+  .week-grid td.cell { cursor: pointer; }
+  .week-grid td.cell:hover { background: var(--accent-soft); }
+  .week-grid td.cell.signed { background: var(--success-soft); color: var(--success); font-weight: 600; }
+  .week-grid td.cell.off { background: #f4f4f5; color: var(--muted); }
+
+  /* Toast */
+  #toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 100; background: #18181b; color: white;
+    padding: 12px 18px; border-radius: var(--radius);
+    font-size: 14px; font-weight: 500;
+    box-shadow: var(--shadow-md);
+    opacity: 0; transition: opacity 200ms; pointer-events: none;
+    max-width: calc(100vw - 32px);
+  }
+  #toast.show { opacity: 1; }
+  #toast.error { background: var(--danger); }
+  #toast.success { background: var(--success); }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid currentColor; border-top-color: transparent;
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .hidden { display: none !important; }
+  .center { text-align: center; }
+  .muted { color: var(--muted); }
+  .small { font-size: 12px; }
+  .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; } .mb-4 { margin-bottom: 16px; }
+  .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<header class="app">
+  <div class="row">
+    <div class="brand">
+      Foreman Sign-In
+      <small id="brand-sub">Webcor Concrete · LA Convention Center</small>
+    </div>
+    <div class="greeting" id="greeting">
+      <strong id="g-name">—</strong>
+      <span class="switch" id="g-switch">switch user</span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="signin" class="active">Sign In</button>
+  <button data-tab="history">History</button>
+  <button data-tab="manager">Manager</button>
+</nav>
+
+<main>
+  <!-- SIGN IN TAB -->
+  <section class="panel active" id="panel-signin">
+    <div class="card">
+      <h2>Daily Sign-In</h2>
+      <p class="sub">Sign in for today, or backfill up to 7 days back.</p>
+
+      <label class="field">
+        <div class="lbl-row"><span>Date</span><span class="small muted" id="dow-label"></span></div>
+        <input type="date" id="signin-date" />
+      </label>
+
+      <div class="row-flex" style="gap: 0; flex-direction: column;">
+        <div class="readout mb-3" style="width: 100%;">
+          <div class="muted small">Name</div>
+          <div id="signin-name">—</div>
+        </div>
+        <div class="readout mb-3" style="width: 100%;">
+          <div class="muted small">Classification</div>
+          <div id="signin-cls">—</div>
+        </div>
+      </div>
+
+      <div class="row-flex">
+        <label class="field" style="flex: 1; margin-bottom: 12px;">
+          <div class="lbl-row"><span>Time In</span></div>
+          <input type="time" id="time-in" />
+        </label>
+        <label class="field" style="flex: 1; margin-bottom: 12px;">
+          <div class="lbl-row"><span>Time Out</span></div>
+          <input type="time" id="time-out" />
+        </label>
+      </div>
+
+      <div class="readout mb-3">
+        <div class="muted small">Total Hours</div>
+        <div id="total-hours" style="font-size: 18px; font-weight: 700;">—</div>
+      </div>
+
+      <label class="field">
+        <div class="lbl-row"><span>Were you injured today at work?</span></div>
+        <div class="toggle-row">
+          <button id="injured-no" class="on-no" type="button">No</button>
+          <button id="injured-yes" type="button">Yes</button>
+        </div>
+      </label>
+
+      <label class="field">
+        <div class="lbl-row">
+          <span>Signature</span>
+          <span class="switch ghost-link" id="sig-mode-toggle" style="color: var(--accent); cursor: pointer; font-size: 12px;">Type instead</span>
+        </div>
+        <div class="sig-wrap" id="sig-wrap">
+          <canvas id="sig-canvas"></canvas>
+          <div class="sig-typed" id="sig-typed">—</div>
+        </div>
+        <div class="sig-controls">
+          <div class="left">
+            <button type="button" class="btn ghost" id="sig-clear">Clear</button>
+          </div>
+          <div class="muted" id="sig-hint">Sign with your finger</div>
+        </div>
+      </label>
+
+      <div class="row-flex mt-3" style="gap: 8px;">
+        <button class="btn primary block lg" id="btn-sign-submit" style="flex: 2;">Sign &amp; Submit</button>
+        <button class="btn secondary" id="btn-mark-off" style="flex: 1;">Mark Off</button>
+      </div>
+
+      <p class="small muted center mt-3" id="signin-status"></p>
+    </div>
+  </section>
+
+  <!-- HISTORY TAB -->
+  <section class="panel" id="panel-history">
+    <div class="card">
+      <h2>My Attendance</h2>
+      <p class="sub" id="history-sub">Last 30 days</p>
+
+      <div class="week-totals" id="week-totals"></div>
+
+      <div class="hist-list mt-3" id="hist-list">
+        <p class="muted center small">Loading…</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MANAGER TAB -->
+  <section class="panel" id="panel-manager">
+    <!-- Locked state -->
+    <div class="card" id="mgr-locked">
+      <h2>Manager Access</h2>
+      <p class="sub">Enter PIN to manage the roster, edit attendance, and export PDFs.</p>
+      <label class="field">
+        <div class="lbl-row"><span>PIN</span></div>
+        <input type="password" inputmode="numeric" id="mgr-pin" placeholder="••••" />
+      </label>
+      <button class="btn primary block" id="mgr-unlock">Unlock</button>
+    </div>
+
+    <!-- Unlocked state -->
+    <div id="mgr-unlocked" class="hidden">
+
+      <div class="card mgr-section">
+        <div class="row-flex between mb-3">
+          <h3 style="margin:0;">Export</h3>
+        </div>
+        <label class="field">
+          <div class="lbl-row"><span>Week ending date</span></div>
+          <input type="date" id="export-week-end" />
+        </label>
+        <div class="row-flex">
+          <button class="btn primary" id="btn-export-week" style="flex: 1;">Export week as PDF</button>
+          <button class="btn secondary" id="btn-export-day" style="flex: 1;">Export single day</button>
+        </div>
+      </div>
+
+      <div class="card mgr-section">
+        <div class="row-flex between mb-3">
+          <h3 style="margin:0;">Week View</h3>
+          <span class="small muted" id="week-view-label"></span>
+        </div>
+        <div class="week-grid" id="week-grid">
+          <p class="muted center small" style="padding: 20px;">Pick a week-ending date above to load.</p>
+        </div>
+      </div>
+
+      <div class="card mgr-section">
+        <div class="row-flex between mb-3">
+          <h3 style="margin:0;">Roster</h3>
+          <button class="btn primary" id="btn-add-foreman">+ Add Foreman</button>
+        </div>
+        <div id="roster-list"></div>
+      </div>
+
+      <div class="card mgr-section">
+        <h3>Project Config</h3>
+        <label class="field"><div class="lbl-row"><span>Prime Contractor</span></div>
+          <input type="text" id="cfg-prime" /></label>
+        <label class="field"><div class="lbl-row"><span>Project Name</span></div>
+          <input type="text" id="cfg-project" /></label>
+        <label class="field"><div class="lbl-row"><span>Subcontractor Name</span></div>
+          <input type="text" id="cfg-sub" /></label>
+        <label class="field"><div class="lbl-row"><span>Manager PIN</span></div>
+          <input type="text" inputmode="numeric" id="cfg-pin" /></label>
+        <button class="btn primary" id="btn-save-config">Save config</button>
+      </div>
+
+      <p class="center small muted">
+        <button class="btn ghost" id="btn-mgr-lock">Lock manager</button>
+      </p>
+    </div>
+  </section>
+</main>
+
+<!-- NAME PICKER OVERLAY -->
+<div class="overlay" id="overlay-namepicker">
+  <div class="modal">
+    <h3>Who's signing in?</h3>
+    <p class="sub">Tap your name to begin. The manager controls this list.</p>
+    <div class="name-grid" id="name-grid">
+      <p class="muted center small">Loading roster…</p>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT FOREMAN OVERLAY -->
+<div class="overlay" id="overlay-foreman">
+  <div class="modal">
+    <h3 id="fm-title">Edit Foreman</h3>
+    <p class="sub">Set how this foreman appears in the picker and on the PDF.</p>
+    <label class="field"><div class="lbl-row"><span>Name (printed)</span></div>
+      <input type="text" id="fm-name" /></label>
+    <label class="field"><div class="lbl-row"><span>Work Classification</span></div>
+      <input type="text" id="fm-cls" placeholder="e.g. Carpenter Journeyman" /></label>
+    <label class="field"><div class="lbl-row"><span>Active</span></div>
+      <select id="fm-active"><option value="true">Yes — show in picker</option><option value="false">No — hide</option></select></label>
+    <div class="row-flex mt-3">
+      <button class="btn danger" id="fm-delete" style="flex: 1;">Delete</button>
+      <button class="btn secondary" id="fm-cancel" style="flex: 1;">Cancel</button>
+      <button class="btn primary" id="fm-save" style="flex: 1;">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT ENTRY OVERLAY (manager week-view click) -->
+<div class="overlay" id="overlay-entry">
+  <div class="modal">
+    <h3 id="entry-title">Edit Entry</h3>
+    <p class="sub" id="entry-sub"></p>
+    <div class="row-flex">
+      <label class="field" style="flex: 1;"><div class="lbl-row"><span>Time In</span></div>
+        <input type="time" id="entry-tin" /></label>
+      <label class="field" style="flex: 1;"><div class="lbl-row"><span>Time Out</span></div>
+        <input type="time" id="entry-tout" /></label>
+    </div>
+    <label class="field"><div class="lbl-row"><span>Hours</span></div>
+      <input type="number" step="0.25" id="entry-hours" /></label>
+    <label class="field"><div class="lbl-row"><span>Status</span></div>
+      <select id="entry-status">
+        <option value="signed">Signed in</option>
+        <option value="off">Off</option>
+      </select></label>
+    <label class="field"><div class="lbl-row"><span>Injured</span></div>
+      <select id="entry-injured">
+        <option value="false">No</option>
+        <option value="true">Yes</option>
+      </select></label>
+    <div class="row-flex mt-3">
+      <button class="btn danger" id="entry-delete" style="flex: 1;">Delete</button>
+      <button class="btn secondary" id="entry-cancel" style="flex: 1;">Cancel</button>
+      <button class="btn primary" id="entry-save" style="flex: 1;">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ── FIREBASE ────────────────────────────────────────────────────────────────
+const FIREBASE_CONFIG = {
+  databaseURL: 'https://gen-lang-client-0119642855-default-rtdb.firebaseio.com'
+};
+const NS = 'foreman-attendance';
+let db = null;
+function initFirebase() {
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.database();
+    return true;
+  } catch (e) { console.error('Firebase init error:', e); return false; }
+}
+function fbSet(path, data)  { return db.ref(`${NS}/${path}`).set(data); }
+function fbUpdate(path, data) { return db.ref(`${NS}/${path}`).update(data); }
+function fbPush(path, data) { return db.ref(`${NS}/${path}`).push(data); }
+function fbGet(path)        { return db.ref(`${NS}/${path}`).once('value').then(s => s.val()); }
+function fbListen(path, cb) { db.ref(`${NS}/${path}`).on('value', s => cb(s.val())); }
+function fbRemove(path)     { return db.ref(`${NS}/${path}`).remove(); }
+
+// ── STATE ───────────────────────────────────────────────────────────────────
+const state = {
+  profile: null,              // { id, name, classification }
+  foremen: {},                // { id: foremanObj }
+  config: {
+    primeContractor: 'PCL — WEBCOR',
+    projectName: 'LA Convention Center',
+    subcontractor: 'Webcor Concrete',
+    managerPin: '8888'
+  },
+  signin: {
+    date: ymd(new Date()),
+    timeIn: '', timeOut: '', totalHours: 0,
+    injured: false,
+    sigMode: 'drawn'   // 'drawn' | 'typed'
+  },
+  attendanceCache: {},        // { date: { foremanId: entry } } — loaded on demand
+  manager: {
+    unlocked: false,
+    weekEnd: null,
+    weekEndStr: '',
+    weekData: null,
+    editingForemanId: null,
+    editingEntry: null
+  },
+  sigPad: null
+};
+
+// ── HELPERS ─────────────────────────────────────────────────────────────────
+function ymd(d) {
+  const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+function parseYmd(s) {
+  const [y,m,d] = s.split('-').map(Number);
+  return new Date(y, m-1, d);
+}
+function dayOfWeek(date) {
+  return ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][date.getDay()];
+}
+function dayOfWeekEs(date) {
+  return ['DOMINGO','LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO'][date.getDay()];
+}
+function dayShortEn(date) {
+  return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][date.getDay()];
+}
+function fmtDateUS(s) {
+  const d = parseYmd(s);
+  return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`;
+}
+function hoursBetween(tIn, tOut) {
+  if (!tIn || !tOut) return 0;
+  const [hi, mi] = tIn.split(':').map(Number);
+  const [ho, mo] = tOut.split(':').map(Number);
+  const m = (ho*60+mo) - (hi*60+mi);
+  return m > 0 ? Math.round((m/60)*100)/100 : 0;
+}
+function toast(msg, kind='') {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = ''; if (kind) t.classList.add(kind);
+  t.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+function $(sel) { return document.querySelector(sel); }
+function $$(sel) { return [...document.querySelectorAll(sel)]; }
+
+// Default week ends on Friday (matches the paper form sample at LACC).
+// The form actually supports any week-ending date — manager can change it in Export.
+function weekEndingFor(date) {
+  const d = new Date(date);
+  const dow = d.getDay();
+  // Find this week's Friday (5). If today is Sat/Sun, jump forward to next Friday.
+  const diff = (5 - dow + 7) % 7;
+  d.setDate(d.getDate() + diff);
+  return d;
+}
+// Get array of 7 dates Sun→Sat ending on the given weekEnd Saturday
+function weekDates(weekEndSat) {
+  const out = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(weekEndSat);
+    d.setDate(d.getDate() - i);
+    out.push(d);
+  }
+  return out;
+}
+
+// ── BOOT ────────────────────────────────────────────────────────────────────
+async function boot() {
+  if (!initFirebase()) {
+    toast('Firebase unavailable', 'error');
+    return;
+  }
+  await ensureSeed();
+  fbListen('config', cfg => {
+    if (cfg) state.config = Object.assign(state.config, cfg);
+    renderBrand();
+    renderConfigForm();
+  });
+  fbListen('foremen', fm => {
+    state.foremen = fm || {};
+    renderNamePicker();
+    renderRoster();
+    if (state.manager.weekData) renderWeekGrid();
+  });
+
+  const saved = localStorage.getItem('foreman_profile');
+  if (saved) {
+    try { state.profile = JSON.parse(saved); } catch(e) {}
+  }
+  // Wait for foremen to load — if profile foreman still exists/active, use it
+  setTimeout(() => {
+    if (state.profile && state.foremen[state.profile.id]) {
+      const fm = state.foremen[state.profile.id];
+      state.profile.name = fm.name;
+      state.profile.classification = fm.classification;
+      localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
+      showApp();
+    } else {
+      showNamePicker();
+    }
+  }, 400);
+
+  initTabs();
+  initSignInForm();
+  initSignaturePad();
+  initManager();
+}
+
+async function ensureSeed() {
+  const cfg = await fbGet('config');
+  if (!cfg) {
+    await fbSet('config', state.config);
+  }
+  const fm = await fbGet('foremen');
+  if (!fm || Object.keys(fm).length === 0) {
+    const seed = [
+      { name: 'Juan Sanchez',              classification: 'Carpenter Foreman',     order: 1 },
+      { name: 'Alejandro Gutierrez',       classification: 'Carpenter Journeyman',  order: 2 },
+      { name: 'Claudio Rosas Hernandez',   classification: 'Carpenter Journeyman',  order: 3 },
+      { name: 'Jesus Juarez',              classification: 'Carpenter Apprentice L3', order: 4 },
+      { name: 'Claudio Hernandez Victoria',classification: 'Carpenter Apprentice L1', order: 5 },
+      { name: 'Alpidio Hernandez',         classification: 'Carpenter Journeyman',  order: 6 },
+      { name: 'Luis Hernandez',            classification: 'Carpenter Journeyman',  order: 7 }
+    ];
+    for (const s of seed) {
+      await fbPush('foremen', { ...s, active: true });
+    }
+  }
+}
+
+function renderBrand() {
+  $('#brand-sub').textContent = `${state.config.subcontractor} · ${state.config.projectName}`;
+}
+
+// ── NAME PICKER ─────────────────────────────────────────────────────────────
+function showNamePicker() {
+  renderNamePicker();
+  $('#overlay-namepicker').classList.add('show');
+}
+function hideNamePicker() {
+  $('#overlay-namepicker').classList.remove('show');
+}
+function showApp() {
+  hideNamePicker();
+  $('#g-name').textContent = state.profile.name.split(' ')[0];
+  $('#signin-name').textContent = state.profile.name;
+  $('#signin-cls').textContent = state.profile.classification;
+  loadHistory();
+}
+function renderNamePicker() {
+  const grid = $('#name-grid');
+  const list = Object.entries(state.foremen)
+    .filter(([_, f]) => f.active)
+    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+  if (list.length === 0) {
+    grid.innerHTML = '<p class="muted center small">No foremen yet. Ask your manager.</p>';
+    return;
+  }
+  grid.innerHTML = list.map(([id, f]) => `
+    <button class="name-btn" data-id="${id}">
+      <span>${escapeHtml(f.name)}</span>
+      <span class="cls">${escapeHtml(f.classification || '')}</span>
+    </button>
+  `).join('');
+  grid.querySelectorAll('.name-btn').forEach(btn => {
+    btn.onclick = () => {
+      const id = btn.dataset.id;
+      const f = state.foremen[id];
+      state.profile = { id, name: f.name, classification: f.classification };
+      localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
+      showApp();
+    };
+  });
+}
+$('#g-switch').onclick = () => showNamePicker();
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ── TABS ────────────────────────────────────────────────────────────────────
+function initTabs() {
+  $$('#tabs button').forEach(b => {
+    b.onclick = () => {
+      $$('#tabs button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      const t = b.dataset.tab;
+      $$('.panel').forEach(p => p.classList.remove('active'));
+      $(`#panel-${t}`).classList.add('active');
+      if (t === 'history') loadHistory();
+      if (t === 'manager') refreshManagerView();
+    };
+  });
+}
+
+// ── SIGN-IN FORM ────────────────────────────────────────────────────────────
+function initSignInForm() {
+  const today = ymd(new Date());
+  const max = today;
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() - 6);
+  const min = ymd(minDate);
+
+  const dateInput = $('#signin-date');
+  dateInput.min = min;
+  dateInput.max = max;
+  dateInput.value = today;
+  state.signin.date = today;
+  updateDowLabel(today);
+  dateInput.onchange = e => {
+    state.signin.date = e.target.value;
+    updateDowLabel(e.target.value);
+  };
+
+  $('#time-in').oninput = e => { state.signin.timeIn = e.target.value; recalcHours(); };
+  $('#time-out').oninput = e => { state.signin.timeOut = e.target.value; recalcHours(); };
+
+  $('#injured-no').onclick = () => setInjured(false);
+  $('#injured-yes').onclick = () => setInjured(true);
+
+  $('#sig-mode-toggle').onclick = toggleSigMode;
+  $('#sig-clear').onclick = clearSig;
+
+  $('#btn-sign-submit').onclick = submitSignIn;
+  $('#btn-mark-off').onclick = markOff;
+}
+function updateDowLabel(dateStr) {
+  $('#dow-label').textContent = dayOfWeek(parseYmd(dateStr)) + ' / ' + dayOfWeekEs(parseYmd(dateStr));
+}
+function recalcHours() {
+  const h = hoursBetween(state.signin.timeIn, state.signin.timeOut);
+  state.signin.totalHours = h;
+  $('#total-hours').textContent = h ? `${h.toFixed(2)} hrs` : '—';
+}
+function setInjured(yes) {
+  state.signin.injured = yes;
+  $('#injured-no').classList.toggle('on-no', !yes);
+  $('#injured-yes').classList.toggle('on-yes', yes);
+}
+
+// ── SIGNATURE ───────────────────────────────────────────────────────────────
+function initSignaturePad() {
+  const canvas = $('#sig-canvas');
+  resizeCanvas(canvas);
+  state.sigPad = new SignaturePad(canvas, {
+    penColor: '#18181b', minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
+  });
+  window.addEventListener('resize', () => resizeCanvas(canvas));
+}
+function resizeCanvas(c) {
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+  c.width  = c.offsetWidth  * ratio;
+  c.height = c.offsetHeight * ratio;
+  c.getContext('2d').scale(ratio, ratio);
+  if (state.sigPad) state.sigPad.clear();
+}
+function toggleSigMode() {
+  state.signin.sigMode = state.signin.sigMode === 'drawn' ? 'typed' : 'drawn';
+  const wrap = $('#sig-wrap');
+  const typedEl = $('#sig-typed');
+  if (state.signin.sigMode === 'typed') {
+    wrap.classList.add('mode-typed');
+    typedEl.textContent = state.profile?.name || '—';
+    $('#sig-mode-toggle').textContent = 'Draw instead';
+    $('#sig-hint').textContent = 'Tap "Sign & Submit" to stamp your name';
+    $('#sig-clear').style.display = 'none';
+  } else {
+    wrap.classList.remove('mode-typed');
+    $('#sig-mode-toggle').textContent = 'Type instead';
+    $('#sig-hint').textContent = 'Sign with your finger';
+    $('#sig-clear').style.display = '';
+  }
+}
+function clearSig() {
+  if (state.sigPad) state.sigPad.clear();
+}
+
+// ── SUBMIT SIGN-IN ──────────────────────────────────────────────────────────
+async function submitSignIn() {
+  if (!state.profile) { toast('Pick your name first', 'error'); return; }
+  if (!state.signin.timeIn || !state.signin.timeOut) { toast('Enter time in and time out', 'error'); return; }
+  if (state.signin.totalHours <= 0) { toast('Time out must be after time in', 'error'); return; }
+  let signatureType, signatureDataUrl, signatureText;
+  if (state.signin.sigMode === 'drawn') {
+    if (state.sigPad.isEmpty()) { toast('Please sign before submitting', 'error'); return; }
+    signatureType = 'drawn';
+    signatureDataUrl = state.sigPad.toDataURL('image/png');
+  } else {
+    signatureType = 'typed';
+    signatureText = state.profile.name;
+  }
+  await writeEntry({
+    timeIn: state.signin.timeIn,
+    timeOut: state.signin.timeOut,
+    totalHours: state.signin.totalHours,
+    injured: state.signin.injured,
+    signatureType, signatureDataUrl: signatureDataUrl || null,
+    signatureText: signatureText || null,
+    signedAt: Date.now(), signedBy: 'self'
+  });
+}
+async function markOff() {
+  if (!state.profile) { toast('Pick your name first', 'error'); return; }
+  await writeEntry({
+    timeIn: null, timeOut: null, totalHours: 0,
+    injured: false, signatureType: 'off',
+    signatureDataUrl: null, signatureText: null,
+    signedAt: Date.now(), signedBy: 'self'
+  });
+}
+async function writeEntry(entry) {
+  const path = `attendance/${state.signin.date}/${state.profile.id}`;
+  const existing = await fbGet(path);
+  if (existing) {
+    if (!confirm('You already have an entry for this date. Overwrite?')) return;
+  }
+  $('#signin-status').textContent = 'Saving…';
+  try {
+    await fbSet(path, entry);
+    toast(entry.signatureType === 'off' ? 'Marked off' : 'Signed in successfully', 'success');
+    $('#signin-status').textContent = 'Saved.';
+    clearSig();
+    loadHistory();
+  } catch (e) {
+    toast('Error saving: ' + e.message, 'error');
+    $('#signin-status').textContent = '';
+  }
+}
+
+// ── HISTORY ─────────────────────────────────────────────────────────────────
+async function loadHistory() {
+  if (!state.profile) return;
+  const list = $('#hist-list');
+  list.innerHTML = '<p class="muted center small">Loading…</p>';
+  // Pull last 30 days of attendance
+  const today = new Date();
+  const dates = [];
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    dates.push(ymd(d));
+  }
+  const entries = [];
+  await Promise.all(dates.map(async date => {
+    const e = await fbGet(`attendance/${date}/${state.profile.id}`);
+    if (e) entries.push({ date, ...e });
+  }));
+  entries.sort((a, b) => b.date.localeCompare(a.date));
+  if (entries.length === 0) {
+    list.innerHTML = '<p class="muted center small">No history yet. Sign in today to start.</p>';
+  } else {
+    list.innerHTML = entries.map(e => {
+      const d = parseYmd(e.date);
+      const isOff = e.signatureType === 'off';
+      return `<div class="hist-item ${isOff ? 'off' : ''}">
+        <div class="left">
+          <div class="date">${fmtDateUS(e.date)} <span class="dow">${dayShortEn(d)}</span></div>
+          <div class="small muted">${isOff ? 'Off' : `${e.timeIn} – ${e.timeOut}`}${e.injured ? ' · injury reported' : ''}</div>
+        </div>
+        <div class="hrs">${isOff ? 'OFF' : (e.totalHours||0).toFixed(2) + ' hrs'}</div>
+      </div>`;
+    }).join('');
+  }
+  // Weekly totals (last 4 weeks)
+  const totalsWrap = $('#week-totals');
+  const weeks = [];
+  const todaySat = weekEndingFor(today);
+  for (let w = 0; w < 4; w++) {
+    const sat = new Date(todaySat);
+    sat.setDate(sat.getDate() - 7*w);
+    const days = weekDates(sat);
+    const total = entries
+      .filter(e => days.some(d => ymd(d) === e.date))
+      .reduce((sum, e) => sum + (e.totalHours || 0), 0);
+    const sun = days[0];
+    weeks.push({ sun, sat, total });
+  }
+  totalsWrap.innerHTML = weeks.map((w,i) => `
+    <div class="wt">
+      <div class="lbl">Week ending ${fmtDateUS(ymd(w.sat))}${i === 0 ? ' · current' : ''}</div>
+      <div class="val">${w.total.toFixed(2)} hrs</div>
+    </div>
+  `).join('');
+}
+
+// ── MANAGER ─────────────────────────────────────────────────────────────────
+function initManager() {
+  $('#mgr-unlock').onclick = () => {
+    const pin = $('#mgr-pin').value;
+    if (pin === state.config.managerPin) {
+      state.manager.unlocked = true;
+      $('#mgr-locked').classList.add('hidden');
+      $('#mgr-unlocked').classList.remove('hidden');
+      $('#mgr-pin').value = '';
+      const today = new Date();
+      const sat = weekEndingFor(today);
+      $('#export-week-end').value = ymd(sat);
+      onWeekEndChange();
+    } else {
+      toast('Incorrect PIN', 'error');
+    }
+  };
+  $('#mgr-pin').onkeydown = e => { if (e.key === 'Enter') $('#mgr-unlock').click(); };
+  $('#btn-mgr-lock').onclick = lockManager;
+  $('#export-week-end').onchange = onWeekEndChange;
+  $('#btn-export-week').onclick = () => exportPDF('week');
+  $('#btn-export-day').onclick = () => exportPDF('day');
+  $('#btn-add-foreman').onclick = () => openForemanEditor(null);
+  $('#btn-save-config').onclick = saveConfig;
+  $('#fm-cancel').onclick = closeForemanEditor;
+  $('#fm-save').onclick = saveForemanEditor;
+  $('#fm-delete').onclick = deleteForeman;
+  $('#entry-cancel').onclick = () => $('#overlay-entry').classList.remove('show');
+  $('#entry-save').onclick = saveEntryEditor;
+  $('#entry-delete').onclick = deleteEntry;
+}
+function lockManager() {
+  state.manager.unlocked = false;
+  $('#mgr-locked').classList.remove('hidden');
+  $('#mgr-unlocked').classList.add('hidden');
+}
+function refreshManagerView() {
+  if (state.manager.unlocked) {
+    renderRoster();
+    renderConfigForm();
+    if (state.manager.weekData) renderWeekGrid();
+  }
+}
+function renderConfigForm() {
+  $('#cfg-prime').value = state.config.primeContractor || '';
+  $('#cfg-project').value = state.config.projectName || '';
+  $('#cfg-sub').value = state.config.subcontractor || '';
+  $('#cfg-pin').value = state.config.managerPin || '';
+}
+async function saveConfig() {
+  const cfg = {
+    primeContractor: $('#cfg-prime').value.trim(),
+    projectName: $('#cfg-project').value.trim(),
+    subcontractor: $('#cfg-sub').value.trim(),
+    managerPin: $('#cfg-pin').value.trim() || '8888'
+  };
+  await fbSet('config', cfg);
+  toast('Config saved', 'success');
+}
+function renderRoster() {
+  const wrap = $('#roster-list');
+  if (!wrap) return;
+  const list = Object.entries(state.foremen)
+    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+  if (list.length === 0) {
+    wrap.innerHTML = '<p class="muted center small">No foremen yet. Add one above.</p>';
+    return;
+  }
+  wrap.innerHTML = list.map(([id, f], idx) => `
+    <div class="roster-item ${f.active ? '' : 'inactive'}">
+      <div class="info">
+        <div class="name">${escapeHtml(f.name)}</div>
+        <div class="cls">${escapeHtml(f.classification || '')}</div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" data-act="up" data-id="${id}" ${idx === 0 ? 'disabled' : ''}>↑</button>
+        <button class="btn ghost" data-act="down" data-id="${id}" ${idx === list.length-1 ? 'disabled' : ''}>↓</button>
+        <button class="btn secondary" data-act="edit" data-id="${id}">Edit</button>
+      </div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.onclick = () => handleRosterAction(btn.dataset.act, btn.dataset.id);
+  });
+}
+async function handleRosterAction(act, id) {
+  if (act === 'edit') return openForemanEditor(id);
+  const list = Object.entries(state.foremen).sort((a,b)=>(a[1].order??99)-(b[1].order??99));
+  const idx = list.findIndex(([k]) => k === id);
+  if (idx < 0) return;
+  if (act === 'up' && idx > 0) {
+    const [a, b] = [list[idx-1], list[idx]];
+    await fbUpdate(`foremen/${a[0]}`, { order: b[1].order ?? idx });
+    await fbUpdate(`foremen/${b[0]}`, { order: a[1].order ?? idx-1 });
+  }
+  if (act === 'down' && idx < list.length-1) {
+    const [a, b] = [list[idx], list[idx+1]];
+    await fbUpdate(`foremen/${a[0]}`, { order: b[1].order ?? idx+1 });
+    await fbUpdate(`foremen/${b[0]}`, { order: a[1].order ?? idx });
+  }
+}
+function openForemanEditor(id) {
+  state.manager.editingForemanId = id;
+  const f = id ? state.foremen[id] : { name: '', classification: '', active: true };
+  $('#fm-title').textContent = id ? 'Edit Foreman' : 'Add Foreman';
+  $('#fm-name').value = f.name || '';
+  $('#fm-cls').value = f.classification || '';
+  $('#fm-active').value = String(f.active ?? true);
+  $('#fm-delete').style.display = id ? '' : 'none';
+  $('#overlay-foreman').classList.add('show');
+}
+function closeForemanEditor() {
+  $('#overlay-foreman').classList.remove('show');
+  state.manager.editingForemanId = null;
+}
+async function saveForemanEditor() {
+  const name = $('#fm-name').value.trim();
+  const cls = $('#fm-cls').value.trim();
+  const active = $('#fm-active').value === 'true';
+  if (!name) { toast('Name required', 'error'); return; }
+  if (state.manager.editingForemanId) {
+    await fbUpdate(`foremen/${state.manager.editingForemanId}`, { name, classification: cls, active });
+  } else {
+    const orders = Object.values(state.foremen).map(f => f.order ?? 0);
+    const nextOrder = (orders.length ? Math.max(...orders) : 0) + 1;
+    await fbPush('foremen', { name, classification: cls, active, order: nextOrder });
+  }
+  closeForemanEditor();
+  toast('Saved', 'success');
+}
+async function deleteForeman() {
+  const id = state.manager.editingForemanId;
+  if (!id) return;
+  if (!confirm('Delete this foreman? Historical attendance entries will remain.')) return;
+  await fbRemove(`foremen/${id}`);
+  closeForemanEditor();
+  toast('Deleted', 'success');
+}
+
+// ── WEEK VIEW ───────────────────────────────────────────────────────────────
+async function onWeekEndChange() {
+  const v = $('#export-week-end').value;
+  if (!v) return;
+  state.manager.weekEndStr = v;
+  state.manager.weekEnd = parseYmd(v);
+  $('#week-view-label').textContent = `Week ending ${fmtDateUS(v)}`;
+  await loadWeekData();
+  renderWeekGrid();
+}
+async function loadWeekData() {
+  const days = weekDates(state.manager.weekEnd);
+  const data = {};
+  await Promise.all(days.map(async d => {
+    const k = ymd(d);
+    data[k] = (await fbGet(`attendance/${k}`)) || {};
+  }));
+  state.manager.weekData = data;
+}
+function renderWeekGrid() {
+  const grid = $('#week-grid');
+  if (!state.manager.weekData) return;
+  const days = weekDates(state.manager.weekEnd);
+  const foremen = Object.entries(state.foremen)
+    .filter(([_, f]) => f.active)
+    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+  if (foremen.length === 0) { grid.innerHTML = '<p class="muted center small" style="padding:20px;">No active foremen.</p>'; return; }
+  const headerCols = days.map(d => `<th>${dayShortEn(d)}<br><span class="small muted">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
+  const rows = foremen.map(([fid, f]) => {
+    const cells = days.map(d => {
+      const k = ymd(d);
+      const e = state.manager.weekData[k]?.[fid];
+      let cls = 'cell', label = '—';
+      if (e) {
+        if (e.signatureType === 'off') { cls += ' off'; label = 'OFF'; }
+        else { cls += ' signed'; label = (e.totalHours || 0).toFixed(1); }
+      }
+      return `<td class="${cls}" data-fid="${fid}" data-date="${k}">${label}</td>`;
+    }).join('');
+    return `<tr><td class="name">${escapeHtml(f.name)}<br><span class="small muted">${escapeHtml(f.classification||'')}</span></td>${cells}</tr>`;
+  }).join('');
+  grid.innerHTML = `<table>
+    <thead><tr><th style="text-align:left;">Foreman</th>${headerCols}</tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+  grid.querySelectorAll('td.cell').forEach(td => {
+    td.onclick = () => openEntryEditor(td.dataset.fid, td.dataset.date);
+  });
+}
+function openEntryEditor(fid, date) {
+  const f = state.foremen[fid];
+  const e = state.manager.weekData?.[date]?.[fid] || {};
+  state.manager.editingForemanId = fid;
+  state.manager.editingEntry = { date };
+  $('#entry-title').textContent = f.name;
+  $('#entry-sub').textContent = `${dayOfWeek(parseYmd(date))} · ${fmtDateUS(date)}`;
+  $('#entry-tin').value = e.timeIn || '';
+  $('#entry-tout').value = e.timeOut || '';
+  $('#entry-hours').value = e.totalHours || '';
+  $('#entry-status').value = e.signatureType === 'off' ? 'off' : 'signed';
+  $('#entry-injured').value = String(!!e.injured);
+  $('#entry-delete').style.display = e.signatureType ? '' : 'none';
+  $('#overlay-entry').classList.add('show');
+}
+async function saveEntryEditor() {
+  const fid = state.manager.editingForemanId;
+  const date = state.manager.editingEntry.date;
+  const status = $('#entry-status').value;
+  const entry = {
+    timeIn: $('#entry-tin').value || null,
+    timeOut: $('#entry-tout').value || null,
+    totalHours: parseFloat($('#entry-hours').value) || 0,
+    injured: $('#entry-injured').value === 'true',
+    signatureType: status === 'off' ? 'off' : 'typed',
+    signatureDataUrl: null,
+    signatureText: status === 'off' ? null : state.foremen[fid]?.name || '',
+    signedAt: Date.now(),
+    signedBy: 'manager'
+  };
+  if (status === 'signed' && entry.timeIn && entry.timeOut && !$('#entry-hours').value) {
+    entry.totalHours = hoursBetween(entry.timeIn, entry.timeOut);
+  }
+  await fbSet(`attendance/${date}/${fid}`, entry);
+  $('#overlay-entry').classList.remove('show');
+  await loadWeekData();
+  renderWeekGrid();
+  toast('Entry saved', 'success');
+}
+async function deleteEntry() {
+  const fid = state.manager.editingForemanId;
+  const date = state.manager.editingEntry.date;
+  if (!confirm('Delete this entry?')) return;
+  await fbRemove(`attendance/${date}/${fid}`);
+  $('#overlay-entry').classList.remove('show');
+  await loadWeekData();
+  renderWeekGrid();
+  toast('Entry deleted', 'success');
+}
+
+// ── PDF EXPORT ──────────────────────────────────────────────────────────────
+async function exportPDF(mode) {
+  if (!state.manager.weekEnd) { toast('Pick a week-ending date first', 'error'); return; }
+  await loadWeekData();
+  const days = weekDates(state.manager.weekEnd);
+  const targetDays = mode === 'day'
+    ? await pickDayFromWeek(days)
+    : days;
+  if (!targetDays || targetDays.length === 0) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
+
+  for (let i = 0; i < targetDays.length; i++) {
+    if (i > 0) doc.addPage();
+    renderPdfPage(doc, targetDays[i]);
+  }
+
+  const fname = (mode === 'day'
+    ? `Sign-In_${ymd(targetDays[0])}`
+    : `Sign-In_WeekEnding_${ymd(state.manager.weekEnd)}`) + '.pdf';
+  const blob = doc.output('blob');
+  await sharePdf(blob, fname);
+}
+async function pickDayFromWeek(days) {
+  const labels = days.map(d => `${dayShortEn(d)} ${d.getMonth()+1}/${d.getDate()}`);
+  const choice = prompt(`Pick a day (1-7):\n${labels.map((l,i)=>`${i+1}. ${l}`).join('\n')}`);
+  const n = parseInt(choice, 10);
+  if (n >= 1 && n <= 7) return [days[n-1]];
+  return null;
+}
+
+function renderPdfPage(doc, date) {
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const cfg = state.config;
+  const weekEnd = state.manager.weekEnd;
+  const dateStr = ymd(date);
+
+  // Title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text('SUBCONTRACTOR DAILY EMPLOYEE SIGN-IN SHEET', pageW/2, 32, { align: 'center' });
+  doc.setFontSize(10);
+  doc.text('EACH EMPLOYEE MUST SIGN IN AND OUT AT THE PROJECT FOR EACH DAY WORKED', pageW/2, 48, { align: 'center' });
+
+  // Header fields
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  let y = 70;
+  doc.text(`PRIME CONTRACTOR: ${cfg.primeContractor || ''}`, 36, y); y += 12;
+  doc.text(`PROJECT NAME: ${cfg.projectName || ''}`, 36, y); y += 12;
+  doc.text(`SUBCONTRACTOR NAME: ${cfg.subcontractor || ''}`, 36, y);
+
+  doc.text(`WEEKENDING DATE: ${fmtDateUS(ymd(weekEnd))}`, pageW - 36, 82, { align: 'right' });
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.text('Foreman', 36, 116);
+
+  // Build table data
+  const foremen = Object.entries(state.foremen)
+    .filter(([_, f]) => f.active)
+    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+  const dayEntries = state.manager.weekData[dateStr] || {};
+
+  const rows = foremen.map(([fid, f], idx) => {
+    const e = dayEntries[fid];
+    const isOff = e && e.signatureType === 'off';
+    return [
+      String(idx + 1),
+      fmtDateUS(dateStr),
+      f.name || '',
+      f.classification || '',
+      isOff ? 'OFF' : (e?.timeIn || ''),
+      isOff ? '' : (e?.timeOut || ''),
+      isOff ? '' : (e?.totalHours ? e.totalHours.toFixed(2) : ''),
+      e ? (e.injured ? 'Yes' : 'No') : '',
+      e || ''   // signature placeholder (rendered by didDrawCell)
+    ];
+  });
+  // Pad to at least 14 rows to match paper form
+  while (rows.length < 14) {
+    rows.push([String(rows.length + 1), fmtDateUS(dateStr), '', '', '', '', '', '', '']);
+  }
+
+  doc.autoTable({
+    startY: 124,
+    head: [[
+      '#',
+      'DATE\nFECHA',
+      'EMPLOYEE NAME (PRINT)\nNOMBRE DEL EMPLEADO',
+      'EMPLOYEE WORK CLASSIFICATION\nCLASIFICACION DE EMPLEADO',
+      'TIME IN\nHORA DE ENTRADA',
+      'TIME OUT\nHORA DE SALIDA',
+      'TOTAL WORK HOURS\nTOTALES DEL TRABAJO',
+      'Were you injured today at work?\nTe lastimaste en el trabajo hoy?',
+      'EMPLOYEE SIGNATURE\nFIRMA DEL EMPLEADO'
+    ]],
+    body: rows.map(r => r.slice(0, 8).concat([''])),  // last col rendered by didDrawCell
+    theme: 'grid',
+    headStyles: { fillColor: [240,240,240], textColor: 30, fontSize: 7, fontStyle: 'bold', halign: 'center', valign: 'middle', lineColor: [120,120,120] },
+    bodyStyles: { fontSize: 9, cellPadding: 4, minCellHeight: 28, valign: 'middle', lineColor: [180,180,180] },
+    columnStyles: {
+      0: { cellWidth: 18, halign: 'center' },
+      1: { cellWidth: 58, halign: 'center' },
+      2: { cellWidth: 140 },
+      3: { cellWidth: 110 },
+      4: { cellWidth: 58, halign: 'center' },
+      5: { cellWidth: 58, halign: 'center' },
+      6: { cellWidth: 58, halign: 'center' },
+      7: { cellWidth: 60, halign: 'center' },
+      8: { cellWidth: 160 }
+    },
+    margin: { left: 36, right: 36 },
+    didDrawCell: (data) => {
+      if (data.section !== 'body' || data.column.index !== 8) return;
+      const rowIdx = data.row.index;
+      const original = rows[rowIdx]?.[8];
+      if (!original) return;
+      const e = original;
+      if (e.signatureType === 'drawn' && e.signatureDataUrl) {
+        try {
+          const cell = data.cell;
+          const pad = 2;
+          const w = cell.width - pad*2;
+          const h = cell.height - pad*2;
+          doc.addImage(e.signatureDataUrl, 'PNG', cell.x + pad, cell.y + pad, w, h);
+        } catch (err) { console.warn('sig img error', err); }
+      } else if (e.signatureType === 'typed' && e.signatureText) {
+        const cell = data.cell;
+        doc.setFont('times', 'italic');
+        doc.setFontSize(13);
+        doc.text(e.signatureText, cell.x + cell.width/2, cell.y + cell.height/2 + 4, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+      }
+    }
+  });
+
+  // Day-of-week footer
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(28);
+  doc.text(`${dayOfWeek(date)} / ${dayOfWeekEs(date)}`, pageW/2, pageH - 28, { align: 'center' });
+}
+
+async function sharePdf(blob, filename) {
+  const file = new File([blob], filename, { type: 'application/pdf' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: filename });
+      toast('Shared', 'success');
+      return;
+    } catch (e) {
+      if (e.name !== 'AbortError') console.warn(e);
+    }
+  }
+  // Fallback: download
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
+  toast('PDF downloaded', 'success');
+}
+
+// ── BOOT ────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
