@@ -14,80 +14,158 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
+<!-- Mictlán theme: fonts + icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,200..700,0..1,-50..200&display=swap" rel="stylesheet" />
+
 <style>
   :root {
-    --bg: #f7f7f8;
-    --surface: #ffffff;
-    --surface-2: #fafafa;
-    --line: #e4e4e7;
-    --line-strong: #d4d4d8;
-    --text: #18181b;
-    --muted: #71717a;
-    --accent: #2563eb;
-    --accent-hover: #1d4ed8;
-    --accent-on: #ffffff;
-    --accent-soft: #eff6ff;
-    --success: #059669;
-    --success-soft: #ecfdf5;
-    --warn: #d97706;
-    --danger: #dc2626;
-    --danger-soft: #fef2f2;
-    --radius: 12px;
+    /* Mictlán dark — default look */
+    --bg: #0f0d13;
+    --surface: #1d1b20;
+    --surface-2: #211f24;
+    --surface-3: #2c292f;
+    --surface-4: #36343a;
+    --line: #494550;
+    --line-strong: #494550;
+    --text: #e7e0e8;
+    --muted: #cbc4d2;
+    --outline: #958e9c;
+    --accent: #d3bbff;          /* primary purple */
+    --accent-hover: #ebddff;
+    --accent-on: #3b1d71;
+    --accent-soft: rgba(211,187,255,0.12);
+    --accent-container: #4c2f82;
+    --on-accent-container: #ebddff;
+    --secondary: #ffb874;       /* marigold */
+    --secondary-container: #e38401;
+    --on-secondary-container: #4e2a00;
+    --tertiary: #00a19a;        /* turquoise */
+    --tertiary-soft: rgba(0,161,154,0.16);
+    --success: #10b981;
+    --success-soft: rgba(16,185,129,0.12);
+    --warn: #e38401;
+    --danger: #ffb4ab;
+    --danger-soft: rgba(255,180,171,0.10);
+    --error-container: #93000a;
+    --on-error-container: #ffdad6;
+    --radius: 16px;
     --radius-sm: 8px;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-    --sig-line: #18181b;
-  }
-  html[data-theme="dark"] {
-    --bg: #0b0e14;
-    --surface: #15181f;
-    --surface-2: #1c2029;
-    --line: #2a2f3a;
-    --line-strong: #3f4654;
-    --text: #f4f4f5;
-    --muted: #9aa3b2;
-    --accent: #60a5fa;
-    --accent-hover: #93c5fd;
-    --accent-on: #0b1220;
-    --accent-soft: rgba(96, 165, 250, 0.14);
-    --success: #34d399;
-    --success-soft: rgba(52, 211, 153, 0.12);
-    --warn: #fbbf24;
-    --danger: #f87171;
-    --danger-soft: rgba(248, 113, 113, 0.12);
+    --radius-lg: 24px;
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
-    --sig-line: #f4f4f5;
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+    --glow-primary: 0 0 24px rgba(211,187,255,0.18);
+    --glow-secondary: 0 0 20px rgba(227,132,1,0.30);
+    --sig-line: #e7e0e8;
+  }
+  /* Light alt — kept available via the existing theme toggle. Soft Mictlán day variant. */
+  html[data-theme="light"] {
+    --bg: #f7f4fb;
+    --surface: #ffffff;
+    --surface-2: #f3eef8;
+    --surface-3: #ece4f3;
+    --surface-4: #ddd1ea;
+    --line: #d6cde0;
+    --line-strong: #b9aec5;
+    --text: #1d1b20;
+    --muted: #5d5764;
+    --outline: #7b7385;
+    --accent: #533689;
+    --accent-hover: #3b1d71;
+    --accent-on: #ffffff;
+    --accent-soft: rgba(83,54,137,0.10);
+    --accent-container: #ebddff;
+    --on-accent-container: #533689;
+    --secondary: #b35a00;
+    --secondary-container: #ffdcbf;
+    --on-secondary-container: #2d1600;
+    --tertiary: #00766f;
+    --tertiary-soft: rgba(0,118,111,0.10);
+    --success: #047857;
+    --success-soft: rgba(4,120,87,0.10);
+    --warn: #b35a00;
+    --danger: #b3261e;
+    --danger-soft: rgba(179,38,30,0.08);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+    --glow-primary: 0 0 12px rgba(83,54,137,0.18);
+    --glow-secondary: 0 0 12px rgba(179,90,0,0.25);
+    --sig-line: #1d1b20;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0; padding: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
     color: var(--text);
     background: var(--bg);
     font-size: 16px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
-  body { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
+  body {
+    min-height: 100dvh;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    position: relative;
+  }
+  /* Ambient atmospheric glow */
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse at top, rgba(211,187,255,0.07) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .material-symbols-outlined {
+    font-family: "Material Symbols Outlined";
+    font-weight: 400; font-style: normal; line-height: 1;
+    letter-spacing: normal; text-transform: none; display: inline-block;
+    white-space: nowrap; word-wrap: normal; direction: ltr;
+    font-feature-settings: "liga"; -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+    user-select: none;
+  }
+  .icon-fill { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+
+  /* Desktop offset for the fixed left rail nav */
+  @media (min-width: 900px) {
+    body { padding-bottom: env(safe-area-inset-bottom); padding-left: 240px; }
+    header.app { padding-left: 32px; }
+  }
 
   /* Header */
   header.app {
     position: sticky; top: 0; z-index: 30;
-    background: var(--surface);
+    background: rgba(15,13,19,0.78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--line);
-    padding: 14px 16px;
-    padding-top: max(14px, env(safe-area-inset-top));
+    padding: 12px 16px;
+    padding-top: max(12px, env(safe-area-inset-top));
+    box-shadow: 0 0 24px rgba(211,187,255,0.04);
   }
+  html[data-theme="light"] header.app { background: rgba(255,255,255,0.85); }
   header.app .row {
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
   }
-  .brand { font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
-  .brand small { color: var(--muted); font-weight: 500; font-size: 12px; display: block; margin-top: 1px; }
-  .greeting { text-align: right; font-size: 14px; }
-  .greeting strong { display: block; font-weight: 600; }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 700; font-size: 17px; letter-spacing: -0.01em; color: var(--accent);
+    text-shadow: 0 0 8px rgba(211,187,255,0.30);
+  }
+  .brand small {
+    color: var(--muted); font-weight: 500; font-size: 12px;
+    display: block; margin-top: 1px;
+    text-shadow: none;
+  }
+  .brand .brand-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--accent-container); color: var(--on-accent-container);
+    display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 12px rgba(211,187,255,0.30);
+  }
+  .greeting { text-align: right; font-size: 14px; line-height: 1.2; }
+  .greeting strong { display: block; font-weight: 600; color: var(--text); }
   .greeting .switch { color: var(--accent); font-size: 12px; cursor: pointer; user-select: none; }
-  .greeting .switch:hover { text-decoration: underline; }
+  .greeting .switch:hover { text-decoration: underline; text-shadow: 0 0 6px rgba(211,187,255,0.6); }
 
   /* Preference pills (lang + theme) */
   .prefs-row {
@@ -95,7 +173,7 @@
   }
   .pref-pill {
     display: inline-flex; align-items: center; gap: 0;
-    padding: 2px; border: 1px solid var(--line-strong);
+    padding: 2px; border: 1px solid var(--line);
     background: var(--surface); border-radius: 999px;
     cursor: pointer; font-size: 11px; font-family: inherit;
     color: var(--muted); user-select: none;
@@ -103,174 +181,458 @@
   .pref-pill .opt {
     padding: 4px 10px; border-radius: 999px;
     transition: background 120ms, color 120ms;
-    font-weight: 600; letter-spacing: 0.02em;
+    font-weight: 600; letter-spacing: 0.04em;
   }
   .pref-pill .opt.active { background: var(--accent); color: var(--accent-on); }
 
-  /* Tabs */
+  /* Tabs — desktop side-nav style + mobile bottom nav. The same <nav class="tabs"> element renders into either depending on viewport. */
   nav.tabs {
-    display: flex; gap: 4px; padding: 4px;
-    background: var(--surface); border-bottom: 1px solid var(--line);
-    overflow-x: auto;
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
+    display: flex; gap: 4px; padding: 8px 12px max(8px, env(safe-area-inset-bottom));
+    background: rgba(15,13,19,0.92); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--line);
+    justify-content: space-around;
   }
+  html[data-theme="light"] nav.tabs { background: rgba(255,255,255,0.95); }
   nav.tabs button {
-    flex: 1 1 auto; min-width: 100px;
-    padding: 10px 14px; border: 0; background: transparent;
-    color: var(--muted); font-weight: 600; font-size: 14px;
+    flex: 1 1 0; min-width: 0;
+    padding: 8px 6px; border: 0; background: transparent;
+    color: var(--muted); font-weight: 600; font-size: 11px;
     border-radius: var(--radius-sm); cursor: pointer;
-    transition: background 120ms, color 120ms;
+    transition: all 150ms;
     font-family: inherit;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    letter-spacing: 0.05em; text-transform: uppercase;
   }
-  nav.tabs button.active { background: var(--accent-soft); color: var(--accent); }
-  nav.tabs button:not(.active):hover { background: var(--surface-2); }
+  nav.tabs button .nav-icon { font-size: 22px; }
+  nav.tabs button.active {
+    color: var(--on-accent-container); background: var(--accent-container);
+    box-shadow: 0 0 14px rgba(76,47,130,0.45);
+  }
+  nav.tabs button.active .nav-icon { font-variation-settings: "FILL" 1, "wght" 500; }
+  nav.tabs button:not(.active):hover { background: var(--surface-3); color: var(--text); }
+
+  /* Desktop: tabs become a fixed left side rail */
+  @media (min-width: 900px) {
+    nav.tabs {
+      position: fixed; top: 0; left: 0; bottom: 0; right: auto;
+      width: 240px; flex-direction: column; gap: 6px; padding: 88px 12px 24px;
+      background: var(--surface-2); backdrop-filter: none;
+      border-top: 0; border-right: 1px solid var(--line);
+      justify-content: flex-start;
+      z-index: 31;
+    }
+    nav.tabs::before {
+      content: "FOREMAN PORTAL";
+      position: absolute; top: 28px; left: 24px;
+      color: var(--accent); font-weight: 700; font-size: 18px;
+      letter-spacing: 0.02em;
+      text-shadow: 0 0 12px rgba(211,187,255,0.30);
+    }
+    nav.tabs::after {
+      content: "Site Attendance";
+      position: absolute; top: 54px; left: 24px;
+      color: var(--muted); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+    nav.tabs button {
+      flex: 0 0 auto; flex-direction: row; justify-content: flex-start;
+      gap: 14px; padding: 12px 14px; font-size: 14px;
+      text-transform: none; letter-spacing: 0; text-align: left;
+      border-radius: 10px;
+    }
+    nav.tabs button .nav-icon { font-size: 22px; }
+    nav.tabs button.active {
+      border-left: 4px solid var(--secondary);
+      padding-left: 10px;
+      box-shadow: 0 0 18px rgba(227,132,1,0.25);
+      background: var(--secondary-container);
+      color: var(--on-secondary-container);
+    }
+  }
 
   /* Layout */
-  main { max-width: 720px; margin: 0 auto; padding: 16px; }
+  main { max-width: 760px; margin: 0 auto; padding: 24px 16px; width: 100%; }
+  @media (min-width: 900px) { main { padding: 40px 32px; } }
   .panel { display: none; }
   .panel.active { display: block; }
   .card {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 16px;
-    box-shadow: var(--shadow-sm); margin-bottom: 16px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 20px 18px;
+    box-shadow: var(--shadow-sm); margin-bottom: 20px;
+    position: relative; overflow: hidden;
   }
-  .card h2 { margin: 0 0 4px 0; font-size: 16px; font-weight: 700; }
-  .card .sub { color: var(--muted); font-size: 13px; margin-bottom: 14px; }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.55;
+  }
+  .card h2 {
+    margin: 0 0 4px 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .card .sub { color: var(--muted); font-size: 15px; margin-bottom: 18px; line-height: 1.45; }
   .row-flex { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   .row-flex.between { justify-content: space-between; }
 
-  /* Form fields */
-  label.field { display: block; margin-bottom: 12px; font-size: 13px; color: var(--muted); font-weight: 500; }
-  label.field .lbl-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
-  label.field input, label.field select, label.field textarea {
-    width: 100%; padding: 10px 12px;
-    border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
-    font-size: 16px; background: var(--surface); color: var(--text);
-    font-family: inherit;
+  /* Section headings (used inside cards) */
+  .section-heading {
+    font-size: 18px; font-weight: 700; color: var(--text);
+    margin: 24px 0 12px 0; padding-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; gap: 10px;
   }
-  label.field input:focus, label.field select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
-  label.field input[readonly] { background: var(--surface-2); color: var(--text); }
+  .section-heading .material-symbols-outlined { color: var(--danger); }
+  .section-heading-warn { color: var(--text); }
+
+  /* Worker identity card on Sign-In */
+  .worker-card {
+    background: var(--surface-3); border: 1px solid var(--line);
+    border-radius: 14px; padding: 20px 18px; margin-bottom: 24px;
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+    position: relative; overflow: hidden;
+  }
+  .worker-card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.7;
+  }
+  .worker-card-info { min-width: 0; }
+  .worker-card-label {
+    display: block; font-size: 11px; color: var(--accent);
+    font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .worker-card-name {
+    font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  .worker-card-cls {
+    color: var(--muted); font-size: 14px; margin-top: 6px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .worker-card-date {
+    background: var(--surface-4); border: 1px solid var(--line);
+    border-radius: 10px; padding: 10px 12px;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    flex-shrink: 0;
+  }
+  .worker-card-date .date-pill {
+    background: transparent; border: 0; color: var(--text);
+    font-weight: 700; font-size: 14px; padding: 0; cursor: pointer;
+    color-scheme: dark;
+  }
+  html[data-theme="light"] .worker-card-date .date-pill { color-scheme: light; }
+  .worker-card-date .date-pill:focus { outline: none; }
+
+  /* Input with leading icon */
+  .input-with-icon { position: relative; }
+  .input-with-icon .material-symbols-outlined {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); pointer-events: none; font-size: 20px;
+  }
+  .input-with-icon input { padding-left: 44px !important; }
+
+  /* Form fields */
+  label.field { display: block; margin-bottom: 14px; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+  label.field .lbl-row { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; }
+  label.field input, label.field select, label.field textarea {
+    width: 100%; padding: 12px 14px;
+    border: 1px solid var(--line); border-radius: var(--radius-sm);
+    font-size: 16px; background: var(--surface-3); color: var(--text);
+    font-family: inherit; text-transform: none; letter-spacing: normal; font-weight: 400;
+    transition: border-color 150ms, box-shadow 150ms;
+    color-scheme: dark;
+  }
+  html[data-theme="light"] label.field input,
+  html[data-theme="light"] label.field select,
+  html[data-theme="light"] label.field textarea { color-scheme: light; background: var(--surface); }
+  label.field input:focus, label.field select:focus, label.field textarea:focus {
+    outline: none; border-color: var(--tertiary);
+    box-shadow: 0 0 0 3px var(--tertiary-soft);
+  }
+  label.field input[readonly] { background: var(--surface-2); color: var(--muted); }
   .readout {
-    padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    background: var(--surface-2); font-size: 15px; color: var(--text);
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface-3); font-size: 15px; color: var(--text);
+    display: flex; justify-content: space-between; align-items: center;
   }
   .readout .muted { color: var(--muted); font-size: 13px; }
+  .readout .val { font-size: 22px; font-weight: 600; color: var(--secondary); letter-spacing: -0.01em; }
 
   /* Buttons */
   .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 11px 16px; border: 0; border-radius: var(--radius-sm);
-    font-weight: 600; font-size: 14px; cursor: pointer;
-    transition: background 120ms, transform 80ms;
-    min-height: 44px; font-family: inherit;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 18px; border: 0; border-radius: var(--radius-sm);
+    font-weight: 700; font-size: 14px; cursor: pointer;
+    transition: all 150ms;
+    min-height: 48px; font-family: inherit;
+    letter-spacing: 0.02em;
   }
+  .btn .material-symbols-outlined { font-size: 20px; }
   .btn:active { transform: scale(0.98); }
-  .btn.primary { background: var(--accent); color: var(--accent-on); }
-  .btn.primary:hover { background: var(--accent-hover); }
-  .btn.secondary { background: var(--surface); color: var(--text); border: 1px solid var(--line-strong); }
-  .btn.secondary:hover { background: var(--surface-2); }
-  .btn.success { background: var(--success); color: white; }
-  .btn.warn { background: var(--warn); color: white; }
-  .btn.danger { background: var(--danger); color: white; }
-  .btn.ghost { background: transparent; color: var(--accent); padding: 6px 10px; min-height: auto; }
-  .btn.ghost:hover { text-decoration: underline; }
+  .btn.primary {
+    background: var(--accent-container); color: var(--on-accent-container);
+    box-shadow: 0 0 16px rgba(76,47,130,0.45);
+    border: 1px solid rgba(211,187,255,0.20);
+  }
+  .btn.primary:hover { background: var(--accent); color: var(--accent-on); box-shadow: 0 0 24px rgba(211,187,255,0.45); }
+  .btn.secondary {
+    background: transparent; color: var(--text);
+    border: 1px solid var(--line);
+  }
+  .btn.secondary:hover { background: var(--surface-3); border-color: var(--tertiary); }
+  .btn.success { background: var(--success); color: #052e23; }
+  .btn.warn { background: var(--warn); color: #2b1500; }
+  .btn.danger { background: var(--error-container); color: var(--on-error-container); border: 1px solid rgba(255,180,171,0.35); }
+  .btn.ghost {
+    background: transparent; color: var(--secondary); padding: 8px 12px; min-height: auto;
+    font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; font-size: 12px;
+  }
+  .btn.ghost:hover { color: var(--secondary); text-decoration: underline; text-shadow: 0 0 6px rgba(255,184,116,0.5); }
   .btn.block { width: 100%; }
-  .btn.lg { padding: 14px 18px; font-size: 15px; }
+  .btn.lg { padding: 16px 20px; font-size: 15px; min-height: 56px; border-radius: 12px; }
   .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 
   /* Toggle (injured y/n) */
-  .toggle-row { display: flex; gap: 8px; }
+  .toggle-row { display: flex; gap: 12px; }
   .toggle-row button {
-    flex: 1; padding: 12px; border: 1px solid var(--line-strong);
-    background: var(--surface); border-radius: var(--radius-sm);
-    font-weight: 600; font-size: 14px; cursor: pointer; color: var(--muted);
-    min-height: 48px; font-family: inherit;
+    flex: 1; padding: 18px 12px; border: 2px solid var(--line);
+    background: var(--surface-3); border-radius: 12px;
+    font-weight: 700; font-size: 15px; cursor: pointer; color: var(--muted);
+    min-height: 64px; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    transition: all 150ms;
   }
-  .toggle-row button.on-no { background: var(--success-soft); border-color: var(--success); color: var(--success); }
-  .toggle-row button.on-yes { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+  .toggle-row button .material-symbols-outlined { font-size: 22px; }
+  .toggle-row button.on-no {
+    background: rgba(16,185,129,0.10); border-color: var(--success); color: var(--success);
+    box-shadow: 0 0 15px rgba(16,185,129,0.10);
+  }
+  .toggle-row button.on-yes {
+    background: rgba(255,180,171,0.10); border-color: var(--danger); color: var(--danger);
+    box-shadow: 0 0 15px rgba(255,180,171,0.10);
+  }
 
   /* Signature */
   .sig-wrap {
-    border: 1.5px dashed var(--line-strong); border-radius: var(--radius-sm);
-    background: var(--surface); position: relative; touch-action: none;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: var(--surface-4); position: relative; touch-action: none;
+    overflow: hidden;
   }
-  .sig-wrap canvas { display: block; width: 100%; height: 180px; border-radius: var(--radius-sm); }
+  .sig-wrap canvas { display: block; width: 100%; height: 180px; }
+  .sig-wrap .sig-placeholder {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 6px;
+    color: var(--outline); opacity: 0.55; pointer-events: none;
+    font-size: 14px;
+  }
+  .sig-wrap .sig-placeholder .material-symbols-outlined { font-size: 28px; }
+  .sig-wrap.has-stroke .sig-placeholder { display: none; }
   .sig-typed {
-    display: none; padding: 20px; text-align: center;
+    display: none; padding: 24px; text-align: center;
     font-family: "Snell Roundhand", "Brush Script MT", cursive;
     font-size: 32px; color: var(--text);
   }
   .sig-wrap.mode-typed canvas { display: none; }
+  .sig-wrap.mode-typed .sig-placeholder { display: none; }
   .sig-wrap.mode-typed .sig-typed { display: block; }
-  .sig-controls { display: flex; gap: 8px; justify-content: space-between; margin-top: 8px; font-size: 13px; }
+  .sig-controls { display: flex; gap: 8px; justify-content: space-between; margin-top: 10px; font-size: 12px; }
   .sig-controls .left { display: flex; gap: 8px; }
 
   /* Overlay */
   .overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
     z-index: 60; display: none; align-items: center; justify-content: center;
     padding: 16px; padding-top: max(16px, env(safe-area-inset-top));
     overflow-y: auto;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   }
   .overlay.show { display: flex; }
   .overlay .modal {
-    background: var(--surface); border-radius: 16px;
-    max-width: 480px; width: 100%; padding: 20px;
-    box-shadow: var(--shadow-md);
+    background: var(--surface-2); border-radius: var(--radius);
+    border: 1px solid rgba(211,187,255,0.18);
+    max-width: 520px; width: 100%; padding: 24px;
+    box-shadow: var(--shadow-md), 0 0 32px rgba(211,187,255,0.06);
     max-height: calc(100dvh - 32px); overflow-y: auto;
+    position: relative;
   }
-  .overlay .modal h3 { margin: 0 0 4px 0; font-size: 18px; }
-  .overlay .modal .sub { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+  .overlay .modal::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+  .overlay .modal h3 { margin: 0 0 4px 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  .overlay .modal .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
 
-  .name-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  .name-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
   .name-btn {
-    padding: 14px 16px; border: 1px solid var(--line-strong); background: var(--surface);
-    border-radius: var(--radius-sm); cursor: pointer; text-align: left;
+    padding: 14px 16px; border: 1px solid transparent; background: var(--surface-3);
+    border-radius: 12px; cursor: pointer; text-align: left;
     font-size: 15px; font-weight: 600; color: var(--text);
     display: flex; justify-content: space-between; align-items: center;
-    font-family: inherit;
+    gap: 16px; font-family: inherit;
+    min-height: 64px;
+    transition: all 150ms;
   }
-  .name-btn:hover { background: var(--accent-soft); border-color: var(--accent); }
-  .name-btn .cls { font-size: 12px; color: var(--muted); font-weight: 500; }
-  .name-btn.manager { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
-  .name-btn.manager:hover { background: var(--accent); color: var(--accent-on); }
-  .name-btn.manager .cls { color: inherit; opacity: 0.85; }
-  .name-divider { height: 1px; background: var(--line); margin: 6px 0; }
+  .name-btn:hover {
+    background: var(--surface-4); border-color: var(--secondary-container);
+    box-shadow: 0 0 18px rgba(227,132,1,0.20);
+  }
+  .name-btn .name-meta { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
+  .name-btn .avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(227,132,1,0.10); border: 1px solid rgba(227,132,1,0.35);
+    color: var(--secondary-container);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .name-btn .avatar .material-symbols-outlined { font-size: 22px; }
+  .name-btn:hover .avatar { box-shadow: 0 0 10px rgba(227,132,1,0.40); }
+  .name-btn .text { min-width: 0; flex: 1; }
+  .name-btn .text > span:first-child { display: block; font-size: 18px; font-weight: 600; }
+  .name-btn .cls { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+  .name-btn .arrow {
+    color: var(--secondary-container); opacity: 0; transform: translateX(-4px);
+    transition: all 150ms;
+  }
+  .name-btn:hover .arrow { opacity: 1; transform: translateX(0); }
 
-  /* Manager mode hides foreman-only tabs */
-  body.manager-mode nav.tabs button[data-tab="signin"],
-  body.manager-mode nav.tabs button[data-tab="history"] { display: none; }
+  /* Manager mode badge in header */
+  .mgr-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 6px; padding: 3px 10px;
+    background: var(--secondary-container); color: var(--on-secondary-container);
+    border-radius: 999px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    box-shadow: 0 0 12px rgba(227,132,1,0.30);
+  }
+  .mgr-badge::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--on-secondary-container);
+    box-shadow: 0 0 6px var(--on-secondary-container);
+  }
+  .greeting .mgr-lock {
+    margin-left: 8px; padding: 3px 10px;
+    background: transparent; color: var(--secondary);
+    border: 1px solid var(--secondary); border-radius: 999px;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    font-family: inherit; letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .greeting .mgr-lock:hover { background: var(--secondary); color: #2b1500; box-shadow: 0 0 12px rgba(255,184,116,0.45); }
+
+  /* Manager-only history controls (inside the History card) */
+  .hist-mgr-controls {
+    display: flex; flex-direction: column; gap: 16px;
+    margin-bottom: 18px;
+  }
+  .hist-block-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+  .hist-block-row .field {
+    flex: 1 1 140px; min-width: 140px;
+    margin-bottom: 0;
+  }
+  .hist-block-row-divider {
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+  }
+  .hist-mgr-controls label {
+    font-size: 11px; color: var(--muted); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px;
+  }
+  .hist-mgr-controls input[type=date], .hist-mgr-controls select,
+  #hist-export-card input[type=date] {
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface-3); color: var(--text); font-size: 14px; font-family: inherit;
+    min-width: 130px; width: 100%; color-scheme: dark;
+  }
+  html[data-theme="light"] .hist-mgr-controls input[type=date],
+  html[data-theme="light"] .hist-mgr-controls select,
+  html[data-theme="light"] #hist-export-card input[type=date] { color-scheme: light; background: var(--surface); }
+  .hist-mgr-controls input:focus, .hist-mgr-controls select:focus,
+  #hist-export-card input[type=date]:focus {
+    outline: none; border-color: var(--tertiary); box-shadow: 0 0 0 3px var(--tertiary-soft);
+  }
+  .hist-mgr-controls .btn, #hist-export-card .btn { min-height: 48px; }
+  /* Export card uses secondary container glow */
+  #hist-export-card { border-top: 2px solid transparent; position: relative; }
+  #hist-export-card::before {
+    background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+    opacity: 0.7;
+  }
+  #hist-export-card .hist-block-row .field { flex: 1 1 200px; }
+  #hist-export-card .field label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px; }
+
+  .hist-group-header {
+    font-size: 12px; font-weight: 700; color: var(--secondary);
+    text-transform: uppercase; letter-spacing: 0.10em;
+    margin: 18px 0 8px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hist-group-header::before {
+    content: ""; width: 4px; height: 16px; border-radius: 2px;
+    background: var(--secondary-container);
+    box-shadow: 0 0 10px rgba(227,132,1,0.5);
+  }
+  .hist-group-header:first-child { margin-top: 0; }
+  .hist-group-header .count { color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; margin-left: 4px; }
 
   /* History */
-  .hist-list { display: flex; flex-direction: column; gap: 8px; }
+  .hist-list { display: flex; flex-direction: column; gap: 10px; }
   .hist-item {
-    padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius-sm);
     display: flex; justify-content: space-between; align-items: center;
-    background: var(--surface);
+    background: var(--surface-2);
+    transition: all 150ms;
+  }
+  .hist-item.editable { cursor: pointer; }
+  .hist-item.editable:hover {
+    border-color: var(--secondary-container);
+    background: var(--surface-3);
+    box-shadow: 0 0 14px rgba(227,132,1,0.18);
   }
   .hist-item .left { font-size: 14px; }
-  .hist-item .date { font-weight: 600; }
-  .hist-item .dow { color: var(--muted); font-size: 12px; }
-  .hist-item .hrs { font-size: 14px; font-weight: 600; color: var(--accent); }
-  .hist-item.off .hrs { color: var(--muted); }
-  .week-totals { display: flex; gap: 8px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; }
-  .week-totals .wt {
-    flex: 0 0 auto; padding: 8px 12px; border: 1px solid var(--line);
-    border-radius: var(--radius-sm); background: var(--surface-2); font-size: 12px;
-    min-width: 120px;
+  .hist-item .date { font-weight: 600; color: var(--text); font-size: 15px; }
+  .hist-item .dow { color: var(--muted); font-size: 12px; margin-left: 4px; }
+  .hist-item .hrs {
+    font-size: 18px; font-weight: 700; color: var(--secondary); letter-spacing: -0.01em;
   }
-  .week-totals .wt .lbl { color: var(--muted); }
-  .week-totals .wt .val { font-size: 16px; font-weight: 700; }
+  .hist-item.off { background: var(--surface); }
+  .hist-item.off .hrs { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .week-totals { display: flex; gap: 10px; margin: 18px 0; overflow-x: auto; padding-bottom: 4px; }
+  .week-totals .wt {
+    flex: 0 0 auto; padding: 12px 14px; border: 1px solid var(--line);
+    border-radius: var(--radius-sm); background: var(--surface-3); font-size: 12px;
+    min-width: 140px; position: relative; overflow: hidden;
+  }
+  .week-totals .wt::after {
+    content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--secondary), transparent);
+    opacity: 0.4;
+  }
+  .week-totals .wt .lbl { color: var(--muted); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
+  .week-totals .wt .val { font-size: 20px; font-weight: 700; color: var(--secondary); margin-top: 4px; letter-spacing: -0.01em; }
 
   /* Manager */
-  .mgr-section { margin-bottom: 24px; }
-  .mgr-section h3 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 10px 0; }
+  .mgr-section { margin-bottom: 28px; }
+  .mgr-section h3 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: 0.10em;
+    color: var(--secondary); margin: 0 0 12px 0; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .mgr-section h3::before {
+    content: ""; width: 4px; height: 14px; border-radius: 2px;
+    background: var(--secondary-container);
+    box-shadow: 0 0 8px rgba(227,132,1,0.5);
+  }
   .roster-item {
     display: flex; align-items: center; gap: 10px;
-    padding: 10px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    background: var(--surface); margin-bottom: 8px;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+    background: var(--surface-3); margin-bottom: 8px;
+    transition: border-color 150ms;
   }
+  .roster-item:hover { border-color: var(--accent); }
   .roster-item .info { flex: 1; min-width: 0; }
-  .roster-item .name { font-weight: 600; font-size: 14px; }
+  .roster-item .name { font-weight: 600; font-size: 15px; }
   .roster-item .cls { font-size: 12px; color: var(--muted); }
   .roster-item .actions { display: flex; gap: 6px; }
   .roster-item.inactive .name { color: var(--muted); text-decoration: line-through; }
@@ -278,29 +640,39 @@
   .week-grid { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); }
   .week-grid table { width: 100%; border-collapse: collapse; min-width: 720px; }
   .week-grid th, .week-grid td {
-    border: 1px solid var(--line); padding: 6px 8px;
+    border: 1px solid var(--line); padding: 8px 10px;
     text-align: center; font-size: 12px; min-width: 60px;
   }
-  .week-grid th { background: var(--surface-2); font-weight: 600; }
-  .week-grid td.name { text-align: left; font-weight: 600; min-width: 160px; position: sticky; left: 0; background: var(--surface); z-index: 1; }
-  .week-grid td.cell { cursor: pointer; }
+  .week-grid th {
+    background: var(--surface-3); font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px;
+    color: var(--muted);
+  }
+  .week-grid td.name {
+    text-align: left; font-weight: 600; min-width: 160px;
+    position: sticky; left: 0; background: var(--surface-2); z-index: 1;
+  }
+  .week-grid td.cell { cursor: pointer; transition: background 100ms; }
   .week-grid td.cell:hover { background: var(--accent-soft); }
-  .week-grid td.cell.signed { background: var(--success-soft); color: var(--success); font-weight: 600; }
-  .week-grid td.cell.off { background: var(--surface-2); color: var(--muted); }
+  .week-grid td.cell.signed { background: rgba(16,185,129,0.10); color: var(--success); font-weight: 700; }
+  .week-grid td.cell.off { background: var(--surface-3); color: var(--muted); }
 
   /* Toast */
   #toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    z-index: 100; background: #18181b; color: white;
-    padding: 12px 18px; border-radius: var(--radius);
-    font-size: 14px; font-weight: 500;
+    position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%;
+    transform: translateX(-50%);
+    z-index: 100; background: var(--surface-4); color: var(--text);
+    border: 1px solid var(--line);
+    padding: 14px 22px; border-radius: 999px;
+    font-size: 14px; font-weight: 600;
     box-shadow: var(--shadow-md);
     opacity: 0; transition: opacity 200ms; pointer-events: none;
     max-width: calc(100vw - 32px);
   }
+  @media (min-width: 900px) { #toast { bottom: 24px; } }
   #toast.show { opacity: 1; }
-  #toast.error { background: var(--danger); }
-  #toast.success { background: var(--success); }
+  #toast.error { background: var(--error-container); color: var(--on-error-container); border-color: rgba(255,180,171,0.35); }
+  #toast.success { background: rgba(16,185,129,0.18); color: var(--success); border-color: rgba(16,185,129,0.45); }
 
   .hidden { display: none !important; }
   .center { text-align: center; }
@@ -315,12 +687,19 @@
 <header class="app">
   <div class="row">
     <div class="brand">
-      <span data-i18n="brand">Foreman Sign-In</span>
-      <small id="brand-sub">Webcor Concrete · LA Convention Center</small>
+      <span class="brand-icon"><span class="material-symbols-outlined" style="font-size:20px;">domain</span></span>
+      <span>
+        <span data-i18n="brand">Foreman Sign-In</span>
+        <small id="brand-sub">Webcor Concrete · LA Convention Center</small>
+      </span>
     </div>
     <div class="greeting" id="greeting">
       <strong id="g-name">—</strong>
       <span class="switch" id="g-switch" data-i18n="switch_user">switch user</span>
+      <div>
+        <span id="g-mgr-badge" class="mgr-badge hidden" data-i18n="manager_mode_on">Manager mode</span>
+        <button id="g-mgr-lock" class="mgr-lock hidden" type="button" data-i18n="lock_manager">Lock</button>
+      </div>
     </div>
   </div>
   <div class="prefs-row">
@@ -333,10 +712,19 @@
   </div>
 </header>
 
-<nav class="tabs" id="tabs">
-  <button data-tab="signin" class="active" data-i18n="tab_signin">Sign In</button>
-  <button data-tab="history" data-i18n="tab_history">History</button>
-  <button data-tab="manager" data-i18n="tab_manager">Manager</button>
+<nav class="tabs" id="tabs" aria-label="Section navigation">
+  <button data-tab="signin" class="active" type="button">
+    <span class="material-symbols-outlined nav-icon">edit_square</span>
+    <span data-i18n="tab_signin">Sign In</span>
+  </button>
+  <button data-tab="history" type="button">
+    <span class="material-symbols-outlined nav-icon">history</span>
+    <span data-i18n="tab_history">History</span>
+  </button>
+  <button data-tab="manager" type="button">
+    <span class="material-symbols-outlined nav-icon">admin_panel_settings</span>
+    <span data-i18n="tab_manager">Manager</span>
+  </button>
 </nav>
 
 <main>
@@ -346,53 +734,75 @@
       <h2 data-i18n="signin_title">Daily Sign-In</h2>
       <p class="sub" data-i18n="signin_sub">Sign in for today, or backfill up to 7 days back.</p>
 
-      <label class="field">
-        <div class="lbl-row"><span data-i18n="date">Date</span><span class="small muted" id="dow-label"></span></div>
-        <input type="date" id="signin-date" />
-      </label>
-
-      <div class="row-flex" style="gap: 0; flex-direction: column;">
-        <div class="readout mb-3" style="width: 100%;">
-          <div class="muted small" data-i18n="name">Name</div>
-          <div id="signin-name">—</div>
+      <!-- Worker Identity (selected worker card) -->
+      <div class="worker-card">
+        <div class="worker-card-info">
+          <span class="worker-card-label" data-i18n="selected_worker">SELECTED WORKER</span>
+          <div class="worker-card-name" id="signin-name">—</div>
+          <div class="worker-card-cls">
+            <span class="material-symbols-outlined" style="font-size:18px;">account_circle</span>
+            <span id="signin-cls">—</span>
+          </div>
         </div>
-        <div class="readout mb-3" style="width: 100%;">
-          <div class="muted small" data-i18n="classification">Classification</div>
-          <div id="signin-cls">—</div>
+        <div class="worker-card-date">
+          <span class="worker-card-label" data-i18n="today">TODAY</span>
+          <input type="date" id="signin-date" class="date-pill" />
+          <span class="small muted" id="dow-label"></span>
         </div>
       </div>
 
+      <h4 class="section-heading" data-i18n="hours_log">Hours Log</h4>
       <div class="row-flex">
         <label class="field" style="flex: 1; margin-bottom: 12px;">
           <div class="lbl-row"><span data-i18n="time_in">Time In</span></div>
-          <input type="time" id="time-in" />
+          <div class="input-with-icon">
+            <span class="material-symbols-outlined">login</span>
+            <input type="time" id="time-in" />
+          </div>
         </label>
         <label class="field" style="flex: 1; margin-bottom: 12px;">
           <div class="lbl-row"><span data-i18n="time_out">Time Out</span></div>
-          <input type="time" id="time-out" />
+          <div class="input-with-icon">
+            <span class="material-symbols-outlined">logout</span>
+            <input type="time" id="time-out" />
+          </div>
         </label>
       </div>
 
       <div class="readout mb-3">
         <div class="muted small" data-i18n="total_hours">Total Hours</div>
-        <div id="total-hours" style="font-size: 18px; font-weight: 700;">—</div>
+        <div id="total-hours" class="val">—</div>
       </div>
 
+      <h4 class="section-heading section-heading-warn">
+        <span class="material-symbols-outlined">health_and_safety</span>
+        <span data-i18n="safety_declaration">Safety Declaration</span>
+      </h4>
       <label class="field">
         <div class="lbl-row"><span data-i18n="injured_q">Were you injured today at work?</span></div>
         <div class="toggle-row">
-          <button id="injured-no" class="on-no" type="button" data-i18n="no">No</button>
-          <button id="injured-yes" type="button" data-i18n="yes">Yes</button>
+          <button id="injured-no" class="on-no" type="button">
+            <span class="material-symbols-outlined icon-fill">check_circle</span>
+            <span data-i18n="no">No</span>
+          </button>
+          <button id="injured-yes" type="button">
+            <span class="material-symbols-outlined">warning</span>
+            <span data-i18n="yes">Yes</span>
+          </button>
         </div>
       </label>
 
       <label class="field">
         <div class="lbl-row">
           <span data-i18n="signature">Signature</span>
-          <span class="switch" id="sig-mode-toggle" style="color: var(--accent); cursor: pointer; font-size: 12px;" data-i18n="type_instead">Type instead</span>
+          <span class="switch" id="sig-mode-toggle" style="color: var(--secondary); cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;" data-i18n="type_instead">Type instead</span>
         </div>
         <div class="sig-wrap" id="sig-wrap">
           <canvas id="sig-canvas"></canvas>
+          <div class="sig-placeholder" id="sig-placeholder">
+            <span class="material-symbols-outlined">draw</span>
+            <span data-i18n="sig_hint_draw">Sign with your finger</span>
+          </div>
           <div class="sig-typed" id="sig-typed">—</div>
         </div>
         <div class="sig-controls">
@@ -403,9 +813,12 @@
         </div>
       </label>
 
-      <div class="row-flex mt-3" style="gap: 8px;">
-        <button class="btn primary block lg" id="btn-sign-submit" style="flex: 2;" data-i18n="sign_submit">Sign &amp; Submit</button>
-        <button class="btn secondary" id="btn-mark-off" style="flex: 1;" data-i18n="mark_off">Mark Off</button>
+      <div class="row-flex mt-3" style="gap: 10px;">
+        <button class="btn primary block lg" id="btn-sign-submit" style="flex: 2;" type="button">
+          <span class="material-symbols-outlined icon-fill">how_to_reg</span>
+          <span data-i18n="sign_submit">Sign &amp; Submit</span>
+        </button>
+        <button class="btn secondary lg" id="btn-mark-off" style="flex: 1;" type="button" data-i18n="mark_off">Mark Off</button>
       </div>
 
       <p class="small muted center mt-3" id="signin-status"></p>
@@ -414,9 +827,57 @@
 
   <!-- HISTORY TAB -->
   <section class="panel" id="panel-history">
+
+    <!-- Export Report card (manager-only) -->
+    <div class="card hidden" id="hist-export-card">
+      <h2 style="display:flex;align-items:center;gap:10px;">
+        <span class="material-symbols-outlined" style="color:var(--secondary);">download</span>
+        <span data-i18n="export_report">Export Report</span>
+      </h2>
+      <p class="sub" data-i18n="export_report_sub">Generate a weekly attendance PDF for the chosen week-ending date.</p>
+      <div class="hist-block-row">
+        <div class="field">
+          <label data-i18n="hist_export_label">Week ending</label>
+          <input type="date" id="hist-export-week-end" />
+        </div>
+        <button class="btn primary" id="btn-hist-export-week" type="button">
+          <span class="material-symbols-outlined">picture_as_pdf</span>
+          <span data-i18n="hist_export_btn">Export</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- History view card -->
     <div class="card">
-      <h2 data-i18n="history_title">My Attendance</h2>
+      <h2 id="history-title" data-i18n="history_title">My Attendance</h2>
       <p class="sub" id="history-sub" data-i18n="history_sub">Last 30 days</p>
+
+      <div class="hist-mgr-controls hidden" id="hist-mgr-controls">
+        <div class="hist-block-row">
+          <div class="field">
+            <label data-i18n="hist_start_label">From</label>
+            <input type="date" id="hist-start" />
+          </div>
+          <div class="field">
+            <label data-i18n="hist_end_label">To</label>
+            <input type="date" id="hist-end" />
+          </div>
+          <div class="field">
+            <label data-i18n="hist_foreman_label">Foreman</label>
+            <select id="hist-foreman-filter"></select>
+          </div>
+        </div>
+        <div class="hist-block-row hist-block-row-divider">
+          <div class="field">
+            <label data-i18n="hist_clear_label">Clear records older than</label>
+            <input type="date" id="hist-clear-cutoff" />
+          </div>
+          <button class="btn ghost" id="btn-hist-clear" type="button">
+            <span class="material-symbols-outlined" style="font-size:16px;">delete_sweep</span>
+            <span data-i18n="hist_clear_btn">Clear</span>
+          </button>
+        </div>
+      </div>
 
       <div class="week-totals" id="week-totals"></div>
 
@@ -430,13 +891,19 @@
   <section class="panel" id="panel-manager">
     <!-- Locked state -->
     <div class="card" id="mgr-locked">
-      <h2 data-i18n="mgr_access_title">Manager Access</h2>
+      <h2 style="display:flex;align-items:center;gap:10px;">
+        <span class="material-symbols-outlined" style="color:var(--danger);">lock</span>
+        <span data-i18n="mgr_access_title">Manager Access</span>
+      </h2>
       <p class="sub" data-i18n="mgr_access_sub">Enter PIN to manage the roster, edit attendance, and export PDFs.</p>
       <label class="field">
         <div class="lbl-row"><span data-i18n="pin">PIN</span></div>
         <input type="password" inputmode="numeric" id="mgr-pin" placeholder="••••••" />
       </label>
-      <button class="btn primary block" id="mgr-unlock" data-i18n="unlock">Unlock</button>
+      <button class="btn primary block lg" id="mgr-unlock" type="button">
+        <span class="material-symbols-outlined icon-fill">lock_open</span>
+        <span data-i18n="unlock">Unlock</span>
+      </button>
     </div>
 
     <!-- Unlocked state -->
@@ -451,8 +918,14 @@
           <input type="date" id="export-week-end" />
         </label>
         <div class="row-flex">
-          <button class="btn primary" id="btn-export-week" style="flex: 1;" data-i18n="export_week">Export week as PDF</button>
-          <button class="btn secondary" id="btn-export-day" style="flex: 1;" data-i18n="export_day">Export single day</button>
+          <button class="btn primary" id="btn-export-week" style="flex: 1;" type="button">
+            <span class="material-symbols-outlined">download</span>
+            <span data-i18n="export_week">Export week as PDF</span>
+          </button>
+          <button class="btn secondary" id="btn-export-day" style="flex: 1;" type="button">
+            <span class="material-symbols-outlined">today</span>
+            <span data-i18n="export_day">Export single day</span>
+          </button>
         </div>
       </div>
 
@@ -469,7 +942,10 @@
       <div class="card mgr-section">
         <div class="row-flex between mb-3">
           <h3 style="margin:0;" data-i18n="roster">Roster</h3>
-          <button class="btn primary" id="btn-add-foreman" data-i18n="add_foreman">+ Add Foreman</button>
+          <button class="btn primary" id="btn-add-foreman" type="button">
+            <span class="material-symbols-outlined">person_add</span>
+            <span data-i18n="add_foreman">Add Foreman</span>
+          </button>
         </div>
         <div id="roster-list"></div>
       </div>
@@ -484,11 +960,17 @@
           <input type="text" id="cfg-sub" /></label>
         <label class="field"><div class="lbl-row"><span data-i18n="mgr_pin">Manager PIN</span></div>
           <input type="text" inputmode="numeric" id="cfg-pin" /></label>
-        <button class="btn primary" id="btn-save-config" data-i18n="save_config">Save config</button>
+        <button class="btn primary" id="btn-save-config" type="button">
+          <span class="material-symbols-outlined">save</span>
+          <span data-i18n="save_config">Save config</span>
+        </button>
       </div>
 
       <p class="center small muted">
-        <button class="btn ghost" id="btn-mgr-lock" data-i18n="lock_mgr">Lock manager</button>
+        <button class="btn ghost" id="btn-mgr-lock" type="button">
+          <span class="material-symbols-outlined" style="font-size:16px;">lock</span>
+          <span data-i18n="lock_mgr">Lock manager</span>
+        </button>
       </p>
     </div>
   </section>
@@ -628,7 +1110,23 @@ const T = {
     deleted: 'Deleted', saved_toast: 'Saved', name_required: 'Name required',
     entry_saved: 'Entry saved', entry_deleted: 'Entry deleted',
     delete_entry_confirm: 'Delete this entry?',
-    manager_login: 'Manager', manager_role: 'Manager access · PIN required'
+    selected_worker: 'SELECTED WORKER', today: 'TODAY',
+    hours_log: 'Hours Log', safety_declaration: 'Safety Declaration',
+    brand_full: 'Foreman Portal', brand_sub_long: 'Site Attendance · LACC',
+    manager_mode_on: 'Manager mode', lock_manager: 'Lock',
+    hist_start_label: 'From', hist_end_label: 'To',
+    hist_foreman_label: 'Foreman', hist_foreman_all: 'All foremen',
+    hist_clear_label: 'Clear records older than', hist_clear_btn: 'Clear',
+    clear_old_confirm: 'Permanently delete {n} day(s) of records before {date}?',
+    clear_old_done: 'Cleared {n} day(s)', clear_old_empty: 'Pick a cutoff date first',
+    clear_old_none: 'No records older than {date}',
+    hist_export_label: 'Week ending', hist_export_btn: 'Export',
+    export_report: 'Export Report',
+    export_report_sub: 'Generate a weekly attendance PDF for the chosen week-ending date.',
+    hist_no_results: 'No entries in this range',
+    hist_group_count: '{n} entries',
+    history_title_mgr: 'All Attendance',
+    history_sub_mgr: 'All foremen · pick a date range below'
   },
   es: {
     brand: 'Registro de Foreman', switch_user: 'cambiar usuario',
@@ -695,7 +1193,23 @@ const T = {
     deleted: 'Eliminado', saved_toast: 'Guardado', name_required: 'Nombre requerido',
     entry_saved: 'Registro guardado', entry_deleted: 'Registro eliminado',
     delete_entry_confirm: '¿Eliminar este registro?',
-    manager_login: 'Gerente', manager_role: 'Acceso de gerente · PIN requerido'
+    selected_worker: 'TRABAJADOR SELECCIONADO', today: 'HOY',
+    hours_log: 'Registro de Horas', safety_declaration: 'Declaración de Seguridad',
+    brand_full: 'Portal Foreman', brand_sub_long: 'Asistencia · LACC',
+    manager_mode_on: 'Modo gerente', lock_manager: 'Bloquear',
+    hist_start_label: 'Desde', hist_end_label: 'Hasta',
+    hist_foreman_label: 'Foreman', hist_foreman_all: 'Todos los foremen',
+    hist_clear_label: 'Borrar registros anteriores a', hist_clear_btn: 'Borrar',
+    clear_old_confirm: '¿Eliminar permanentemente {n} día(s) de registros antes de {date}?',
+    clear_old_done: '{n} día(s) borrado(s)', clear_old_empty: 'Seleccione una fecha de corte primero',
+    clear_old_none: 'No hay registros anteriores a {date}',
+    hist_export_label: 'Semana terminando', hist_export_btn: 'Exportar',
+    export_report: 'Exportar Reporte',
+    export_report_sub: 'Genere un PDF de asistencia semanal para la fecha de fin de semana seleccionada.',
+    hist_no_results: 'No hay registros en este rango',
+    hist_group_count: '{n} registros',
+    history_title_mgr: 'Toda la Asistencia',
+    history_sub_mgr: 'Todos los foremen · seleccione un rango de fechas abajo'
   }
 };
 
@@ -722,7 +1236,7 @@ function fbRemove(path)     { return db.ref(`${NS}/${path}`).remove(); }
 // ── STATE ───────────────────────────────────────────────────────────────────
 const state = {
   lang: localStorage.getItem('lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
-  theme: localStorage.getItem('theme') || (window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
+  theme: localStorage.getItem('theme') || 'dark',
   profile: null,
   foremen: {},
   config: {
@@ -838,7 +1352,7 @@ function applyTheme(theme) {
   $$('#pref-theme .opt').forEach(o => o.classList.toggle('active', o.dataset.theme === theme));
   // Re-init signature pad pen color to match theme
   if (state.sigPad) {
-    state.sigPad.penColor = theme === 'dark' ? '#f4f4f5' : '#18181b';
+    state.sigPad.penColor = theme === 'dark' ? '#e7e0e8' : '#1d1b20';
   }
 }
 function initPrefs() {
@@ -856,6 +1370,7 @@ async function boot() {
     return;
   }
   await ensureSeed();
+  await ensureFausto();
   fbListen('config', cfg => {
     if (cfg) state.config = Object.assign(state.config, cfg);
     renderBrand();
@@ -870,13 +1385,13 @@ async function boot() {
 
   const saved = localStorage.getItem('foreman_profile');
   if (saved) { try { state.profile = JSON.parse(saved); } catch(e) {} }
+  // Legacy: older builds stored a '__manager__' pseudo-profile. Clear it so the user re-picks a real foreman.
+  if (state.profile?.id === '__manager__') {
+    localStorage.removeItem('foreman_profile');
+    state.profile = null;
+  }
   setTimeout(() => {
-    if (state.profile?.id === MANAGER_PROFILE_ID) {
-      // Refresh the display name in case the language changed since last login.
-      state.profile.name = t('manager_login');
-      localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
-      showApp();
-    } else if (state.profile && state.foremen[state.profile.id]) {
+    if (state.profile && state.foremen[state.profile.id]) {
       const fm = state.foremen[state.profile.id];
       state.profile.name = fm.name;
       state.profile.classification = fm.classification;
@@ -899,6 +1414,7 @@ async function ensureSeed() {
   const fm = await fbGet('foremen');
   if (!fm || Object.keys(fm).length === 0) {
     const seed = [
+      { name: 'Fausto',                    classification: 'Carpenter Foreman',       order: 0 },
       { name: 'Juan Sanchez',              classification: 'Carpenter Foreman',       order: 1 },
       { name: 'Alejandro Gutierrez',       classification: 'Carpenter Journeyman',    order: 2 },
       { name: 'Claudio Rosas Hernandez',   classification: 'Carpenter Journeyman',    order: 3 },
@@ -911,6 +1427,21 @@ async function ensureSeed() {
   }
 }
 
+async function ensureFausto() {
+  // Idempotent: adds Fausto to the roster if no foreman named "Fausto" exists.
+  const fm = await fbGet('foremen');
+  if (!fm) return;
+  const hasFausto = Object.values(fm).some(f =>
+    (f?.name || '').trim().toLowerCase() === 'fausto');
+  if (hasFausto) return;
+  await fbPush('foremen', {
+    name: 'Fausto',
+    classification: 'Carpenter Foreman',
+    order: 0,
+    active: true
+  });
+}
+
 function renderBrand() {
   $('#brand-sub').textContent = `${state.config.subcontractor} · ${state.config.projectName}`;
 }
@@ -921,58 +1452,53 @@ function hideNamePicker() { $('#overlay-namepicker').classList.remove('show'); }
 function showApp() {
   hideNamePicker();
   $('#g-name').textContent = state.profile.name.split(' ')[0];
-  if (isManagerMode()) {
-    document.body.classList.add('manager-mode');
-    // Jump straight to the Manager tab (the PIN gate still applies).
-    $$('#tabs button').forEach(x => x.classList.remove('active'));
-    $('#tabs button[data-tab="manager"]').classList.add('active');
-    $$('.panel').forEach(p => p.classList.remove('active'));
-    $('#panel-manager').classList.add('active');
-  } else {
-    document.body.classList.remove('manager-mode');
-    $('#signin-name').textContent = state.profile.name;
-    $('#signin-cls').textContent = state.profile.classification;
-    loadHistory();
-  }
+  $('#signin-name').textContent = state.profile.name;
+  $('#signin-cls').textContent = state.profile.classification || '';
+  updateManagerBadge();
+  loadHistory();
 }
-const MANAGER_PROFILE_ID = '__manager__';
 function renderNamePicker() {
   const grid = $('#name-grid');
   const list = Object.entries(state.foremen)
     .filter(([_, f]) => f.active)
     .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
-  const managerBtn = `
-    <button class="name-btn manager" data-id="${MANAGER_PROFILE_ID}">
-      <span>${escapeHtml(t('manager_login'))}</span>
-      <span class="cls">${escapeHtml(t('manager_role'))}</span>
-    </button>
-    <div class="name-divider"></div>`;
   if (list.length === 0) {
-    grid.innerHTML = managerBtn + `<p class="muted center small">${escapeHtml(t('no_foremen_user'))}</p>`;
+    grid.innerHTML = `<p class="muted center small">${escapeHtml(t('no_foremen_user'))}</p>`;
   } else {
-    grid.innerHTML = managerBtn + list.map(([id, f]) => `
-      <button class="name-btn" data-id="${id}">
-        <span>${escapeHtml(f.name)}</span>
-        <span class="cls">${escapeHtml(f.classification || '')}</span>
+    grid.innerHTML = list.map(([id, f]) => `
+      <button class="name-btn" data-id="${id}" type="button">
+        <span class="name-meta">
+          <span class="avatar"><span class="material-symbols-outlined">person</span></span>
+          <span class="text">
+            <span>${escapeHtml(f.name)}</span>
+            <span class="cls">${escapeHtml(f.classification || '')}</span>
+          </span>
+        </span>
+        <span class="material-symbols-outlined arrow">arrow_forward</span>
       </button>
     `).join('');
   }
   grid.querySelectorAll('.name-btn').forEach(btn => {
     btn.onclick = () => {
       const id = btn.dataset.id;
-      if (id === MANAGER_PROFILE_ID) {
-        state.profile = { id: MANAGER_PROFILE_ID, name: t('manager_login'), classification: '' };
-      } else {
-        const f = state.foremen[id];
-        state.profile = { id, name: f.name, classification: f.classification };
-      }
+      const f = state.foremen[id];
+      state.profile = { id, name: f.name, classification: f.classification };
       localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
       showApp();
     };
   });
 }
-function isManagerMode() { return state.profile?.id === MANAGER_PROFILE_ID; }
+function updateManagerBadge() {
+  const on = !!state.manager.unlocked;
+  $('#g-mgr-badge').classList.toggle('hidden', !on);
+  $('#g-mgr-lock').classList.toggle('hidden', !on);
+}
 $('#g-switch').onclick = () => showNamePicker();
+$('#g-mgr-lock').onclick = () => {
+  lockManager();
+  loadHistory();
+  updateManagerBadge();
+};
 
 // ── TABS ────────────────────────────────────────────────────────────────────
 function initTabs() {
@@ -983,8 +1509,8 @@ function initTabs() {
       const tab = b.dataset.tab;
       $$('.panel').forEach(p => p.classList.remove('active'));
       $(`#panel-${tab}`).classList.add('active');
-      if (tab === 'history') loadHistory();
-      if (tab === 'manager') refreshManagerView();
+      if (tab === 'history') { updateManagerBadge(); loadHistory(); }
+      if (tab === 'manager') { updateManagerBadge(); refreshManagerView(); }
     };
   });
 }
@@ -1030,13 +1556,16 @@ function initSignaturePad() {
   const canvas = $('#sig-canvas');
   resizeCanvas(canvas);
   state.sigPad = new SignaturePad(canvas, {
-    penColor: state.theme === 'dark' ? '#f4f4f5' : '#18181b',
+    penColor: state.theme === 'dark' ? '#e7e0e8' : '#1d1b20',
     minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
   });
-  // Only re-init the canvas if the rendered size actually changed. Browser
-  // resize events fire for many reasons (scrollbar appearing, focus changes,
-  // viewport keyboard, etc.) — clearing on every one wipes the user's signature
-  // mid-flow on desktop.
+  // Toggle placeholder visibility based on whether any strokes exist
+  state.sigPad.addEventListener('beginStroke', () => {
+    $('#sig-wrap').classList.add('has-stroke');
+  });
+  state.sigPad.addEventListener('endStroke', () => {
+    if (state.sigPad.isEmpty()) $('#sig-wrap').classList.remove('has-stroke');
+  });
   window.addEventListener('resize', () => resizeCanvas(canvas));
 }
 function resizeCanvas(c) {
@@ -1069,7 +1598,10 @@ function toggleSigMode() {
     $('#sig-clear').style.display = '';
   }
 }
-function clearSig() { if (state.sigPad) state.sigPad.clear(); }
+function clearSig() {
+  if (state.sigPad) state.sigPad.clear();
+  $('#sig-wrap').classList.remove('has-stroke');
+}
 
 async function submitSignIn() {
   if (!state.profile) { toast(t('pick_name_first'), 'error'); return; }
@@ -1118,38 +1650,115 @@ async function writeEntry(entry) {
 }
 
 // ── HISTORY ─────────────────────────────────────────────────────────────────
+function dateRangeInclusive(startStr, endStr) {
+  // Returns YYYY-MM-DD strings inclusive from startStr to endStr (assumes startStr <= endStr).
+  const out = [];
+  const start = parseYmd(startStr), end = parseYmd(endStr);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    out.push(ymd(d));
+  }
+  return out;
+}
+async function fetchHistory({ startDate, endDate, foremanFilter }) {
+  // foremanFilter === 'all' fetches every foreman per day; otherwise just that id.
+  const dates = dateRangeInclusive(startDate, endDate);
+  const entries = [];
+  await Promise.all(dates.map(async date => {
+    if (foremanFilter === 'all') {
+      const day = await fbGet(`attendance/${date}`);
+      if (day) {
+        for (const fid of Object.keys(day)) {
+          const fm = state.foremen[fid];
+          entries.push({
+            date, foremanId: fid,
+            foremanName: fm?.name || fid,
+            foremanCls: fm?.classification || '',
+            ...day[fid]
+          });
+        }
+      }
+    } else {
+      const e = await fbGet(`attendance/${date}/${foremanFilter}`);
+      if (e) {
+        const fm = state.foremen[foremanFilter];
+        entries.push({
+          date, foremanId: foremanFilter,
+          foremanName: fm?.name || foremanFilter,
+          foremanCls: fm?.classification || '',
+          ...e
+        });
+      }
+    }
+  }));
+  entries.sort((a, b) =>
+    b.date.localeCompare(a.date) || a.foremanName.localeCompare(b.foremanName));
+  return entries;
+}
+function renderHistRow(e, opts = {}) {
+  const d = parseYmd(e.date);
+  const isOff = e.signatureType === 'off';
+  const hrsLabel = (e.totalHours || 0).toFixed(2) + ' ' + t('hrs');
+  const injIcon = e.injured
+    ? `<span class="material-symbols-outlined" style="font-size:14px;color:var(--danger);vertical-align:middle;margin-right:4px;">warning</span>`
+    : '';
+  const timeRange = isOff
+    ? t('off_lower')
+    : `${injIcon}${e.timeIn || '—'} – ${e.timeOut || '—'}`;
+  const cls = `hist-item${isOff ? ' off' : ''}${opts.editable ? ' editable' : ''}`;
+  const attrs = opts.editable
+    ? ` data-fid="${escapeHtml(e.foremanId)}" data-date="${escapeHtml(e.date)}"`
+    : '';
+  return `<div class="${cls}"${attrs}>
+    <div class="left">
+      <div class="date">${fmtDateUS(e.date)} <span class="dow">${dayShort(d)}</span></div>
+      <div class="small muted">${timeRange}</div>
+    </div>
+    <div class="hrs">${isOff ? t('off_upper') : hrsLabel}</div>
+  </div>`;
+}
 async function loadHistory() {
   if (!state.profile) return;
   const list = $('#hist-list');
+  const totalsWrap = $('#week-totals');
+  const controls = $('#hist-mgr-controls');
+  const titleEl = $('#history-title');
+  const subEl = $('#history-sub');
   list.innerHTML = `<p class="muted center small">${escapeHtml(t('loading'))}</p>`;
-  const today = new Date();
-  const dates = [];
-  for (let i = 0; i < 30; i++) {
-    const d = new Date(today); d.setDate(today.getDate() - i); dates.push(ymd(d));
+
+  const exportCard = $('#hist-export-card');
+  if (state.manager.unlocked) {
+    controls.classList.remove('hidden');
+    if (exportCard) exportCard.classList.remove('hidden');
+    totalsWrap.classList.add('hidden');
+    titleEl.textContent = t('history_title_mgr');
+    subEl.textContent = t('history_sub_mgr');
+    ensureHistMgrDefaults();
+    populateHistForemanFilter();
+    const startDate = $('#hist-start').value;
+    const endDate = $('#hist-end').value;
+    const foremanFilter = $('#hist-foreman-filter').value || 'all';
+    const entries = await fetchHistory({ startDate, endDate, foremanFilter });
+    renderManagerHistory(entries);
+  } else {
+    controls.classList.add('hidden');
+    if (exportCard) exportCard.classList.add('hidden');
+    totalsWrap.classList.remove('hidden');
+    titleEl.textContent = t('history_title');
+    subEl.textContent = t('history_sub');
+    const today = new Date();
+    const start = new Date(today); start.setDate(today.getDate() - 29);
+    const entries = await fetchHistory({
+      startDate: ymd(start), endDate: ymd(today), foremanFilter: state.profile.id
+    });
+    renderPersonalHistory(entries, today);
   }
-  const entries = [];
-  await Promise.all(dates.map(async date => {
-    const e = await fbGet(`attendance/${date}/${state.profile.id}`);
-    if (e) entries.push({ date, ...e });
-  }));
-  entries.sort((a, b) => b.date.localeCompare(a.date));
+}
+function renderPersonalHistory(entries, today) {
+  const list = $('#hist-list');
   if (entries.length === 0) {
     list.innerHTML = `<p class="muted center small">${escapeHtml(t('no_history'))}</p>`;
   } else {
-    list.innerHTML = entries.map(e => {
-      const d = parseYmd(e.date);
-      const isOff = e.signatureType === 'off';
-      const hrsLabel = (e.totalHours || 0).toFixed(2) + ' ' + t('hrs');
-      const injLabel = e.injured ? ` · ${t('injury_reported')}` : '';
-      const timeRange = isOff ? t('off_lower') : `${e.timeIn} – ${e.timeOut}${injLabel}`;
-      return `<div class="hist-item ${isOff ? 'off' : ''}">
-        <div class="left">
-          <div class="date">${fmtDateUS(e.date)} <span class="dow">${dayShort(d)}</span></div>
-          <div class="small muted">${escapeHtml(timeRange)}</div>
-        </div>
-        <div class="hrs">${isOff ? t('off_upper') : hrsLabel}</div>
-      </div>`;
-    }).join('');
+    list.innerHTML = entries.map(e => renderHistRow(e)).join('');
   }
   const totalsWrap = $('#week-totals');
   const weeks = [];
@@ -1169,6 +1778,70 @@ async function loadHistory() {
     </div>
   `).join('');
 }
+function renderManagerHistory(entries) {
+  const list = $('#hist-list');
+  if (entries.length === 0) {
+    list.innerHTML = `<p class="muted center small">${escapeHtml(t('hist_no_results'))}</p>`;
+    return;
+  }
+  const groups = new Map();
+  for (const e of entries) {
+    if (!groups.has(e.foremanId)) groups.set(e.foremanId, { name: e.foremanName, rows: [] });
+    groups.get(e.foremanId).rows.push(e);
+  }
+  const sortedGroups = [...groups.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
+  list.innerHTML = sortedGroups.map(([fid, g]) => `
+    <div class="hist-group-header">
+      ${escapeHtml(g.name)}
+      <span class="count">${t('hist_group_count').replace('{n}', g.rows.length)}</span>
+    </div>
+    ${g.rows.map(e => renderHistRow(e, { editable: true })).join('')}
+  `).join('');
+  list.querySelectorAll('.hist-item.editable').forEach(node => {
+    node.onclick = () => openEntryEditor(node.dataset.fid, node.dataset.date);
+  });
+}
+function ensureHistMgrDefaults() {
+  const today = new Date();
+  const start = new Date(today); start.setDate(today.getDate() - 29);
+  if (!$('#hist-start').value) $('#hist-start').value = ymd(start);
+  if (!$('#hist-end').value) $('#hist-end').value = ymd(today);
+  if (!$('#hist-export-week-end').value) {
+    $('#hist-export-week-end').value = ymd(weekEndingFor(today));
+  }
+}
+function populateHistForemanFilter() {
+  const sel = $('#hist-foreman-filter');
+  const current = sel.value;
+  const list = Object.entries(state.foremen)
+    .sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+  sel.innerHTML = `<option value="all">${escapeHtml(t('hist_foreman_all'))}</option>` +
+    list.map(([id, f]) => `<option value="${escapeHtml(id)}">${escapeHtml(f.name)}</option>`).join('');
+  if (current && (current === 'all' || state.foremen[current])) sel.value = current;
+}
+async function clearOldRecords() {
+  const cutoff = $('#hist-clear-cutoff').value;
+  if (!cutoff) { toast(t('clear_old_empty'), 'error'); return; }
+  const node = await fbGet('attendance');
+  const targets = Object.keys(node || {}).filter(d => d < cutoff);
+  if (targets.length === 0) {
+    toast(t('clear_old_none').replace('{date}', fmtDateUS(cutoff)), 'error');
+    return;
+  }
+  const msg = t('clear_old_confirm')
+    .replace('{n}', targets.length)
+    .replace('{date}', fmtDateUS(cutoff));
+  if (!confirm(msg)) return;
+  await Promise.all(targets.map(d => fbSet('attendance/' + d, null)));
+  toast(t('clear_old_done').replace('{n}', targets.length), 'success');
+  loadHistory();
+}
+function exportPdfFromHistory() {
+  const v = $('#hist-export-week-end').value;
+  if (!v) { toast(t('pick_week_first'), 'error'); return; }
+  state.manager.weekEnd = parseYmd(v);
+  exportPDF('week');
+}
 
 // ── MANAGER ─────────────────────────────────────────────────────────────────
 function initManager() {
@@ -1182,6 +1855,7 @@ function initManager() {
       const sat = weekEndingFor(new Date());
       $('#export-week-end').value = ymd(sat);
       onWeekEndChange();
+      updateManagerBadge();
     } else { toast(t('incorrect_pin'), 'error'); }
   };
   $('#mgr-pin').onkeydown = e => { if (e.key === 'Enter') $('#mgr-unlock').click(); };
@@ -1197,11 +1871,18 @@ function initManager() {
   $('#entry-cancel').onclick = () => $('#overlay-entry').classList.remove('show');
   $('#entry-save').onclick = saveEntryEditor;
   $('#entry-delete').onclick = deleteEntry;
+  // History tab manager controls
+  $('#hist-start').onchange = loadHistory;
+  $('#hist-end').onchange = loadHistory;
+  $('#hist-foreman-filter').onchange = loadHistory;
+  $('#btn-hist-clear').onclick = clearOldRecords;
+  $('#btn-hist-export-week').onclick = exportPdfFromHistory;
 }
 function lockManager() {
   state.manager.unlocked = false;
   $('#mgr-locked').classList.remove('hidden');
   $('#mgr-unlocked').classList.add('hidden');
+  updateManagerBadge();
 }
 function refreshManagerView() {
   if (state.manager.unlocked) {
@@ -1357,12 +2038,13 @@ function renderWeekGrid() {
     td.onclick = () => openEntryEditor(td.dataset.fid, td.dataset.date);
   });
 }
-function openEntryEditor(fid, date) {
+async function openEntryEditor(fid, date) {
   const f = state.foremen[fid];
-  const e = state.manager.weekData?.[date]?.[fid] || {};
+  let e = state.manager.weekData?.[date]?.[fid];
+  if (!e) e = (await fbGet(`attendance/${date}/${fid}`)) || {};
   state.manager.editingForemanId = fid;
   state.manager.editingEntry = { date };
-  $('#entry-title').textContent = f.name;
+  $('#entry-title').textContent = f?.name || fid;
   $('#entry-sub').textContent = `${dayOfWeek(parseYmd(date))} · ${fmtDateUS(date)}`;
   $('#entry-tin').value = e.timeIn || '';
   $('#entry-tout').value = e.timeOut || '';
@@ -1371,6 +2053,9 @@ function openEntryEditor(fid, date) {
   $('#entry-injured').value = String(!!e.injured);
   $('#entry-delete').style.display = e.signatureType ? '' : 'none';
   $('#overlay-entry').classList.add('show');
+}
+function isHistoryPanelActive() {
+  return $('#panel-history').classList.contains('active');
 }
 async function saveEntryEditor() {
   const fid = state.manager.editingForemanId;
@@ -1391,8 +2076,8 @@ async function saveEntryEditor() {
   }
   await fbSet(`attendance/${date}/${fid}`, entry);
   $('#overlay-entry').classList.remove('show');
-  await loadWeekData();
-  renderWeekGrid();
+  if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); }
+  if (isHistoryPanelActive()) loadHistory();
   toast(t('entry_saved'), 'success');
 }
 async function deleteEntry() {
@@ -1401,8 +2086,8 @@ async function deleteEntry() {
   if (!confirm(t('delete_entry_confirm'))) return;
   await fbRemove(`attendance/${date}/${fid}`);
   $('#overlay-entry').classList.remove('show');
-  await loadWeekData();
-  renderWeekGrid();
+  if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); }
+  if (isHistoryPanelActive()) loadHistory();
   toast(t('entry_deleted'), 'success');
 }
 
