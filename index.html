@@ -4,9 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)" />
-<meta name="theme-color" content="#f7f7f8" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#F5EFE4" />
 <title>Foreman Sign-In · Webcor Concrete</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='15' fill='%23F5EFE4'/><g fill='%23D97706'><circle cx='25' cy='16' r='4.2'/><circle cx='22.36' cy='22.36' r='4.2'/><circle cx='16' cy='25' r='4.2'/><circle cx='9.64' cy='22.36' r='4.2'/><circle cx='7' cy='16' r='4.2'/><circle cx='9.64' cy='9.64' r='4.2'/><circle cx='16' cy='7' r='4.2'/><circle cx='22.36' cy='9.64' r='4.2'/></g><circle cx='16' cy='16' r='4' fill='%233A2E1F'/></svg>" />
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
@@ -14,1028 +14,774 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
-<!-- Mictlán theme: fonts + icons -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,200..700,0..1,-50..200&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500;1,6..72,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,200..700,0..1,-50..200&display=swap" rel="stylesheet" />
 
 <style>
-  :root {
-    /* Mictlán dark — default look */
-    --bg: #0f0d13;
-    --surface: #1d1b20;
-    --surface-2: #211f24;
-    --surface-3: #2c292f;
-    --surface-4: #36343a;
-    --line: #494550;
-    --line-strong: #494550;
-    --text: #e7e0e8;
-    --muted: #cbc4d2;
-    --outline: #958e9c;
-    --accent: #d3bbff;          /* primary purple */
-    --accent-hover: #ebddff;
-    --accent-on: #3b1d71;
-    --accent-soft: rgba(211,187,255,0.12);
-    --accent-container: #4c2f82;
-    --on-accent-container: #ebddff;
-    --secondary: #ffb874;       /* marigold */
-    --secondary-container: #e38401;
-    --on-secondary-container: #4e2a00;
-    --tertiary: #00a19a;        /* turquoise */
-    --tertiary-soft: rgba(0,161,154,0.16);
-    --success: #10b981;
-    --success-soft: rgba(16,185,129,0.12);
-    --warn: #e38401;
-    --danger: #ffb4ab;
-    --danger-soft: rgba(255,180,171,0.10);
-    --error-container: #93000a;
-    --on-error-container: #ffdad6;
-    --radius: 16px;
-    --radius-sm: 8px;
-    --radius-lg: 24px;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
-    --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
-    --glow-primary: 0 0 24px rgba(211,187,255,0.18);
-    --glow-secondary: 0 0 20px rgba(227,132,1,0.30);
-    --sig-line: #e7e0e8;
-  }
-  /* Light alt — kept available via the existing theme toggle. Soft Mictlán day variant. */
-  html[data-theme="light"] {
-    --bg: #f7f4fb;
-    --surface: #ffffff;
-    --surface-2: #f3eef8;
-    --surface-3: #ece4f3;
-    --surface-4: #ddd1ea;
-    --line: #d6cde0;
-    --line-strong: #b9aec5;
-    --text: #1d1b20;
-    --muted: #5d5764;
-    --outline: #7b7385;
-    --accent: #533689;
-    --accent-hover: #3b1d71;
-    --accent-on: #ffffff;
-    --accent-soft: rgba(83,54,137,0.10);
-    --accent-container: #ebddff;
-    --on-accent-container: #533689;
-    --secondary: #b35a00;
-    --secondary-container: #ffdcbf;
-    --on-secondary-container: #2d1600;
-    --tertiary: #00766f;
-    --tertiary-soft: rgba(0,118,111,0.10);
-    --success: #047857;
-    --success-soft: rgba(4,120,87,0.10);
-    --warn: #b35a00;
-    --danger: #b3261e;
-    --danger-soft: rgba(179,38,30,0.08);
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
-    --glow-primary: 0 0 12px rgba(83,54,137,0.18);
-    --glow-secondary: 0 0 12px rgba(179,90,0,0.25);
-    --sig-line: #1d1b20;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body {
-    margin: 0; padding: 0;
-    font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
-    color: var(--text);
-    background: var(--bg);
-    font-size: 16px;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-  }
-  body {
-    min-height: 100dvh;
-    padding-bottom: calc(72px + env(safe-area-inset-bottom));
-    position: relative;
-  }
-  /* Ambient atmospheric glow */
-  body::before {
-    content: ""; position: fixed; inset: 0; z-index: 0;
-    background: radial-gradient(ellipse at top, rgba(211,187,255,0.07) 0%, transparent 55%);
-    pointer-events: none;
-  }
-  .material-symbols-outlined {
-    font-family: "Material Symbols Outlined";
-    font-weight: 400; font-style: normal; line-height: 1;
-    letter-spacing: normal; text-transform: none; display: inline-block;
-    white-space: nowrap; word-wrap: normal; direction: ltr;
-    font-feature-settings: "liga"; -webkit-font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
-    user-select: none;
-  }
-  .icon-fill { font-variation-settings: "FILL" 1, "wght" 500, "GRAD" 0, "opsz" 24; }
+/* ============================================================
+   Foreman Sign-In · Design Tokens — Webcor Concrete × Mictlán
+   ============================================================ */
+:root {
+  --webcor-green: #009A5C;
+  --webcor-green-deep: #006B3F;
+  --webcor-green-ink: #003B22;
+  --terracotta: #B23A48;
+  --marigold:   #D97706;
+  --marigold-soft: #F5C56A;
+  --teal-deep:  #0F4C5C;
+  --cocoa:      #3A2E1F;
+  --cream:      #F5EFE4;
+  --paper:      #FBF8F2;
+  --paper-2:    #FFFFFF;
+  --hairline:   #E8DFCF;
+  --hairline-2: #D8CCB4;
+  --ink:        #1A1410;
+  --ink-2:      #4A3F33;
+  --ink-mute:   #8A7B68;
+  --ink-on-dark:#F7F1E3;
+  --success:    var(--webcor-green);
+  --warning:    var(--marigold);
+  --danger:     var(--terracotta);
+  --info:       var(--teal-deep);
+  --r-xs: 6px; --r-sm: 10px; --r-md: 14px; --r-lg: 20px; --r-xl: 28px;
+  --shadow-1: 0 1px 0 rgba(58,46,31,0.04), 0 1px 2px rgba(58,46,31,0.06);
+  --shadow-2: 0 2px 4px rgba(58,46,31,0.06), 0 8px 24px rgba(58,46,31,0.08);
+  --shadow-3: 0 4px 8px rgba(58,46,31,0.08), 0 16px 40px rgba(58,46,31,0.12);
+  --font-display: "Newsreader", "Source Serif 4", Georgia, serif;
+  --font-ui: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+}
+.fs-app, .fs-app * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
+.fs-app {
+  font-family: var(--font-ui); color: var(--ink); background: var(--cream);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  line-height: 1.45; min-height: 100dvh;
+}
+.fs-app button { font-family: inherit; cursor: pointer; }
+.fs-app input, .fs-app select, .fs-app textarea { font-family: inherit; color: inherit; }
+.fs-app :focus { outline: none; }
+.fs-app button:focus-visible,
+.fs-app a:focus-visible { box-shadow: 0 0 0 4px rgba(0, 154, 92, 0.22); border-radius: var(--r-md); }
+.fs-app .fs-tab:focus-visible { box-shadow: 0 0 0 3px rgba(0, 154, 92, 0.22); }
+.fs-app .pin-key:focus-visible { box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.30); }
+.fs-app .wp-tile:focus-visible { box-shadow: 0 0 0 4px rgba(0, 154, 92, 0.22), var(--shadow-2); border-color: var(--hairline-2); }
+.fs-app .safety-opt:focus-visible { box-shadow: 0 0 0 4px rgba(0, 154, 92, 0.18); }
+.fs-app .roster-toggle:focus-visible { box-shadow: 0 0 0 3px rgba(0, 154, 92, 0.30); }
+.fs-app .fs-input:focus-visible, .fs-app .fs-select:focus-visible { /* handled by .fs-input:focus */ }
+.material-symbols-rounded {
+  font-family: "Material Symbols Rounded"; font-weight: 400; font-style: normal;
+  line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block;
+  white-space: nowrap; direction: ltr; -webkit-font-smoothing: antialiased;
+  font-variation-settings: "FILL" 0, "wght" 500, "GRAD" 0, "opsz" 24; user-select: none;
+}
 
-  /* Desktop offset for the fixed left rail nav */
-  @media (min-width: 900px) {
-    body { padding-bottom: env(safe-area-inset-bottom); padding-left: 240px; }
-    header.app { padding-left: 32px; }
-  }
+/* Bilingual label */
+.fs-label { display: flex; flex-direction: column; gap: 1px; margin-bottom: 8px; }
+.fs-label .es { font-family: var(--font-display); font-style: italic; font-size: 13px; color: var(--marigold); letter-spacing: 0.01em; }
+.fs-label .en { font-family: var(--font-ui); font-size: 12px; font-weight: 600; color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.08em; }
 
-  /* Header */
-  header.app {
-    position: sticky; top: 0; z-index: 30;
-    background: rgba(15,13,19,0.78); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--line);
-    padding: 12px 16px;
-    padding-top: max(12px, env(safe-area-inset-top));
-    box-shadow: 0 0 24px rgba(211,187,255,0.04);
-  }
-  html[data-theme="light"] header.app { background: rgba(255,255,255,0.85); }
-  header.app .row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  }
-  .brand {
-    display: flex; align-items: center; gap: 10px;
-    font-weight: 700; font-size: 17px; letter-spacing: -0.01em; color: var(--accent);
-    text-shadow: 0 0 8px rgba(211,187,255,0.30);
-  }
-  .brand small {
-    color: var(--muted); font-weight: 500; font-size: 12px;
-    display: block; margin-top: 1px;
-    text-shadow: none;
-  }
-  .brand .brand-icon {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: var(--accent-container); color: var(--on-accent-container);
-    display: inline-flex; align-items: center; justify-content: center;
-    box-shadow: 0 0 12px rgba(211,187,255,0.30);
-  }
-  .greeting { text-align: right; font-size: 14px; line-height: 1.2; }
-  .greeting strong { display: block; font-weight: 600; color: var(--text); }
-  .greeting .switch { color: var(--accent); font-size: 12px; cursor: pointer; user-select: none; }
-  .greeting .switch:hover { text-decoration: underline; text-shadow: 0 0 6px rgba(211,187,255,0.6); }
+/* Atoms */
+.fs-card { background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--r-lg); box-shadow: var(--shadow-1); }
+.fs-card-pad { padding: 20px; }
+.fs-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 48px; padding: 0 18px; border-radius: var(--r-md); font-weight: 600;
+  font-size: 15px; border: 1px solid transparent;
+  transition: transform .06s ease, background .15s ease, border-color .15s ease; white-space: nowrap;
+}
+.fs-btn:active { transform: translateY(1px); }
+.fs-btn:disabled { opacity: .5; cursor: not-allowed; }
+.fs-btn--primary { background: var(--webcor-green); color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,0.06), inset 0 -1px 0 rgba(0,0,0,0.12); }
+.fs-btn--primary:hover { background: var(--webcor-green-deep); }
+.fs-btn--ghost { background: transparent; color: var(--ink); border-color: var(--hairline-2); }
+.fs-btn--ghost:hover { background: var(--paper-2); }
+.fs-btn--marigold { background: var(--marigold); color: #fff; }
+.fs-btn--lg { height: 56px; padding: 0 22px; font-size: 16px; border-radius: var(--r-lg); }
+.fs-btn--full { width: 100%; }
+.fs-input, .fs-select {
+  height: 48px; width: 100%; padding: 0 14px; background: var(--paper-2);
+  border: 1px solid var(--hairline-2); border-radius: var(--r-md); font-size: 15px; color: var(--ink);
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.fs-input:focus, .fs-select:focus { outline: none; border-color: var(--webcor-green); box-shadow: 0 0 0 4px rgba(0,154,92,0.12); }
+.fs-chip {
+  display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px;
+  border-radius: 999px; background: var(--paper-2); border: 1px solid var(--hairline-2);
+  font-size: 12px; font-weight: 600; color: var(--ink-2); white-space: nowrap;
+}
+.fs-chip--green { background: rgba(0,154,92,0.08); border-color: rgba(0,154,92,0.24); color: var(--webcor-green-ink); }
+.fs-chip--marigold { background: rgba(217,119,6,0.10); border-color: rgba(217,119,6,0.28); color: #8A4A03; }
+.fs-chip--terracotta { background: rgba(178,58,72,0.08); border-color: rgba(178,58,72,0.24); color: #7A2533; }
+.fs-chip--teal { background: rgba(15,76,92,0.08); border-color: rgba(15,76,92,0.22); color: var(--teal-deep); }
+.fs-divider { height: 1px; background: linear-gradient(to right, transparent, var(--hairline-2), transparent); margin: 16px 0; }
+.fs-greca {
+  height: 10px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 10'><path d='M0 9 H4 V5 H8 V1 H16 V5 H20 V9 H24' fill='none' stroke='%23D97706' stroke-width='1.4' stroke-linecap='square' stroke-linejoin='miter'/></svg>");
+  background-repeat: repeat-x; background-size: 24px 10px; opacity: 0.7;
+}
 
-  /* Preference pills (lang + theme) */
-  .prefs-row {
-    display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end;
-  }
-  .pref-pill {
-    display: inline-flex; align-items: center; gap: 0;
-    padding: 2px; border: 1px solid var(--line);
-    background: var(--surface); border-radius: 999px;
-    cursor: pointer; font-size: 11px; font-family: inherit;
-    color: var(--muted); user-select: none;
-  }
-  .pref-pill .opt {
-    padding: 4px 10px; border-radius: 999px;
-    transition: background 120ms, color 120ms;
-    font-weight: 600; letter-spacing: 0.04em;
-  }
-  .pref-pill .opt.active { background: var(--accent); color: var(--accent-on); }
+/* Screens / panels */
+.screen { display: none; }
+.screen.active { display: block; }
+.panel { display: none; }
+.panel.active { display: block; }
+.ds-main.active { display: flex; }
+.fs-main { max-width: 1180px; margin: 0 auto; width: 100%; }
+.hidden { display: none !important; }
 
-  /* Tabs — desktop side-nav style + mobile bottom nav. The same <nav class="tabs"> element renders into either depending on viewport. */
-  nav.tabs {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 40;
-    display: flex; gap: 4px; padding: 8px 12px max(8px, env(safe-area-inset-bottom));
-    background: rgba(15,13,19,0.92); backdrop-filter: blur(12px);
-    border-top: 1px solid var(--line);
-    justify-content: space-around;
-  }
-  html[data-theme="light"] nav.tabs { background: rgba(255,255,255,0.95); }
-  nav.tabs button {
-    flex: 1 1 0; min-width: 0;
-    padding: 8px 6px; border: 0; background: transparent;
-    color: var(--muted); font-weight: 600; font-size: 11px;
-    border-radius: var(--radius-sm); cursor: pointer;
-    transition: all 150ms;
-    font-family: inherit;
-    display: flex; flex-direction: column; align-items: center; gap: 4px;
-    letter-spacing: 0.05em; text-transform: uppercase;
-  }
-  nav.tabs button .nav-icon { font-size: 22px; }
-  nav.tabs button.active {
-    color: var(--on-accent-container); background: var(--accent-container);
-    box-shadow: 0 0 14px rgba(76,47,130,0.45);
-  }
-  nav.tabs button.active .nav-icon { font-variation-settings: "FILL" 1, "wght" 500; }
-  nav.tabs button:not(.active):hover { background: var(--surface-3); color: var(--text); }
+/* ---------- Header ---------- */
+.fs-header { background: var(--paper); border-bottom: 1px solid var(--hairline); position: sticky; top: 0; z-index: 30; }
+.fs-header__picado { padding: 0 24px; margin-bottom: -8px; overflow: hidden; }
+.fs-header__bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 28px 16px; max-width: 1180px; margin: 0 auto; }
+.fs-header__brand { display: flex; align-items: center; gap: 18px; min-width: 0; }
+.fs-header__logo { height: 34px; width: auto; display: block; }
+.fs-header__project { padding-left: 18px; border-left: 1px solid var(--hairline-2); min-width: 0; }
+.fs-header__project-name { font-family: var(--font-display); font-size: 19px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; line-height: 1.15; }
+.fs-header__project-meta { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+.fs-header__right { display: flex; align-items: center; gap: 14px; }
+.fs-header__nav { display: flex; gap: 6px; background: var(--cream); padding: 4px; border-radius: 999px; border: 1px solid var(--hairline); }
+.fs-tab { display: flex; flex-direction: column; align-items: center; padding: 8px 18px; border-radius: 999px; background: transparent; border: none; color: var(--ink-2); transition: background .15s ease; min-width: 88px; }
+.fs-tab:hover { background: rgba(0,0,0,0.03); }
+.fs-tab.is-active { background: var(--paper-2); box-shadow: var(--shadow-1); }
+.fs-tab.is-active .fs-tab__es { color: var(--marigold); }
+.fs-tab.is-active .fs-tab__en { color: var(--ink); }
+.fs-tab__es { font-family: var(--font-display); font-style: italic; font-size: 13px; line-height: 1.1; color: var(--ink-mute); }
+.fs-tab__en { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); line-height: 1.2; }
+.fs-header__switch { background: transparent; border: none; color: var(--ink-mute); font-size: 12px; font-weight: 600; display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.15; }
+.fs-header__switch .es { font-family: var(--font-display); font-style: italic; color: var(--marigold); }
+.fs-header__switch:hover { color: var(--ink); }
+.fs-header__greca { padding: 0 28px 8px; }
 
-  /* Desktop: tabs become a fixed left side rail */
-  @media (min-width: 900px) {
-    nav.tabs {
-      position: fixed; top: 0; left: 0; bottom: 0; right: auto;
-      width: 240px; flex-direction: column; gap: 6px; padding: 88px 12px 24px;
-      background: var(--surface-2); backdrop-filter: none;
-      border-top: 0; border-right: 1px solid var(--line);
-      justify-content: flex-start;
-      z-index: 31;
-    }
-    nav.tabs::before {
-      content: "FOREMAN PORTAL";
-      position: absolute; top: 28px; left: 24px;
-      color: var(--accent); font-weight: 700; font-size: 18px;
-      letter-spacing: 0.02em;
-      text-shadow: 0 0 12px rgba(211,187,255,0.30);
-    }
-    nav.tabs::after {
-      content: "Site Attendance";
-      position: absolute; top: 54px; left: 24px;
-      color: var(--muted); font-size: 12px; font-weight: 500;
-      letter-spacing: 0.04em;
-    }
-    nav.tabs button {
-      flex: 0 0 auto; flex-direction: row; justify-content: flex-start;
-      gap: 14px; padding: 12px 14px; font-size: 14px;
-      text-transform: none; letter-spacing: 0; text-align: left;
-      border-radius: 10px;
-    }
-    nav.tabs button .nav-icon { font-size: 22px; }
-    nav.tabs button.active {
-      border-left: 4px solid var(--secondary);
-      padding-left: 10px;
-      box-shadow: 0 0 18px rgba(227,132,1,0.25);
-      background: var(--secondary-container);
-      color: var(--on-secondary-container);
-    }
-  }
+/* ---------- Worker picker ---------- */
+.wp-main { padding: 28px; }
+.wp-intro { margin-bottom: 22px; max-width: 720px; }
+.wp-intro__kicker { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); font-style: italic; font-size: 14px; color: var(--marigold); margin-bottom: 6px; }
+.wp-intro__title { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 34px; line-height: 1.1; letter-spacing: -0.02em; color: var(--ink); display: flex; flex-direction: column; gap: 2px; }
+.wp-intro__en { font-family: var(--font-ui); font-size: 16px; font-weight: 500; color: var(--ink-mute); letter-spacing: 0; }
+.wp-intro__meta { margin: 14px 0 0; color: var(--ink-mute); font-size: 13px; }
+.wp-intro__sep { margin: 0 8px; color: var(--hairline-2); }
+.wp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.wp-tile { position: relative; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 14px; padding: 16px; background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--r-lg); text-align: left; color: var(--ink); transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease; overflow: hidden; }
+.wp-tile::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent, var(--marigold)); }
+.wp-tile:hover { box-shadow: var(--shadow-2); border-color: var(--hairline-2); transform: translateY(-1px); }
+.wp-tile.is-marigold { --accent: var(--marigold); }
+.wp-tile.is-terracotta { --accent: var(--terracotta); }
+.wp-tile.is-teal { --accent: var(--teal-deep); }
+.wp-tile.is-cocoa { --accent: var(--cocoa); }
+.wp-tile.is-green { --accent: var(--webcor-green); }
+.wp-tile.is-checked { background: linear-gradient(180deg, rgba(0,154,92,0.04), var(--paper)); border-color: rgba(0,154,92,0.30); }
+.wp-tile__avatar { position: relative; width: 56px; height: 56px; border-radius: 50%; background: var(--cream); color: var(--accent, var(--marigold)); display: grid; place-items: center; font-family: var(--font-display); font-weight: 600; font-size: 19px; letter-spacing: 0.02em; }
+.wp-tile__avatar span { position: relative; z-index: 1; color: var(--accent, var(--marigold)); }
+.wp-tile__petal { position: absolute; inset: 0; }
+.wp-tile__body { min-width: 0; }
+.wp-tile__name { font-weight: 600; font-size: 15px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wp-tile__role { font-size: 12px; color: var(--ink-mute); margin-top: 2px; font-family: var(--font-display); font-style: italic; }
+.wp-tile__status { margin-top: 6px; font-size: 12px; font-weight: 600; color: var(--webcor-green-ink); display: inline-flex; align-items: center; gap: 6px; }
+.wp-tile__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--webcor-green); box-shadow: 0 0 0 3px rgba(0,154,92,0.18); }
+.wp-tile__arrow { color: var(--ink-mute); font-size: 20px; transition: transform .15s ease, color .15s ease; }
+.wp-tile:hover .wp-tile__arrow { transform: translateX(2px); color: var(--accent, var(--marigold)); }
+.wp-foot { margin-top: 28px; padding-top: 18px; border-top: 1px dashed var(--hairline-2); display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.wp-foot__left { display: flex; align-items: center; gap: 12px; }
+.wp-foot__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--webcor-green); box-shadow: 0 0 0 3px rgba(0,154,92,0.20); animation: wpPulse 1.8s ease-in-out infinite; }
+@keyframes wpPulse { 0%,100% { box-shadow: 0 0 0 3px rgba(0,154,92,0.20); } 50% { box-shadow: 0 0 0 6px rgba(0,154,92,0.05); } }
+.wp-foot__meta { font-size: 13px; color: var(--ink-mute); }
+.wp-skel { background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 16px; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 14px; height: 88px; }
+.wp-skel__avatar { width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(110deg, var(--cream) 25%, var(--hairline) 50%, var(--cream) 75%); background-size: 200% 100%; animation: shimmer 1.4s ease-in-out infinite; }
+.wp-skel__bar { height: 12px; background: linear-gradient(110deg, var(--cream) 25%, var(--hairline) 50%, var(--cream) 75%); background-size: 200% 100%; animation: shimmer 1.4s ease-in-out infinite; border-radius: 4px; margin-bottom: 8px; }
+.wp-skel__bar--sm { width: 60%; height: 10px; margin-bottom: 0; }
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-  /* Layout */
-  main { max-width: 760px; margin: 0 auto; padding: 24px 16px; width: 100%; }
-  @media (min-width: 900px) { main { padding: 40px 32px; } }
-  .panel { display: none; }
-  .panel.active { display: block; }
-  .card {
-    background: var(--surface-2); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 20px 18px;
-    box-shadow: var(--shadow-sm); margin-bottom: 20px;
-    position: relative; overflow: hidden;
-  }
-  .card::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0.55;
-  }
-  .card h2 {
-    margin: 0 0 4px 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
-    color: var(--text);
-  }
-  .card .sub { color: var(--muted); font-size: 15px; margin-bottom: 18px; line-height: 1.45; }
-  .row-flex { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-  .row-flex.between { justify-content: space-between; }
+/* ---------- Daily sign-in ---------- */
+.ds-main { padding: 24px 28px 32px; flex-direction: column; gap: 18px; }
+.ds-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+.ds-bottom-meta { margin-top: 4px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 14px; border-top: 1px dashed var(--hairline-2); }
+.ds-bottom-meta__hint { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-mute); font-family: var(--font-display); font-style: italic; }
+.greet-card { position: relative; background: linear-gradient(180deg, #FFFDF7 0%, var(--paper) 100%); border: 1px solid var(--hairline); border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--shadow-2); }
+.greet-card__bg { position: absolute; top: -40px; right: -40px; pointer-events: none; }
+.greet-card__picado { padding: 0 16px; }
+.greet-card__inner { position: relative; padding: 8px 28px 24px; display: grid; grid-template-columns: 72px 1fr auto; gap: 20px; align-items: center; }
+.greet-card__avatar { width: 72px; height: 72px; border-radius: 50%; background: var(--cream); border: 1px solid var(--hairline-2); display: grid; place-items: center; font-family: var(--font-display); font-weight: 600; font-size: 26px; color: var(--cocoa); position: relative; }
+.greet-card__avatar::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 1px dashed var(--marigold); opacity: 0.4; }
+.greet-card__body { min-width: 0; }
+.greet-card__kicker { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-display); font-style: italic; font-size: 13px; color: var(--marigold); margin-bottom: 2px; }
+.greet-card__name { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; line-height: 1.05; letter-spacing: -0.02em; color: var(--ink); }
+.greet-card__role { margin-top: 4px; font-family: var(--font-display); font-style: italic; font-size: 14px; color: var(--teal-deep); }
+.greet-card__date { margin-top: 8px; font-size: 13px; color: var(--ink-mute); }
+.greet-card__es { font-family: var(--font-display); font-style: italic; color: var(--ink-2); }
+.greet-card__sep { margin: 0 8px; color: var(--hairline-2); }
+.greet-card__dateinput { height: 38px; max-width: 190px; margin-top: 8px; font-size: 13px; }
+.greet-card__chips { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+.greet-card__livedot { width: 6px; height: 6px; border-radius: 50%; background: var(--webcor-green); }
+.ds-card { background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 22px; box-shadow: var(--shadow-1); }
+.ds-card__head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+.ds-card__es { font-family: var(--font-display); font-style: italic; font-size: 13px; color: var(--marigold); }
+.ds-card__title { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
+.hours-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.hours-input { position: relative; }
+.hours-input__icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--marigold); font-size: 16px; z-index: 1; }
+.hours-input .fs-input { padding-left: 36px; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0.02em; }
+.hours-total__display { height: 48px; padding: 0 14px; border-radius: var(--r-md); background: linear-gradient(135deg, rgba(217,119,6,0.10), rgba(0,154,92,0.08)); border: 1px solid var(--hairline-2); display: flex; align-items: baseline; gap: 6px; }
+.hours-total__num { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.hours-total__unit { font-size: 13px; color: var(--ink-mute); }
+.safety-q { margin: 0 0 14px; display: flex; flex-direction: column; gap: 2px; }
+.safety-q__es { font-family: var(--font-display); font-style: italic; font-size: 15px; color: var(--ink-2); }
+.safety-q__en { font-size: 13px; color: var(--ink-mute); }
+.safety-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.safety-opt { display: flex; align-items: center; gap: 14px; padding: 14px 16px; min-height: 64px; background: var(--paper-2); border: 1.5px solid var(--hairline-2); border-radius: var(--r-md); text-align: left; color: var(--ink-2); transition: all .15s ease; }
+.safety-opt__mark { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--cream); color: var(--ink-mute); font-weight: 700; flex-shrink: 0; }
+.safety-opt__en { font-weight: 600; font-size: 15px; color: var(--ink); }
+.safety-opt__es { font-family: var(--font-display); font-style: italic; font-size: 12px; color: var(--ink-mute); }
+.safety-opt.is-active { background: rgba(0,154,92,0.06); border-color: var(--webcor-green); }
+.safety-opt.is-active .safety-opt__mark { background: var(--webcor-green); color: #fff; }
+.safety-opt.is-danger.is-active { background: rgba(178,58,72,0.06); border-color: var(--terracotta); }
+.safety-opt.is-danger.is-active .safety-opt__mark { background: var(--terracotta); color: #fff; }
+.sig-mode { display: flex; background: var(--cream); padding: 4px; border-radius: 999px; border: 1px solid var(--hairline); font-size: 12px; }
+.sig-mode__btn { padding: 6px 12px; border: none; background: transparent; color: var(--ink-mute); border-radius: 999px; font-weight: 600; font-family: var(--font-display); font-style: italic; }
+.sig-mode__btn.is-active { background: var(--paper-2); color: var(--ink); box-shadow: var(--shadow-1); }
+.sig-pad { position: relative; background: var(--paper-2); border: 1.5px dashed var(--hairline-2); border-radius: var(--r-md); height: 180px; margin-bottom: 14px; overflow: hidden; touch-action: none; }
+.sig-pad canvas { display: block; width: 100%; height: 180px; }
+.sig-pad__placeholder { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--ink-mute); opacity: 0.7; pointer-events: none; font-family: var(--font-display); font-style: italic; font-size: 13px; }
+.sig-pad.has-stroke .sig-pad__placeholder { display: none; }
+.sig-pad__typed { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; font-family: "Snell Roundhand", "Newsreader", cursive; font-size: 34px; color: var(--cocoa); }
+.sig-pad.mode-typed canvas { display: none; }
+.sig-pad.mode-typed .sig-pad__placeholder { display: none; }
+.sig-pad.mode-typed .sig-pad__typed { display: flex; }
+.sig-pad__corner { position: absolute; bottom: 10px; right: 12px; opacity: 0.6; }
+.sig-actions { display: flex; gap: 10px; }
+.sig-actions .fs-btn--primary { flex: 1; }
 
-  /* Section headings (used inside cards) */
-  .section-heading {
-    font-size: 18px; font-weight: 700; color: var(--text);
-    margin: 24px 0 12px 0; padding-bottom: 8px;
-    border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; gap: 10px;
-  }
-  .section-heading .material-symbols-outlined { color: var(--danger); }
-  .section-heading-warn { color: var(--text); }
+/* ---------- History ---------- */
+.hist-main { padding: 26px 28px 32px; }
+.hist-intro { margin-bottom: 18px; }
+.hist-intro__kicker { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-display); font-style: italic; font-size: 14px; color: var(--marigold); margin-bottom: 4px; }
+.hist-intro__title { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 30px; letter-spacing: -0.02em; color: var(--ink); }
+.hist-intro__sub { margin: 6px 0 0; color: var(--ink-mute); font-size: 13px; }
+.hist-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.hist-stat { background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 16px 18px; position: relative; overflow: hidden; }
+.hist-stat::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--hairline-2); }
+.hist-stat--accent { background: linear-gradient(135deg, rgba(217,119,6,0.08), rgba(0,154,92,0.06)); }
+.hist-stat--accent::before { background: var(--marigold); }
+.hist-stat__num { font-family: var(--font-display); font-size: 32px; font-weight: 600; line-height: 1.1; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.hist-stat__lbl { margin-top: 4px; display: flex; flex-direction: column; font-size: 12px; }
+.hist-stat__lbl .es { font-family: var(--font-display); font-style: italic; color: var(--marigold); font-size: 12px; }
+.hist-stat__lbl .en { color: var(--ink-mute); font-weight: 600; }
+.hist-filters { display: grid; grid-template-columns: 1fr 1fr 1.4fr; gap: 12px; margin-bottom: 18px; }
+.hist-filter { display: flex; flex-direction: column; gap: 6px; }
+.hist-filter__lbl { font-family: var(--font-display); font-style: italic; color: var(--ink-mute); font-size: 12px; }
+.hist-table-wrap { padding: 18px 22px 8px; }
+.hist-table__head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.hist-table { display: flex; flex-direction: column; }
+.hist-row { display: grid; grid-template-columns: 120px 80px 80px 80px 1fr 64px; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--hairline); font-size: 14px; }
+.hist-row:last-child { border-bottom: none; }
+.hist-row--head { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; color: var(--ink-mute); padding: 10px 0; }
+.hist-row.is-active { background: linear-gradient(90deg, rgba(0,154,92,0.04), transparent 60%); margin: 0 -22px; padding: 14px 22px; border-radius: var(--r-sm); }
+.hist-row.is-editable { cursor: pointer; }
+.hist-row.is-editable:hover { background: rgba(217,119,6,0.05); margin: 0 -22px; padding: 14px 22px; border-radius: var(--r-sm); }
+.hist-row__date { display: flex; flex-direction: column; }
+.hist-row__date strong { font-weight: 600; }
+.hist-row__dow { font-family: var(--font-display); font-style: italic; font-size: 11px; color: var(--ink-mute); }
+.hist-row__num { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.hist-row__hrs { font-weight: 700; color: var(--ink); }
+.hist-row__act { color: var(--webcor-green); font-weight: 600; font-size: 13px; text-align: right; }
+.hist-group { font-family: var(--font-display); font-style: italic; font-size: 16px; color: var(--teal-deep); margin: 18px 0 4px; display: flex; align-items: center; gap: 8px; }
+.hist-group:first-child { margin-top: 0; }
+.hist-group .count { font-family: var(--font-ui); font-style: normal; font-size: 12px; color: var(--ink-mute); }
 
-  /* Worker identity card on Sign-In */
-  .worker-card {
-    background: var(--surface-3); border: 1px solid var(--line);
-    border-radius: 14px; padding: 20px 18px; margin-bottom: 24px;
-    display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
-    position: relative; overflow: hidden;
-  }
-  .worker-card::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0.7;
-  }
-  .worker-card-info { min-width: 0; }
-  .worker-card-label {
-    display: block; font-size: 11px; color: var(--accent);
-    font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-  .worker-card-name {
-    font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -0.01em;
-    line-height: 1.15;
-  }
-  .worker-card-cls {
-    color: var(--muted); font-size: 14px; margin-top: 6px;
-    display: flex; align-items: center; gap: 6px;
-  }
-  .worker-card-date {
-    background: var(--surface-4); border: 1px solid var(--line);
-    border-radius: 10px; padding: 10px 12px;
-    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
-    flex-shrink: 0;
-  }
-  .worker-card-date .date-pill {
-    background: transparent; border: 0; color: var(--text);
-    font-weight: 700; font-size: 14px; padding: 0; cursor: pointer;
-    color-scheme: dark;
-  }
-  html[data-theme="light"] .worker-card-date .date-pill { color-scheme: light; }
-  .worker-card-date .date-pill:focus { outline: none; }
+/* ---------- Manager ---------- */
+.mgr-main { padding: 26px 28px 32px; }
+.mgr-intro { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 22px; gap: 16px; flex-wrap: wrap; }
+.mgr-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; align-items: start; }
+.mgr-card { padding: 22px; }
+.mgr-card--wide { grid-column: 1 / -1; }
+.mgr-card__head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; gap: 12px; }
+.mgr-card__intro { margin: 0 0 16px; color: var(--ink-mute); font-size: 13px; line-height: 1.5; }
+.mgr-card__intro em { font-family: var(--font-display); color: var(--marigold); font-style: italic; }
+.pin-card { padding: 0; position: relative; overflow: hidden; max-width: 480px; margin: 0 auto; }
+.pin-card__decor { position: absolute; inset: -40px -40px auto auto; pointer-events: none; }
+.pin-card__inner { position: relative; padding: 32px 32px 28px; text-align: center; }
+.pin-card__icon { width: 56px; height: 56px; border-radius: 50%; background: var(--cream); border: 1px solid var(--hairline-2); display: grid; place-items: center; margin: 0 auto 14px; font-size: 26px; color: var(--cocoa); }
+.pin-card__title { margin: 0 0 6px; font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.pin-card__sub { margin: 0 0 22px; color: var(--ink-mute); font-size: 13px; line-height: 1.5; }
+.pin-card__sub em { font-family: var(--font-display); color: var(--marigold); font-style: italic; }
+.pin-dots { display: flex; gap: 14px; justify-content: center; margin-bottom: 22px; }
+.pin-dot { width: 14px; height: 14px; border-radius: 50%; background: var(--cream); border: 1.5px solid var(--hairline-2); transition: all .15s ease; }
+.pin-dot.is-filled { background: var(--marigold); border-color: var(--marigold); transform: scale(1.1); }
+.pin-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+.pin-key { height: 56px; background: var(--paper-2); border: 1px solid var(--hairline-2); border-radius: var(--r-md); font-family: var(--font-display); font-size: 22px; font-weight: 500; color: var(--ink); transition: background .1s ease, transform .06s ease; }
+.pin-key:hover:not(:disabled) { background: var(--cream); }
+.pin-key:active:not(:disabled) { transform: scale(0.96); }
+.pin-key:disabled { background: transparent; border-color: transparent; cursor: default; }
+.pin-key.is-back { color: var(--terracotta); font-size: 18px; }
+.exp-row { margin-bottom: 18px; }
+.exp-preview { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin-bottom: 16px; padding: 14px; background: var(--cream); border-radius: var(--r-md); border: 1px solid var(--hairline); }
+.exp-preview__doc { background: #fff; border: 1px solid var(--hairline); border-radius: var(--r-sm); padding: 12px; box-shadow: var(--shadow-1); }
+.exp-preview__head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.exp-preview__logo { width: 28px; height: 28px; background: var(--webcor-green); color: #fff; border-radius: 4px; display: grid; place-items: center; font-weight: 800; font-size: 11px; }
+.exp-preview__t1 { font-family: var(--font-display); font-size: 11px; font-weight: 600; }
+.exp-preview__t2 { font-size: 8px; color: var(--ink-mute); }
+.exp-preview__rows { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.exp-preview__row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1.5fr; gap: 4px; }
+.exp-preview__cell { height: 8px; background: var(--cream); border-radius: 2px; }
+.exp-preview__cell--name { background: linear-gradient(90deg, var(--ink-mute), var(--cream)); opacity: 0.4; }
+.exp-preview__cell--sig { background: rgba(217,119,6,0.18); }
+.exp-preview__meta { display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+.exp-preview__metarow { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 6px; border-bottom: 1px dashed var(--hairline-2); font-size: 12px; color: var(--ink-mute); }
+.exp-preview__metarow strong { font-family: var(--font-display); font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.exp-actions { display: flex; gap: 8px; }
+.exp-actions .fs-btn--primary { flex: 1; }
+.roster-list { display: flex; flex-direction: column; max-height: 420px; overflow: auto; margin: 0 -8px; padding: 0 8px; }
+.roster-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--hairline); }
+.roster-row:last-child { border-bottom: none; }
+.roster-row.is-inactive { opacity: 0.5; }
+.roster-row__avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--cream); border: 1px solid var(--hairline-2); display: grid; place-items: center; font-family: var(--font-display); font-weight: 600; font-size: 13px; color: var(--cocoa); }
+.roster-row__name { font-weight: 600; font-size: 14px; }
+.roster-row__role { font-family: var(--font-display); font-style: italic; font-size: 12px; color: var(--ink-mute); }
+.roster-row__toggle { display: flex; gap: 10px; align-items: center; }
+.roster-toggle { width: 34px; height: 20px; border-radius: 999px; background: var(--hairline-2); position: relative; transition: background .15s ease; border: none; padding: 0; }
+.roster-toggle.is-on { background: var(--webcor-green); }
+.roster-toggle__dot { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left .15s ease; box-shadow: var(--shadow-1); }
+.roster-toggle.is-on .roster-toggle__dot { left: 16px; }
+.roster-row__edit { font-size: 12px; color: var(--webcor-green); font-weight: 600; background: none; border: none; }
+.roster-row__ord { background: none; border: none; color: var(--ink-mute); font-size: 14px; padding: 0 2px; }
+.roster-row__ord:disabled { opacity: .3; }
+.cfg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.cfg-actions { display: flex; justify-content: flex-end; }
+.mgr-card--danger { border-color: rgba(178,58,72,0.2); background: linear-gradient(180deg, rgba(178,58,72,0.02), var(--paper)); }
+.danger-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; gap: 14px; border-top: 1px dashed var(--hairline-2); flex-wrap: wrap; }
+.danger-row:first-of-type { border-top: none; }
+.danger-row__t { font-weight: 600; font-size: 14px; }
+.danger-row__s { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+.danger-row__act { display: flex; gap: 8px; }
+.week-grid { overflow-x: auto; border: 1px solid var(--hairline); border-radius: var(--r-md); }
+.week-grid table { width: 100%; border-collapse: collapse; min-width: 720px; }
+.week-grid th, .week-grid td { border: 1px solid var(--hairline); padding: 8px 10px; text-align: center; font-size: 12px; min-width: 60px; }
+.week-grid th { background: var(--cream); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; color: var(--ink-mute); }
+.week-grid td.name { text-align: left; font-weight: 600; min-width: 160px; position: sticky; left: 0; background: var(--paper); z-index: 1; }
+.week-grid td.cell { cursor: pointer; transition: background 100ms; }
+.week-grid td.cell:hover { background: rgba(217,119,6,0.08); }
+.week-grid td.cell.signed { background: rgba(0,154,92,0.10); color: var(--webcor-green-ink); font-weight: 700; }
+.week-grid td.cell.off { background: var(--cream); color: var(--ink-mute); }
 
-  /* Input with leading icon */
-  .input-with-icon { position: relative; }
-  .input-with-icon .material-symbols-outlined {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: var(--muted); pointer-events: none; font-size: 20px;
-  }
-  .input-with-icon input { padding-left: 44px !important; }
+/* ---------- Overlays ---------- */
+.overlay { position: fixed; inset: 0; background: rgba(58,46,31,0.45); z-index: 60; display: none; align-items: center; justify-content: center; padding: 16px; padding-top: max(16px, env(safe-area-inset-top)); overflow-y: auto; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.overlay.show { display: flex; }
+.overlay .modal { background: var(--paper); border-radius: var(--r-xl); border: 1px solid var(--hairline); max-width: 480px; width: 100%; padding: 26px; box-shadow: var(--shadow-3); max-height: calc(100dvh - 32px); overflow-y: auto; }
+.overlay .modal h3 { margin: 0 0 4px; font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--ink); }
+.overlay .modal .modal-sub { color: var(--ink-mute); font-size: 13px; margin-bottom: 18px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+.modal-actions .fs-btn { flex: 1; }
+.fs-btn--danger { background: rgba(178,58,72,0.10); color: var(--terracotta); border-color: rgba(178,58,72,0.3); }
 
-  /* Form fields */
-  label.field { display: block; margin-bottom: 14px; font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-  label.field .lbl-row { display: flex; justify-content: space-between; margin-bottom: 6px; align-items: center; }
-  label.field input, label.field select, label.field textarea {
-    width: 100%; padding: 12px 14px;
-    border: 1px solid var(--line); border-radius: var(--radius-sm);
-    font-size: 16px; background: var(--surface-3); color: var(--text);
-    font-family: inherit; text-transform: none; letter-spacing: normal; font-weight: 400;
-    transition: border-color 150ms, box-shadow 150ms;
-    color-scheme: dark;
-  }
-  html[data-theme="light"] label.field input,
-  html[data-theme="light"] label.field select,
-  html[data-theme="light"] label.field textarea { color-scheme: light; background: var(--surface); }
-  label.field input:focus, label.field select:focus, label.field textarea:focus {
-    outline: none; border-color: var(--tertiary);
-    box-shadow: 0 0 0 3px var(--tertiary-soft);
-  }
-  label.field input[readonly] { background: var(--surface-2); color: var(--muted); }
-  .readout {
-    padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    background: var(--surface-3); font-size: 15px; color: var(--text);
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  .readout .muted { color: var(--muted); font-size: 13px; }
-  .readout .val { font-size: 22px; font-weight: 600; color: var(--secondary); letter-spacing: -0.01em; }
+/* ---------- Toast ---------- */
+#toast { position: fixed; bottom: calc(20px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 100; background: var(--cocoa); color: var(--ink-on-dark); padding: 14px 22px; border-radius: 999px; font-size: 14px; font-weight: 600; box-shadow: var(--shadow-3); opacity: 0; transition: opacity 200ms; pointer-events: none; max-width: calc(100vw - 32px); }
+#toast.show { opacity: 1; }
+#toast.error { background: var(--terracotta); }
+#toast.success { background: var(--webcor-green); }
 
-  /* Buttons */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 18px; border: 0; border-radius: var(--radius-sm);
-    font-weight: 700; font-size: 14px; cursor: pointer;
-    transition: all 150ms;
-    min-height: 48px; font-family: inherit;
-    letter-spacing: 0.02em;
-  }
-  .btn .material-symbols-outlined { font-size: 20px; }
-  .btn:active { transform: scale(0.98); }
-  .btn.primary {
-    background: var(--accent-container); color: var(--on-accent-container);
-    box-shadow: 0 0 16px rgba(76,47,130,0.45);
-    border: 1px solid rgba(211,187,255,0.20);
-  }
-  .btn.primary:hover { background: var(--accent); color: var(--accent-on); box-shadow: 0 0 24px rgba(211,187,255,0.45); }
-  .btn.secondary {
-    background: transparent; color: var(--text);
-    border: 1px solid var(--line);
-  }
-  .btn.secondary:hover { background: var(--surface-3); border-color: var(--tertiary); }
-  .btn.success { background: var(--success); color: #052e23; }
-  .btn.warn { background: var(--warn); color: #2b1500; }
-  .btn.danger { background: var(--error-container); color: var(--on-error-container); border: 1px solid rgba(255,180,171,0.35); }
-  .btn.ghost {
-    background: transparent; color: var(--secondary); padding: 8px 12px; min-height: auto;
-    font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; font-size: 12px;
-  }
-  .btn.ghost:hover { color: var(--secondary); text-decoration: underline; text-shadow: 0 0 6px rgba(255,184,116,0.5); }
-  .btn.block { width: 100%; }
-  .btn.lg { padding: 16px 20px; font-size: 15px; min-height: 56px; border-radius: 12px; }
-  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
-
-  /* Toggle (injured y/n) */
-  .toggle-row { display: flex; gap: 12px; }
-  .toggle-row button {
-    flex: 1; padding: 18px 12px; border: 2px solid var(--line);
-    background: var(--surface-3); border-radius: 12px;
-    font-weight: 700; font-size: 15px; cursor: pointer; color: var(--muted);
-    min-height: 64px; font-family: inherit;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-    letter-spacing: 0.05em; text-transform: uppercase;
-    transition: all 150ms;
-  }
-  .toggle-row button .material-symbols-outlined { font-size: 22px; }
-  .toggle-row button.on-no {
-    background: rgba(16,185,129,0.10); border-color: var(--success); color: var(--success);
-    box-shadow: 0 0 15px rgba(16,185,129,0.10);
-  }
-  .toggle-row button.on-yes {
-    background: rgba(255,180,171,0.10); border-color: var(--danger); color: var(--danger);
-    box-shadow: 0 0 15px rgba(255,180,171,0.10);
-  }
-
-  /* Signature */
-  .sig-wrap {
-    border: 1px solid var(--line); border-radius: 14px;
-    background: var(--surface-4); position: relative; touch-action: none;
-    overflow: hidden;
-  }
-  .sig-wrap canvas { display: block; width: 100%; height: 180px; }
-  .sig-wrap .sig-placeholder {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 6px;
-    color: var(--outline); opacity: 0.55; pointer-events: none;
-    font-size: 14px;
-  }
-  .sig-wrap .sig-placeholder .material-symbols-outlined { font-size: 28px; }
-  .sig-wrap.has-stroke .sig-placeholder { display: none; }
-  .sig-typed {
-    display: none; padding: 24px; text-align: center;
-    font-family: "Snell Roundhand", "Brush Script MT", cursive;
-    font-size: 32px; color: var(--text);
-  }
-  .sig-wrap.mode-typed canvas { display: none; }
-  .sig-wrap.mode-typed .sig-placeholder { display: none; }
-  .sig-wrap.mode-typed .sig-typed { display: block; }
-  .sig-controls { display: flex; gap: 8px; justify-content: space-between; margin-top: 10px; font-size: 12px; }
-  .sig-controls .left { display: flex; gap: 8px; }
-
-  /* Overlay */
-  .overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    z-index: 60; display: none; align-items: center; justify-content: center;
-    padding: 16px; padding-top: max(16px, env(safe-area-inset-top));
-    overflow-y: auto;
-    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  }
-  .overlay.show { display: flex; }
-  .overlay .modal {
-    background: var(--surface-2); border-radius: var(--radius);
-    border: 1px solid rgba(211,187,255,0.18);
-    max-width: 520px; width: 100%; padding: 24px;
-    box-shadow: var(--shadow-md), 0 0 32px rgba(211,187,255,0.06);
-    max-height: calc(100dvh - 32px); overflow-y: auto;
-    position: relative;
-  }
-  .overlay .modal::before {
-    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
-  .overlay .modal h3 { margin: 0 0 4px 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
-  .overlay .modal .sub { color: var(--muted); font-size: 14px; margin-bottom: 18px; }
-
-  .name-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
-  .name-btn {
-    padding: 14px 16px; border: 1px solid transparent; background: var(--surface-3);
-    border-radius: 12px; cursor: pointer; text-align: left;
-    font-size: 15px; font-weight: 600; color: var(--text);
-    display: flex; justify-content: space-between; align-items: center;
-    gap: 16px; font-family: inherit;
-    min-height: 64px;
-    transition: all 150ms;
-  }
-  .name-btn:hover {
-    background: var(--surface-4); border-color: var(--secondary-container);
-    box-shadow: 0 0 18px rgba(227,132,1,0.20);
-  }
-  .name-btn .name-meta { display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1; }
-  .name-btn .avatar {
-    width: 44px; height: 44px; border-radius: 50%;
-    background: rgba(227,132,1,0.10); border: 1px solid rgba(227,132,1,0.35);
-    color: var(--secondary-container);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .name-btn .avatar .material-symbols-outlined { font-size: 22px; }
-  .name-btn:hover .avatar { box-shadow: 0 0 10px rgba(227,132,1,0.40); }
-  .name-btn .text { min-width: 0; flex: 1; }
-  .name-btn .text > span:first-child { display: block; font-size: 18px; font-weight: 600; }
-  .name-btn .cls { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
-  .name-btn .arrow {
-    color: var(--secondary-container); opacity: 0; transform: translateX(-4px);
-    transition: all 150ms;
-  }
-  .name-btn:hover .arrow { opacity: 1; transform: translateX(0); }
-
-  /* Manager mode badge in header */
-  .mgr-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-top: 6px; padding: 3px 10px;
-    background: var(--secondary-container); color: var(--on-secondary-container);
-    border-radius: 999px;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
-    box-shadow: 0 0 12px rgba(227,132,1,0.30);
-  }
-  .mgr-badge::before {
-    content: ""; width: 6px; height: 6px; border-radius: 50%;
-    background: var(--on-secondary-container);
-    box-shadow: 0 0 6px var(--on-secondary-container);
-  }
-  .greeting .mgr-lock {
-    margin-left: 8px; padding: 3px 10px;
-    background: transparent; color: var(--secondary);
-    border: 1px solid var(--secondary); border-radius: 999px;
-    font-size: 11px; font-weight: 700; cursor: pointer;
-    font-family: inherit; letter-spacing: 0.06em; text-transform: uppercase;
-  }
-  .greeting .mgr-lock:hover { background: var(--secondary); color: #2b1500; box-shadow: 0 0 12px rgba(255,184,116,0.45); }
-
-  /* Manager-only history controls (inside the History card) */
-  .hist-mgr-controls {
-    display: flex; flex-direction: column; gap: 16px;
-    margin-bottom: 18px;
-  }
-  .hist-block-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
-  .hist-block-row .field {
-    flex: 1 1 140px; min-width: 140px;
-    margin-bottom: 0;
-  }
-  .hist-block-row-divider {
-    padding-top: 16px;
-    border-top: 1px dashed var(--line);
-  }
-  .hist-mgr-controls label {
-    font-size: 11px; color: var(--muted); font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px;
-  }
-  .hist-mgr-controls input[type=date], .hist-mgr-controls select,
-  #hist-export-card input[type=date] {
-    padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    background: var(--surface-3); color: var(--text); font-size: 14px; font-family: inherit;
-    min-width: 130px; width: 100%; color-scheme: dark;
-  }
-  html[data-theme="light"] .hist-mgr-controls input[type=date],
-  html[data-theme="light"] .hist-mgr-controls select,
-  html[data-theme="light"] #hist-export-card input[type=date] { color-scheme: light; background: var(--surface); }
-  .hist-mgr-controls input:focus, .hist-mgr-controls select:focus,
-  #hist-export-card input[type=date]:focus {
-    outline: none; border-color: var(--tertiary); box-shadow: 0 0 0 3px var(--tertiary-soft);
-  }
-  .hist-mgr-controls .btn, #hist-export-card .btn { min-height: 48px; }
-  /* Export card uses secondary container glow */
-  #hist-export-card { border-top: 2px solid transparent; position: relative; }
-  #hist-export-card::before {
-    background: linear-gradient(90deg, transparent, var(--secondary), transparent);
-    opacity: 0.7;
-  }
-  #hist-export-card .hist-block-row .field { flex: 1 1 200px; }
-  #hist-export-card .field label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 6px; }
-
-  .hist-group-header {
-    font-size: 12px; font-weight: 700; color: var(--secondary);
-    text-transform: uppercase; letter-spacing: 0.10em;
-    margin: 18px 0 8px 0;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .hist-group-header::before {
-    content: ""; width: 4px; height: 16px; border-radius: 2px;
-    background: var(--secondary-container);
-    box-shadow: 0 0 10px rgba(227,132,1,0.5);
-  }
-  .hist-group-header:first-child { margin-top: 0; }
-  .hist-group-header .count { color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; margin-left: 4px; }
-
-  /* History */
-  .hist-list { display: flex; flex-direction: column; gap: 10px; }
-  .hist-item {
-    padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    display: flex; justify-content: space-between; align-items: center;
-    background: var(--surface-2);
-    transition: all 150ms;
-  }
-  .hist-item.editable { cursor: pointer; }
-  .hist-item.editable:hover {
-    border-color: var(--secondary-container);
-    background: var(--surface-3);
-    box-shadow: 0 0 14px rgba(227,132,1,0.18);
-  }
-  .hist-item .left { font-size: 14px; }
-  .hist-item .date { font-weight: 600; color: var(--text); font-size: 15px; }
-  .hist-item .dow { color: var(--muted); font-size: 12px; margin-left: 4px; }
-  .hist-item .hrs {
-    font-size: 18px; font-weight: 700; color: var(--secondary); letter-spacing: -0.01em;
-  }
-  .hist-item.off { background: var(--surface); }
-  .hist-item.off .hrs { color: var(--muted); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .week-totals { display: flex; gap: 10px; margin: 18px 0; overflow-x: auto; padding-bottom: 4px; }
-  .week-totals .wt {
-    flex: 0 0 auto; padding: 12px 14px; border: 1px solid var(--line);
-    border-radius: var(--radius-sm); background: var(--surface-3); font-size: 12px;
-    min-width: 140px; position: relative; overflow: hidden;
-  }
-  .week-totals .wt::after {
-    content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--secondary), transparent);
-    opacity: 0.4;
-  }
-  .week-totals .wt .lbl { color: var(--muted); font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase; font-weight: 600; }
-  .week-totals .wt .val { font-size: 20px; font-weight: 700; color: var(--secondary); margin-top: 4px; letter-spacing: -0.01em; }
-
-  /* Manager */
-  .mgr-section { margin-bottom: 28px; }
-  .mgr-section h3 {
-    font-size: 12px; text-transform: uppercase; letter-spacing: 0.10em;
-    color: var(--secondary); margin: 0 0 12px 0; font-weight: 700;
-    display: flex; align-items: center; gap: 10px;
-  }
-  .mgr-section h3::before {
-    content: ""; width: 4px; height: 14px; border-radius: 2px;
-    background: var(--secondary-container);
-    box-shadow: 0 0 8px rgba(227,132,1,0.5);
-  }
-  .roster-item {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-sm);
-    background: var(--surface-3); margin-bottom: 8px;
-    transition: border-color 150ms;
-  }
-  .roster-item:hover { border-color: var(--accent); }
-  .roster-item .info { flex: 1; min-width: 0; }
-  .roster-item .name { font-weight: 600; font-size: 15px; }
-  .roster-item .cls { font-size: 12px; color: var(--muted); }
-  .roster-item .actions { display: flex; gap: 6px; }
-  .roster-item.inactive .name { color: var(--muted); text-decoration: line-through; }
-
-  .week-grid { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius-sm); }
-  .week-grid table { width: 100%; border-collapse: collapse; min-width: 720px; }
-  .week-grid th, .week-grid td {
-    border: 1px solid var(--line); padding: 8px 10px;
-    text-align: center; font-size: 12px; min-width: 60px;
-  }
-  .week-grid th {
-    background: var(--surface-3); font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.06em; font-size: 11px;
-    color: var(--muted);
-  }
-  .week-grid td.name {
-    text-align: left; font-weight: 600; min-width: 160px;
-    position: sticky; left: 0; background: var(--surface-2); z-index: 1;
-  }
-  .week-grid td.cell { cursor: pointer; transition: background 100ms; }
-  .week-grid td.cell:hover { background: var(--accent-soft); }
-  .week-grid td.cell.signed { background: rgba(16,185,129,0.10); color: var(--success); font-weight: 700; }
-  .week-grid td.cell.off { background: var(--surface-3); color: var(--muted); }
-
-  /* Toast */
-  #toast {
-    position: fixed; bottom: calc(80px + env(safe-area-inset-bottom)); left: 50%;
-    transform: translateX(-50%);
-    z-index: 100; background: var(--surface-4); color: var(--text);
-    border: 1px solid var(--line);
-    padding: 14px 22px; border-radius: 999px;
-    font-size: 14px; font-weight: 600;
-    box-shadow: var(--shadow-md);
-    opacity: 0; transition: opacity 200ms; pointer-events: none;
-    max-width: calc(100vw - 32px);
-  }
-  @media (min-width: 900px) { #toast { bottom: 24px; } }
-  #toast.show { opacity: 1; }
-  #toast.error { background: var(--error-container); color: var(--on-error-container); border-color: rgba(255,180,171,0.35); }
-  #toast.success { background: rgba(16,185,129,0.18); color: var(--success); border-color: rgba(16,185,129,0.45); }
-
-  .hidden { display: none !important; }
-  .center { text-align: center; }
-  .muted { color: var(--muted); }
-  .small { font-size: 12px; }
-  .mb-2 { margin-bottom: 8px; } .mb-3 { margin-bottom: 12px; } .mb-4 { margin-bottom: 16px; }
-  .mt-2 { margin-top: 8px; } .mt-3 { margin-top: 12px; } .mt-4 { margin-top: 16px; }
+/* ---------- Tight / responsive (<1024px) ---------- */
+.is-tight .fs-header__picado { display: none; }
+.is-tight .fs-header__bar { padding: 14px 16px 12px; gap: 12px; flex-wrap: wrap; }
+.is-tight .fs-header__logo { height: 28px; }
+.is-tight .fs-header__project { padding-left: 12px; }
+.is-tight .fs-header__project-name { font-size: 15px; }
+.is-tight .fs-header__project-meta { font-size: 11px; }
+.is-tight .fs-tab { min-width: auto; padding: 6px 12px; }
+.is-tight .fs-header__greca { padding: 0 16px 6px; }
+.is-tight .fs-header__right { gap: 8px; }
+.is-tight .wp-main { padding: 18px 16px 24px; }
+.is-tight .wp-grid { grid-template-columns: 1fr; }
+.is-tight .wp-intro__title { font-size: 27px; }
+.is-tight .wp-foot { flex-direction: column; align-items: stretch; }
+.is-tight .ds-main { padding: 16px 16px 24px; gap: 14px; }
+.is-tight .ds-grid { grid-template-columns: 1fr; gap: 14px; }
+.is-tight .greet-card__inner { grid-template-columns: 56px 1fr; padding: 8px 18px 18px; gap: 14px; }
+.is-tight .greet-card__avatar { width: 56px; height: 56px; font-size: 21px; }
+.is-tight .greet-card__name { font-size: 22px; }
+.is-tight .greet-card__chips { grid-column: 1 / -1; flex-direction: row; align-items: center; flex-wrap: wrap; }
+.is-tight .greet-card__date { display: flex; flex-direction: column; gap: 0; }
+.is-tight .greet-card__sep { display: none; }
+.is-tight .greet-card__bg { display: none; }
+.is-tight .greet-card__name { overflow: hidden; text-overflow: ellipsis; }
+.is-tight .hours-grid { grid-template-columns: 1fr 1fr; }
+.is-tight .hours-total { grid-column: 1 / -1; }
+.is-tight .hist-main { padding: 16px 16px 24px; }
+.is-tight .hist-stats { grid-template-columns: repeat(2, 1fr); }
+.is-tight .hist-filters { grid-template-columns: 1fr 1fr; }
+.is-tight .hist-filters .hist-filter--wide { grid-column: 1 / -1; }
+.is-tight .hist-row { grid-template-columns: 90px 60px 60px 60px 1fr; font-size: 13px; }
+.is-tight .hist-row__act { display: none; }
+.is-tight .mgr-main { padding: 16px 16px 24px; }
+.is-tight .mgr-grid { grid-template-columns: 1fr; gap: 14px; }
+.is-tight .cfg-grid { grid-template-columns: 1fr; }
 </style>
 </head>
-<body>
+<body class="fs-app">
 
-<header class="app">
-  <div class="row">
-    <div class="brand">
-      <span class="brand-icon"><span class="material-symbols-outlined" style="font-size:20px;">domain</span></span>
-      <span>
-        <span data-i18n="brand">Foreman Sign-In</span>
-        <small id="brand-sub">Webcor Concrete · LA Convention Center</small>
-      </span>
-    </div>
-    <div class="greeting" id="greeting">
-      <strong id="g-name">—</strong>
-      <span class="switch" id="g-switch" data-i18n="switch_user">switch user</span>
-      <div>
-        <span id="g-mgr-badge" class="mgr-badge hidden" data-i18n="manager_mode_on">Manager mode</span>
-        <button id="g-mgr-lock" class="mgr-lock hidden" type="button" data-i18n="lock_manager">Lock</button>
+<!-- ============ WORKER PICKER SCREEN ============ -->
+<div class="screen" id="screen-picker">
+  <header class="fs-header">
+    <div class="fs-header__picado" id="picker-picado"></div>
+    <div class="fs-header__bar">
+      <div class="fs-header__brand">
+        <img class="fs-header__logo" id="picker-logo" alt="Webcor Concrete" />
+        <div class="fs-header__project">
+          <div class="fs-header__project-name" id="picker-project-name">LA Convention Center</div>
+          <div class="fs-header__project-meta" id="picker-project-meta">Webcor Concrete</div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="prefs-row">
-    <button class="pref-pill" id="pref-lang" type="button" aria-label="Language">
-      <span class="opt" data-lang="en">EN</span><span class="opt" data-lang="es">ES</span>
-    </button>
-    <button class="pref-pill" id="pref-theme" type="button" aria-label="Theme">
-      <span class="opt" data-theme="light" data-i18n="theme_light">Light</span><span class="opt" data-theme="dark" data-i18n="theme_dark">Dark</span>
-    </button>
-  </div>
-</header>
+    <div class="fs-header__greca"><div class="fs-greca" style="height:8px;opacity:.55"></div></div>
+  </header>
+  <main class="fs-main wp-main">
+    <section class="wp-intro">
+      <div class="wp-intro__kicker" id="wp-kicker"></div>
+      <h1 class="wp-intro__title">
+        <span lang="es">&iquest;Qui&eacute;n entra hoy?</span>
+        <span class="wp-intro__en">Tap your name to sign in</span>
+      </h1>
+      <p class="wp-intro__meta" id="wp-date"></p>
+    </section>
+    <div class="wp-grid" id="wp-grid"><p class="wp-foot__meta">Loading roster&hellip;</p></div>
+    <footer class="wp-foot">
+      <div class="wp-foot__left">
+        <span class="fs-chip fs-chip--green"><span class="wp-foot__dot"></span> <span id="wp-count">0 signed in</span></span>
+        <span class="wp-foot__meta" id="wp-roster-count"></span>
+      </div>
+    </footer>
+  </main>
+</div>
 
-<nav class="tabs" id="tabs" aria-label="Section navigation">
-  <button data-tab="signin" class="active" type="button">
-    <span class="material-symbols-outlined nav-icon">edit_square</span>
-    <span data-i18n="tab_signin">Sign In</span>
-  </button>
-  <button data-tab="history" type="button">
-    <span class="material-symbols-outlined nav-icon">history</span>
-    <span data-i18n="tab_history">History</span>
-  </button>
-  <button data-tab="manager" type="button">
-    <span class="material-symbols-outlined nav-icon">admin_panel_settings</span>
-    <span data-i18n="tab_manager">Manager</span>
-  </button>
-</nav>
-
-<main>
-  <!-- SIGN IN TAB -->
-  <section class="panel active" id="panel-signin">
-    <div class="card">
-      <h2 data-i18n="signin_title">Daily Sign-In</h2>
-      <p class="sub" data-i18n="signin_sub">Sign in for today, or backfill up to 7 days back.</p>
-
-      <!-- Worker Identity (selected worker card) -->
-      <div class="worker-card">
-        <div class="worker-card-info">
-          <span class="worker-card-label" data-i18n="selected_worker">SELECTED WORKER</span>
-          <div class="worker-card-name" id="signin-name">—</div>
-          <div class="worker-card-cls">
-            <span class="material-symbols-outlined" style="font-size:18px;">account_circle</span>
-            <span id="signin-cls">—</span>
-          </div>
-        </div>
-        <div class="worker-card-date">
-          <span class="worker-card-label" data-i18n="today">TODAY</span>
-          <input type="date" id="signin-date" class="date-pill" />
-          <span class="small muted" id="dow-label"></span>
+<!-- ============ MAIN APP SCREEN ============ -->
+<div class="screen" id="screen-app">
+  <header class="fs-header">
+    <div class="fs-header__picado" id="app-picado"></div>
+    <div class="fs-header__bar">
+      <div class="fs-header__brand">
+        <img class="fs-header__logo" id="app-logo" alt="Webcor Concrete" />
+        <div class="fs-header__project">
+          <div class="fs-header__project-name" id="hdr-project-name">LA Convention Center</div>
+          <div class="fs-header__project-meta" id="hdr-project-meta">Webcor Concrete</div>
         </div>
       </div>
+      <div class="fs-header__right">
+        <nav class="fs-header__nav" id="tabs" aria-label="Sections">
+          <button class="fs-tab is-active" data-tab="signin" type="button"><span class="fs-tab__es" lang="es">Entrada</span><span class="fs-tab__en">Sign In</span></button>
+          <button class="fs-tab" data-tab="history" type="button"><span class="fs-tab__es" lang="es">Historial</span><span class="fs-tab__en">History</span></button>
+          <button class="fs-tab" data-tab="manager" type="button"><span class="fs-tab__es" lang="es">Administrador</span><span class="fs-tab__en">Manager</span></button>
+        </nav>
+        <button class="fs-header__switch" id="hdr-switch" type="button"><span class="es" lang="es">Cambiar</span><span>Switch user</span></button>
+      </div>
+    </div>
+    <div class="fs-header__greca"><div class="fs-greca" style="height:8px;opacity:.55"></div></div>
+  </header>
 
-      <h4 class="section-heading" data-i18n="hours_log">Hours Log</h4>
-      <div class="row-flex">
-        <label class="field" style="flex: 1; margin-bottom: 12px;">
-          <div class="lbl-row"><span data-i18n="time_in">Time In</span></div>
-          <div class="input-with-icon">
-            <span class="material-symbols-outlined">login</span>
-            <input type="time" id="time-in" />
+  <main class="fs-main">
+    <!-- SIGN IN -->
+    <section class="panel active ds-main" id="panel-signin">
+      <div class="greet-card">
+        <div class="greet-card__bg" id="greet-bg" aria-hidden="true"></div>
+        <div class="greet-card__picado" id="greet-picado" aria-hidden="true"></div>
+        <div class="greet-card__inner">
+          <div class="greet-card__avatar" id="greet-avatar">&mdash;</div>
+          <div class="greet-card__body">
+            <div class="greet-card__kicker" id="greet-kicker"></div>
+            <h2 class="greet-card__name" id="greet-name">&mdash;</h2>
+            <div class="greet-card__role" id="greet-role">&mdash;</div>
+            <div class="greet-card__date">
+              <span id="greet-date-en"></span>
+              <span class="greet-card__sep">&middot;</span>
+              <span class="greet-card__es" id="greet-date-es" lang="es"></span>
+            </div>
+            <input type="date" id="signin-date" class="fs-input greet-card__dateinput" />
           </div>
-        </label>
-        <label class="field" style="flex: 1; margin-bottom: 12px;">
-          <div class="lbl-row"><span data-i18n="time_out">Time Out</span></div>
-          <div class="input-with-icon">
-            <span class="material-symbols-outlined">logout</span>
-            <input type="time" id="time-out" />
+          <div class="greet-card__chips">
+            <span class="fs-chip fs-chip--marigold" id="greet-status-chip">Not signed in yet</span>
+            <span class="fs-chip" id="greet-week">Week</span>
           </div>
-        </label>
+        </div>
+        <div class="greet-card__greca"><div class="fs-greca" style="height:8px;opacity:.5"></div></div>
       </div>
 
-      <div class="readout mb-3">
-        <div class="muted small" data-i18n="total_hours">Total Hours</div>
-        <div id="total-hours" class="val">—</div>
+      <div class="ds-grid">
+        <section class="ds-card">
+          <header class="ds-card__head">
+            <div><div class="ds-card__es" lang="es">Registro de horas</div><h3 class="ds-card__title">Hours Log</h3></div>
+            <span class="fs-chip fs-chip--marigold">Today &middot; Hoy</span>
+          </header>
+          <div class="hours-grid">
+            <div class="hours-cell">
+              <label class="fs-label"><span class="es" lang="es">Hora de entrada</span><span class="en">Time In</span></label>
+              <div class="hours-input"><span class="hours-input__icon" aria-hidden="true">&#8618;</span><input class="fs-input" type="time" id="time-in" /></div>
+            </div>
+            <div class="hours-cell">
+              <label class="fs-label"><span class="es" lang="es">Hora de salida</span><span class="en">Time Out</span></label>
+              <div class="hours-input"><span class="hours-input__icon" aria-hidden="true">&#8617;</span><input class="fs-input" type="time" id="time-out" /></div>
+            </div>
+            <div class="hours-cell hours-total">
+              <label class="fs-label"><span class="es" lang="es">Total de horas</span><span class="en">Total Hours</span></label>
+              <div class="hours-total__display"><span class="hours-total__num" id="total-hours-num">&mdash;</span><span class="hours-total__unit">hrs</span></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="ds-card">
+          <header class="ds-card__head">
+            <div><div class="ds-card__es" lang="es">Declaraci&oacute;n de seguridad</div><h3 class="ds-card__title">Safety Declaration</h3></div>
+            <span class="fs-chip fs-chip--teal">OSHA &middot; daily</span>
+          </header>
+          <p class="safety-q">
+            <span class="safety-q__es" lang="es">&iquest;Te lesionaste hoy en el trabajo?</span>
+            <span class="safety-q__en">Were you injured today at work?</span>
+          </p>
+          <div class="safety-toggle">
+            <button type="button" class="safety-opt is-active" id="injured-no">
+              <span class="safety-opt__mark">&#10003;</span>
+              <div><div class="safety-opt__en">No</div><div class="safety-opt__es">Sin lesiones</div></div>
+            </button>
+            <button type="button" class="safety-opt is-danger" id="injured-yes">
+              <span class="safety-opt__mark">!</span>
+              <div><div class="safety-opt__en">Yes</div><div class="safety-opt__es">Reportar lesi&oacute;n</div></div>
+            </button>
+          </div>
+        </section>
       </div>
 
-      <h4 class="section-heading section-heading-warn">
-        <span class="material-symbols-outlined">health_and_safety</span>
-        <span data-i18n="safety_declaration">Safety Declaration</span>
-      </h4>
-      <label class="field">
-        <div class="lbl-row"><span data-i18n="injured_q">Were you injured today at work?</span></div>
-        <div class="toggle-row">
-          <button id="injured-no" class="on-no" type="button">
-            <span class="material-symbols-outlined icon-fill">check_circle</span>
-            <span data-i18n="no">No</span>
-          </button>
-          <button id="injured-yes" type="button">
-            <span class="material-symbols-outlined">warning</span>
-            <span data-i18n="yes">Yes</span>
-          </button>
-        </div>
-      </label>
-
-      <label class="field">
-        <div class="lbl-row">
-          <span data-i18n="signature">Signature</span>
-          <span class="switch" id="sig-mode-toggle" style="color: var(--secondary); cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;" data-i18n="type_instead">Type instead</span>
-        </div>
-        <div class="sig-wrap" id="sig-wrap">
+      <section class="ds-card">
+        <header class="ds-card__head">
+          <div><div class="ds-card__es" lang="es">Firma</div><h3 class="ds-card__title">Signature</h3></div>
+          <div class="sig-mode">
+            <button type="button" class="sig-mode__btn is-active" id="sig-mode-draw">Draw &middot; Firmar</button>
+            <button type="button" class="sig-mode__btn" id="sig-mode-type">Type &middot; Escribir</button>
+          </div>
+        </header>
+        <div class="sig-pad" id="sig-wrap">
           <canvas id="sig-canvas"></canvas>
-          <div class="sig-placeholder" id="sig-placeholder">
-            <span class="material-symbols-outlined">draw</span>
-            <span data-i18n="sig_hint_draw">Sign with your finger</span>
+          <div class="sig-pad__placeholder" id="sig-placeholder">Sign with your finger &middot; Firma con el dedo</div>
+          <div class="sig-pad__typed" id="sig-typed">&mdash;</div>
+          <div class="sig-pad__corner" id="sig-corner" aria-hidden="true"></div>
+        </div>
+        <div class="sig-actions">
+          <button class="fs-btn fs-btn--ghost" type="button" id="sig-clear">Clear &middot; Borrar</button>
+          <button class="fs-btn fs-btn--primary fs-btn--lg" type="button" id="btn-sign-submit">&#10003;&nbsp; Sign &amp; Submit &middot; Firmar y enviar</button>
+        </div>
+        <p class="hist-intro__sub" id="signin-status" style="text-align:center"></p>
+      </section>
+
+      <div class="ds-bottom-meta">
+        <button class="fs-btn fs-btn--ghost" type="button" id="btn-mark-off">Mark Off &middot; Marcar ausente</button>
+        <span class="ds-bottom-meta__hint" id="ds-meta-hint"></span>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="panel hist-main" id="panel-history">
+      <section class="hist-intro">
+        <div class="hist-intro__kicker" id="hist-kicker"></div>
+        <h1 class="hist-intro__title" id="hist-title">My Attendance</h1>
+        <p class="hist-intro__sub" id="hist-sub">&Uacute;ltimos 30 d&iacute;as &middot; Last 30 days</p>
+      </section>
+      <div class="hist-stats">
+        <div class="hist-stat"><div class="hist-stat__num" id="hist-stat-hours">0.0</div><div class="hist-stat__lbl"><span class="es" lang="es">Horas trabajadas</span><span class="en">Hours worked</span></div></div>
+        <div class="hist-stat"><div class="hist-stat__num" id="hist-stat-days">0</div><div class="hist-stat__lbl"><span class="es" lang="es">D&iacute;as completos</span><span class="en">Full days</span></div></div>
+        <div class="hist-stat"><div class="hist-stat__num" id="hist-stat-injuries">0</div><div class="hist-stat__lbl"><span class="es" lang="es">Lesiones reportadas</span><span class="en">Injuries logged</span></div></div>
+        <div class="hist-stat hist-stat--accent"><div class="hist-stat__num" id="hist-stat-attendance">100<span style="font-size:18px">%</span></div><div class="hist-stat__lbl"><span class="es" lang="es">Asistencia</span><span class="en">Attendance</span></div></div>
+      </div>
+      <div class="hist-filters">
+        <div class="hist-filter"><span class="hist-filter__lbl">From &middot; Desde</span><input class="fs-input" type="date" id="hist-start" /></div>
+        <div class="hist-filter"><span class="hist-filter__lbl">To &middot; Hasta</span><input class="fs-input" type="date" id="hist-end" /></div>
+        <div class="hist-filter hist-filter--wide" id="hist-foreman-wrap"><span class="hist-filter__lbl">Foreman</span><select class="fs-select" id="hist-foreman-filter"></select></div>
+      </div>
+      <section class="hist-table-wrap fs-card">
+        <header class="hist-table__head">
+          <div><div class="ds-card__es" lang="es">Mis registros</div><h3 class="ds-card__title">Sign-in records</h3></div>
+          <button class="fs-btn fs-btn--ghost hidden" id="hist-export-btn" type="button">Export &middot; Exportar</button>
+        </header>
+        <div class="hist-table" id="hist-table">
+          <p class="wp-foot__meta">Loading&hellip;</p>
+        </div>
+      </section>
+    </section>
+
+    <!-- MANAGER -->
+    <section class="panel mgr-main" id="panel-manager">
+      <section class="mgr-intro">
+        <div>
+          <div class="hist-intro__kicker" id="mgr-kicker"></div>
+          <h1 class="hist-intro__title">Manager</h1>
+          <p class="hist-intro__sub">Roster, asistencia y exportaci&oacute;n &middot; Manage roster, edit attendance, export PDFs</p>
+        </div>
+        <div><span class="fs-chip fs-chip--terracotta" id="mgr-status-chip">&#128274; Locked &middot; Bloqueado</span></div>
+      </section>
+
+      <!-- Locked -->
+      <div id="mgr-locked">
+        <div class="pin-card fs-card">
+          <div class="pin-card__decor" id="pin-decor" aria-hidden="true"></div>
+          <div class="pin-card__inner">
+            <div class="pin-card__icon"><span class="material-symbols-rounded">lock</span></div>
+            <h2 class="pin-card__title">Manager access &middot; Acceso restringido</h2>
+            <p class="pin-card__sub">Enter the PIN to manage the roster and export PDFs.<br/><em>Ingrese su PIN para acceder al panel.</em></p>
+            <div class="pin-dots" id="pin-dots"></div>
+            <div class="pin-keys" id="pin-keys">
+              <button class="pin-key" type="button" data-key="1">1</button>
+              <button class="pin-key" type="button" data-key="2">2</button>
+              <button class="pin-key" type="button" data-key="3">3</button>
+              <button class="pin-key" type="button" data-key="4">4</button>
+              <button class="pin-key" type="button" data-key="5">5</button>
+              <button class="pin-key" type="button" data-key="6">6</button>
+              <button class="pin-key" type="button" data-key="7">7</button>
+              <button class="pin-key" type="button" data-key="8">8</button>
+              <button class="pin-key" type="button" data-key="9">9</button>
+              <button class="pin-key" type="button" disabled></button>
+              <button class="pin-key" type="button" data-key="0">0</button>
+              <button class="pin-key is-back" type="button" data-key="back">&#9003;</button>
+            </div>
+            <button class="fs-btn fs-btn--primary fs-btn--lg fs-btn--full" id="mgr-unlock" type="button" disabled>
+              <span class="material-symbols-rounded">lock_open</span> Unlock &middot; Desbloquear
+            </button>
           </div>
-          <div class="sig-typed" id="sig-typed">—</div>
-        </div>
-        <div class="sig-controls">
-          <div class="left">
-            <button type="button" class="btn ghost" id="sig-clear" data-i18n="clear">Clear</button>
-          </div>
-          <div class="muted" id="sig-hint" data-i18n="sig_hint_draw">Sign with your finger</div>
-        </div>
-      </label>
-
-      <div class="row-flex mt-3" style="gap: 10px;">
-        <button class="btn primary block lg" id="btn-sign-submit" style="flex: 2;" type="button">
-          <span class="material-symbols-outlined icon-fill">how_to_reg</span>
-          <span data-i18n="sign_submit">Sign &amp; Submit</span>
-        </button>
-        <button class="btn secondary lg" id="btn-mark-off" style="flex: 1;" type="button" data-i18n="mark_off">Mark Off</button>
-      </div>
-
-      <p class="small muted center mt-3" id="signin-status"></p>
-    </div>
-  </section>
-
-  <!-- HISTORY TAB -->
-  <section class="panel" id="panel-history">
-
-    <!-- Export Report card (manager-only) -->
-    <div class="card hidden" id="hist-export-card">
-      <h2 style="display:flex;align-items:center;gap:10px;">
-        <span class="material-symbols-outlined" style="color:var(--secondary);">download</span>
-        <span data-i18n="export_report">Export Report</span>
-      </h2>
-      <p class="sub" data-i18n="export_report_sub">Generate a weekly attendance PDF for the chosen week-ending date.</p>
-      <div class="hist-block-row">
-        <div class="field">
-          <label data-i18n="hist_export_label">Week ending</label>
-          <input type="date" id="hist-export-week-end" />
-        </div>
-        <button class="btn primary" id="btn-hist-export-week" type="button">
-          <span class="material-symbols-outlined">picture_as_pdf</span>
-          <span data-i18n="hist_export_btn">Export</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- History view card -->
-    <div class="card">
-      <h2 id="history-title" data-i18n="history_title">My Attendance</h2>
-      <p class="sub" id="history-sub" data-i18n="history_sub">Last 30 days</p>
-
-      <div class="hist-mgr-controls hidden" id="hist-mgr-controls">
-        <div class="hist-block-row">
-          <div class="field">
-            <label data-i18n="hist_start_label">From</label>
-            <input type="date" id="hist-start" />
-          </div>
-          <div class="field">
-            <label data-i18n="hist_end_label">To</label>
-            <input type="date" id="hist-end" />
-          </div>
-          <div class="field">
-            <label data-i18n="hist_foreman_label">Foreman</label>
-            <select id="hist-foreman-filter"></select>
-          </div>
-        </div>
-        <div class="hist-block-row hist-block-row-divider">
-          <div class="field">
-            <label data-i18n="hist_clear_label">Clear records older than</label>
-            <input type="date" id="hist-clear-cutoff" />
-          </div>
-          <button class="btn ghost" id="btn-hist-clear" type="button">
-            <span class="material-symbols-outlined" style="font-size:16px;">delete_sweep</span>
-            <span data-i18n="hist_clear_btn">Clear</span>
-          </button>
         </div>
       </div>
 
-      <div class="week-totals" id="week-totals"></div>
+      <!-- Unlocked -->
+      <div id="mgr-unlocked" class="hidden">
+        <div class="mgr-grid">
+          <!-- Export -->
+          <section class="fs-card mgr-card">
+            <div class="mgr-card__head">
+              <div><div class="ds-card__es" lang="es">Exportar reporte</div><h3 class="ds-card__title">Export Report</h3></div>
+              <span class="fs-chip fs-chip--marigold">PDF</span>
+            </div>
+            <p class="mgr-card__intro">Generate a weekly attendance PDF for the chosen week-ending date.<br/><em>Genera un PDF semanal de asistencia.</em></p>
+            <div class="exp-row">
+              <label class="fs-label"><span class="es" lang="es">Semana terminando</span><span class="en">Week ending</span></label>
+              <input type="date" class="fs-input" id="export-week-end" />
+            </div>
+            <div class="exp-preview">
+              <div class="exp-preview__doc">
+                <div class="exp-preview__sheet">
+                  <div class="exp-preview__head">
+                    <span class="exp-preview__logo">WC</span>
+                    <div><div class="exp-preview__t1">Weekly Attendance</div><div class="exp-preview__t2" id="exp-preview-sub">LA Convention Center</div></div>
+                  </div>
+                  <div class="exp-preview__rows">
+                    <div class="exp-preview__row"><span class="exp-preview__cell exp-preview__cell--name"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell exp-preview__cell--sig"></span></div>
+                    <div class="exp-preview__row"><span class="exp-preview__cell exp-preview__cell--name"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell exp-preview__cell--sig"></span></div>
+                    <div class="exp-preview__row"><span class="exp-preview__cell exp-preview__cell--name"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell exp-preview__cell--sig"></span></div>
+                    <div class="exp-preview__row"><span class="exp-preview__cell exp-preview__cell--name"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell exp-preview__cell--sig"></span></div>
+                    <div class="exp-preview__row"><span class="exp-preview__cell exp-preview__cell--name"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell"></span><span class="exp-preview__cell exp-preview__cell--sig"></span></div>
+                  </div>
+                  <div class="fs-greca" style="height:6px;opacity:.6"></div>
+                </div>
+              </div>
+              <div class="exp-preview__meta">
+                <div class="exp-preview__metarow"><span>Foremen</span><strong id="exp-meta-foremen">&mdash;</strong></div>
+                <div class="exp-preview__metarow"><span>Total hours</span><strong id="exp-meta-hours">&mdash;</strong></div>
+                <div class="exp-preview__metarow"><span>Injuries</span><strong id="exp-meta-injuries">&mdash;</strong></div>
+              </div>
+            </div>
+            <div class="exp-actions">
+              <button class="fs-btn fs-btn--ghost" id="btn-export-day" type="button"><span class="material-symbols-rounded">today</span> Single day &middot; D&iacute;a</button>
+              <button class="fs-btn fs-btn--primary" id="btn-export-week" type="button"><span class="material-symbols-rounded">picture_as_pdf</span> Export week &middot; Exportar</button>
+            </div>
+          </section>
 
-      <div class="hist-list mt-3" id="hist-list">
-        <p class="muted center small" data-i18n="loading">Loading…</p>
-      </div>
-    </div>
-  </section>
+          <!-- Roster -->
+          <section class="fs-card mgr-card">
+            <div class="mgr-card__head">
+              <div><div class="ds-card__es" lang="es">Cuadrilla</div><h3 class="ds-card__title">Roster</h3></div>
+              <button class="fs-btn fs-btn--ghost" id="btn-add-foreman" type="button" style="height:36px;font-size:13px;">+ Add foreman</button>
+            </div>
+            <div class="roster-list" id="roster-list"></div>
+          </section>
 
-  <!-- MANAGER TAB -->
-  <section class="panel" id="panel-manager">
-    <!-- Locked state -->
-    <div class="card" id="mgr-locked">
-      <h2 style="display:flex;align-items:center;gap:10px;">
-        <span class="material-symbols-outlined" style="color:var(--danger);">lock</span>
-        <span data-i18n="mgr_access_title">Manager Access</span>
-      </h2>
-      <p class="sub" data-i18n="mgr_access_sub">Enter PIN to manage the roster, edit attendance, and export PDFs.</p>
-      <label class="field">
-        <div class="lbl-row"><span data-i18n="pin">PIN</span></div>
-        <input type="password" inputmode="numeric" id="mgr-pin" placeholder="••••••" />
-      </label>
-      <button class="btn primary block lg" id="mgr-unlock" type="button">
-        <span class="material-symbols-outlined icon-fill">lock_open</span>
-        <span data-i18n="unlock">Unlock</span>
-      </button>
-    </div>
+          <!-- Week view -->
+          <section class="fs-card mgr-card mgr-card--wide">
+            <div class="mgr-card__head">
+              <div><div class="ds-card__es" lang="es">Vista semanal</div><h3 class="ds-card__title">Week View</h3></div>
+              <span class="fs-chip" id="week-view-label"></span>
+            </div>
+            <div class="week-grid" id="week-grid"><p class="wp-foot__meta" style="padding:16px">Pick a week-ending date above to load.</p></div>
+          </section>
 
-    <!-- Unlocked state -->
-    <div id="mgr-unlocked" class="hidden">
+          <!-- Project config -->
+          <section class="fs-card mgr-card">
+            <div class="mgr-card__head"><div><div class="ds-card__es" lang="es">Configuraci&oacute;n del proyecto</div><h3 class="ds-card__title">Project Config</h3></div></div>
+            <div class="cfg-grid">
+              <div><label class="fs-label"><span class="es" lang="es">Contratista principal</span><span class="en">Prime contractor</span></label><input class="fs-input" type="text" id="cfg-prime" /></div>
+              <div><label class="fs-label"><span class="es" lang="es">Nombre del proyecto</span><span class="en">Project name</span></label><input class="fs-input" type="text" id="cfg-project" /></div>
+              <div><label class="fs-label"><span class="es" lang="es">Subcontratista</span><span class="en">Subcontractor</span></label><input class="fs-input" type="text" id="cfg-sub" /></div>
+              <div><label class="fs-label"><span class="es" lang="es">PIN de administrador</span><span class="en">Manager PIN</span></label><input class="fs-input" type="text" inputmode="numeric" id="cfg-pin" /></div>
+            </div>
+            <div class="cfg-actions"><button class="fs-btn fs-btn--primary" id="btn-save-config" type="button"><span class="material-symbols-rounded">save</span> Save &middot; Guardar</button></div>
+          </section>
 
-      <div class="card mgr-section">
-        <div class="row-flex between mb-3">
-          <h3 style="margin:0;" data-i18n="export">Export</h3>
+          <!-- Maintenance -->
+          <section class="fs-card mgr-card mgr-card--danger">
+            <div class="mgr-card__head"><div><div class="ds-card__es" lang="es" style="color:var(--terracotta)">Mantenimiento</div><h3 class="ds-card__title">Maintenance</h3></div></div>
+            <div class="danger-row">
+              <div><div class="danger-row__t">Clear old records &middot; Limpiar registros</div><div class="danger-row__s">Permanently delete entries older than the selected window.</div></div>
+              <div class="danger-row__act">
+                <select class="fs-select" id="clear-window" style="width:140px">
+                  <option value="90">90 days</option><option value="180">180 days</option><option value="365">1 year</option>
+                </select>
+                <button class="fs-btn fs-btn--danger" id="btn-clear-old" type="button"><span class="material-symbols-rounded">delete_sweep</span> Clear</button>
+              </div>
+            </div>
+            <div class="danger-row">
+              <div><div class="danger-row__t">Lock manager &middot; Bloquear panel</div><div class="danger-row__s">Re-require the PIN before the next manager action.</div></div>
+              <button class="fs-btn fs-btn--ghost" id="btn-mgr-lock" type="button"><span class="material-symbols-rounded">lock</span> Lock now</button>
+            </div>
+          </section>
         </div>
-        <label class="field">
-          <div class="lbl-row"><span data-i18n="week_end_date">Week ending date</span></div>
-          <input type="date" id="export-week-end" />
-        </label>
-        <div class="row-flex">
-          <button class="btn primary" id="btn-export-week" style="flex: 1;" type="button">
-            <span class="material-symbols-outlined">download</span>
-            <span data-i18n="export_week">Export week as PDF</span>
-          </button>
-          <button class="btn secondary" id="btn-export-day" style="flex: 1;" type="button">
-            <span class="material-symbols-outlined">today</span>
-            <span data-i18n="export_day">Export single day</span>
-          </button>
-        </div>
       </div>
-
-      <div class="card mgr-section">
-        <div class="row-flex between mb-3">
-          <h3 style="margin:0;" data-i18n="week_view">Week View</h3>
-          <span class="small muted" id="week-view-label"></span>
-        </div>
-        <div class="week-grid" id="week-grid">
-          <p class="muted center small" style="padding: 20px;" data-i18n="pick_week">Pick a week-ending date above to load.</p>
-        </div>
-      </div>
-
-      <div class="card mgr-section">
-        <div class="row-flex between mb-3">
-          <h3 style="margin:0;" data-i18n="roster">Roster</h3>
-          <button class="btn primary" id="btn-add-foreman" type="button">
-            <span class="material-symbols-outlined">person_add</span>
-            <span data-i18n="add_foreman">Add Foreman</span>
-          </button>
-        </div>
-        <div id="roster-list"></div>
-      </div>
-
-      <div class="card mgr-section">
-        <h3 data-i18n="project_config">Project Config</h3>
-        <label class="field"><div class="lbl-row"><span data-i18n="prime_contractor">Prime Contractor</span></div>
-          <input type="text" id="cfg-prime" /></label>
-        <label class="field"><div class="lbl-row"><span data-i18n="project_name">Project Name</span></div>
-          <input type="text" id="cfg-project" /></label>
-        <label class="field"><div class="lbl-row"><span data-i18n="subcontractor">Subcontractor Name</span></div>
-          <input type="text" id="cfg-sub" /></label>
-        <label class="field"><div class="lbl-row"><span data-i18n="mgr_pin">Manager PIN</span></div>
-          <input type="text" inputmode="numeric" id="cfg-pin" /></label>
-        <button class="btn primary" id="btn-save-config" type="button">
-          <span class="material-symbols-outlined">save</span>
-          <span data-i18n="save_config">Save config</span>
-        </button>
-      </div>
-
-      <p class="center small muted">
-        <button class="btn ghost" id="btn-mgr-lock" type="button">
-          <span class="material-symbols-outlined" style="font-size:16px;">lock</span>
-          <span data-i18n="lock_mgr">Lock manager</span>
-        </button>
-      </p>
-    </div>
-  </section>
-</main>
-
-<!-- NAME PICKER OVERLAY -->
-<div class="overlay" id="overlay-namepicker">
-  <div class="modal">
-    <h3 data-i18n="who_signing">Who's signing in?</h3>
-    <p class="sub" data-i18n="who_sub">Tap your name to begin. The manager controls this list.</p>
-    <div class="name-grid" id="name-grid">
-      <p class="muted center small" data-i18n="loading_roster">Loading roster…</p>
-    </div>
-  </div>
+    </section>
+  </main>
 </div>
 
 <!-- EDIT FOREMAN OVERLAY -->
 <div class="overlay" id="overlay-foreman">
   <div class="modal">
-    <h3 id="fm-title" data-i18n="edit_foreman_title">Edit Foreman</h3>
-    <p class="sub" data-i18n="fm_sub">Set how this foreman appears in the picker and on the PDF.</p>
-    <label class="field"><div class="lbl-row"><span data-i18n="name_printed">Name (printed)</span></div>
-      <input type="text" id="fm-name" /></label>
-    <label class="field"><div class="lbl-row"><span data-i18n="work_classification">Work Classification</span></div>
-      <input type="text" id="fm-cls" data-i18n-ph="cls_placeholder" placeholder="e.g. Carpenter Journeyman" /></label>
-    <label class="field"><div class="lbl-row"><span data-i18n="active">Active</span></div>
-      <select id="fm-active">
-        <option value="true" data-i18n="active_yes">Yes — show in picker</option>
-        <option value="false" data-i18n="active_no">No — hide</option>
-      </select></label>
-    <div class="row-flex mt-3">
-      <button class="btn danger" id="fm-delete" style="flex: 1;" data-i18n="delete_btn">Delete</button>
-      <button class="btn secondary" id="fm-cancel" style="flex: 1;" data-i18n="cancel">Cancel</button>
-      <button class="btn primary" id="fm-save" style="flex: 1;" data-i18n="save">Save</button>
+    <h3 id="fm-title">Edit Foreman</h3>
+    <p class="modal-sub">Set how this foreman appears in the picker and on the PDF.</p>
+    <label class="fs-label"><span class="es" lang="es">Nombre (impreso)</span><span class="en">Name (printed)</span></label>
+    <input class="fs-input" type="text" id="fm-name" style="margin-bottom:14px" />
+    <label class="fs-label"><span class="es" lang="es">Clasificaci&oacute;n de trabajo</span><span class="en">Work classification</span></label>
+    <input class="fs-input" type="text" id="fm-cls" placeholder="e.g. Carpenter Journeyman" style="margin-bottom:14px" />
+    <label class="fs-label"><span class="es" lang="es">Activo</span><span class="en">Active</span></label>
+    <select class="fs-select" id="fm-active">
+      <option value="true">Yes &mdash; show in picker</option>
+      <option value="false">No &mdash; hide</option>
+    </select>
+    <div class="modal-actions">
+      <button class="fs-btn fs-btn--danger" id="fm-delete" type="button">Delete</button>
+      <button class="fs-btn fs-btn--ghost" id="fm-cancel" type="button">Cancel</button>
+      <button class="fs-btn fs-btn--primary" id="fm-save" type="button">Save</button>
     </div>
   </div>
 </div>
 
-<!-- EDIT ENTRY OVERLAY (manager week-view click) -->
+<!-- EDIT ENTRY OVERLAY -->
 <div class="overlay" id="overlay-entry">
   <div class="modal">
     <h3 id="entry-title">Edit Entry</h3>
-    <p class="sub" id="entry-sub"></p>
-    <div class="row-flex">
-      <label class="field" style="flex: 1;"><div class="lbl-row"><span data-i18n="time_in">Time In</span></div>
-        <input type="time" id="entry-tin" /></label>
-      <label class="field" style="flex: 1;"><div class="lbl-row"><span data-i18n="time_out">Time Out</span></div>
-        <input type="time" id="entry-tout" /></label>
+    <p class="modal-sub" id="entry-sub"></p>
+    <div style="display:flex;gap:12px">
+      <div style="flex:1"><label class="fs-label"><span class="es" lang="es">Hora de entrada</span><span class="en">Time In</span></label><input class="fs-input" type="time" id="entry-tin" /></div>
+      <div style="flex:1"><label class="fs-label"><span class="es" lang="es">Hora de salida</span><span class="en">Time Out</span></label><input class="fs-input" type="time" id="entry-tout" /></div>
     </div>
-    <label class="field"><div class="lbl-row"><span data-i18n="hours_label">Hours</span></div>
-      <input type="number" step="0.25" id="entry-hours" /></label>
-    <label class="field"><div class="lbl-row"><span data-i18n="status_label">Status</span></div>
-      <select id="entry-status">
-        <option value="signed" data-i18n="signed_in">Signed in</option>
-        <option value="off" data-i18n="status_off_opt">Off</option>
-      </select></label>
-    <label class="field"><div class="lbl-row"><span data-i18n="injured_label">Injured</span></div>
-      <select id="entry-injured">
-        <option value="false" data-i18n="no">No</option>
-        <option value="true" data-i18n="yes">Yes</option>
-      </select></label>
-    <div class="row-flex mt-3">
-      <button class="btn danger" id="entry-delete" style="flex: 1;" data-i18n="delete_btn">Delete</button>
-      <button class="btn secondary" id="entry-cancel" style="flex: 1;" data-i18n="cancel">Cancel</button>
-      <button class="btn primary" id="entry-save" style="flex: 1;" data-i18n="save">Save</button>
+    <label class="fs-label" style="margin-top:14px"><span class="es" lang="es">Horas</span><span class="en">Hours</span></label>
+    <input class="fs-input" type="number" step="0.25" id="entry-hours" />
+    <label class="fs-label" style="margin-top:14px"><span class="es" lang="es">Estado</span><span class="en">Status</span></label>
+    <select class="fs-select" id="entry-status"><option value="signed">Signed in</option><option value="off">Off</option></select>
+    <label class="fs-label" style="margin-top:14px"><span class="es" lang="es">Lesionado</span><span class="en">Injured</span></label>
+    <select class="fs-select" id="entry-injured"><option value="false">No</option><option value="true">Yes</option></select>
+    <div class="modal-actions">
+      <button class="fs-btn fs-btn--danger" id="entry-delete" type="button">Delete</button>
+      <button class="fs-btn fs-btn--ghost" id="entry-cancel" type="button">Cancel</button>
+      <button class="fs-btn fs-btn--primary" id="entry-save" type="button">Save</button>
     </div>
   </div>
 </div>
@@ -1043,57 +789,17 @@
 <div id="toast"></div>
 
 <script>
-// ── I18N ────────────────────────────────────────────────────────────────────
+const LOGO_DATA_URI = "data:image/png;base64,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";
+
+// ── I18N (dictionary retained for dynamic strings: toasts, confirms) ─────────
 const T = {
   en: {
-    brand: 'Foreman Sign-In', switch_user: 'switch user',
-    tab_signin: 'Sign In', tab_history: 'History', tab_manager: 'Manager',
-    theme_light: 'Light', theme_dark: 'Dark',
-    signin_title: 'Daily Sign-In',
-    signin_sub: 'Sign in for today, or backfill up to 7 days back.',
-    date: 'Date', name: 'Name', classification: 'Classification',
-    time_in: 'Time In', time_out: 'Time Out', total_hours: 'Total Hours',
-    injured_q: 'Were you injured today at work?',
-    no: 'No', yes: 'Yes',
-    signature: 'Signature',
-    type_instead: 'Type instead', draw_instead: 'Draw instead',
-    sig_hint_draw: 'Sign with your finger',
-    sig_hint_typed: 'Tap "Sign & Submit" to stamp your name',
-    clear: 'Clear', sign_submit: 'Sign & Submit', mark_off: 'Mark Off',
+    brand: 'Foreman Sign-In',
     saving: 'Saving…', saved: 'Saved.', hrs: 'hrs',
-    history_title: 'My Attendance', history_sub: 'Last 30 days',
-    loading: 'Loading…',
     no_history: 'No history yet. Sign in today to start.',
-    week_ending: 'Week ending', current_tag: 'current',
-    off_upper: 'OFF', off_lower: 'Off', injury_reported: 'injury reported',
-    who_signing: "Who's signing in?",
-    who_sub: 'Tap your name to begin. The manager controls this list.',
-    loading_roster: 'Loading roster…',
     no_foremen_user: 'No foremen yet. Ask your manager.',
-    mgr_access_title: 'Manager Access',
-    mgr_access_sub: 'Enter PIN to manage the roster, edit attendance, and export PDFs.',
-    pin: 'PIN', unlock: 'Unlock', export: 'Export',
-    week_end_date: 'Week ending date',
-    export_week: 'Export week as PDF', export_day: 'Export single day',
-    week_view: 'Week View',
-    pick_week: 'Pick a week-ending date above to load.',
-    no_active_foremen: 'No active foremen.',
-    week_ending_short: 'Week ending',
-    foreman_col: 'Foreman',
-    roster: 'Roster', add_foreman: '+ Add Foreman',
     no_foremen_mgr: 'No foremen yet. Add one above.',
-    project_config: 'Project Config',
-    prime_contractor: 'Prime Contractor', project_name: 'Project Name',
-    subcontractor: 'Subcontractor Name', mgr_pin: 'Manager PIN',
-    save_config: 'Save config', lock_mgr: 'Lock manager',
-    edit_foreman_title: 'Edit Foreman', add_foreman_title: 'Add Foreman',
-    fm_sub: 'Set how this foreman appears in the picker and on the PDF.',
-    name_printed: 'Name (printed)', work_classification: 'Work Classification',
-    cls_placeholder: 'e.g. Carpenter Journeyman',
-    active: 'Active', active_yes: 'Yes — show in picker', active_no: 'No — hide',
-    delete_btn: 'Delete', cancel: 'Cancel', save: 'Save',
-    edit_entry: 'Edit Entry', hours_label: 'Hours', status_label: 'Status',
-    signed_in: 'Signed in', status_off_opt: 'Off', injured_label: 'Injured',
+    no_active_foremen: 'No active foremen.',
     pick_name_first: 'Pick your name first',
     enter_times: 'Enter time in and time out',
     time_out_after: 'Time out must be after time in',
@@ -1110,73 +816,21 @@ const T = {
     deleted: 'Deleted', saved_toast: 'Saved', name_required: 'Name required',
     entry_saved: 'Entry saved', entry_deleted: 'Entry deleted',
     delete_entry_confirm: 'Delete this entry?',
-    selected_worker: 'SELECTED WORKER', today: 'TODAY',
-    hours_log: 'Hours Log', safety_declaration: 'Safety Declaration',
-    brand_full: 'Foreman Portal', brand_sub_long: 'Site Attendance · LACC',
-    manager_mode_on: 'Manager mode', lock_manager: 'Lock',
-    hist_start_label: 'From', hist_end_label: 'To',
-    hist_foreman_label: 'Foreman', hist_foreman_all: 'All foremen',
-    hist_clear_label: 'Clear records older than', hist_clear_btn: 'Clear',
     clear_old_confirm: 'Permanently delete {n} day(s) of records before {date}?',
-    clear_old_done: 'Cleared {n} day(s)', clear_old_empty: 'Pick a cutoff date first',
+    clear_old_done: 'Cleared {n} day(s)',
     clear_old_none: 'No records older than {date}',
-    hist_export_label: 'Week ending', hist_export_btn: 'Export',
-    export_report: 'Export Report',
-    export_report_sub: 'Generate a weekly attendance PDF for the chosen week-ending date.',
-    hist_no_results: 'No entries in this range',
-    hist_group_count: '{n} entries',
-    history_title_mgr: 'All Attendance',
-    history_sub_mgr: 'All foremen · pick a date range below'
+    loading: 'Loading…', hist_no_results: 'No entries in this range',
+    not_signed_in: 'Not signed in yet', signed_in: 'Signed in',
+    signed_count: 'signed in', off_lower: 'Off',
+    edit_foreman_title: 'Edit Foreman', add_foreman_title: 'Add Foreman'
   },
   es: {
-    brand: 'Registro de Foreman', switch_user: 'cambiar usuario',
-    tab_signin: 'Registrar', tab_history: 'Historial', tab_manager: 'Gerente',
-    theme_light: 'Claro', theme_dark: 'Oscuro',
-    signin_title: 'Registro Diario',
-    signin_sub: 'Regístrese hoy, o complete hasta 7 días atrás.',
-    date: 'Fecha', name: 'Nombre', classification: 'Clasificación',
-    time_in: 'Hora de Entrada', time_out: 'Hora de Salida', total_hours: 'Horas Totales',
-    injured_q: '¿Se lastimó hoy en el trabajo?',
-    no: 'No', yes: 'Sí',
-    signature: 'Firma',
-    type_instead: 'Escribir en su lugar', draw_instead: 'Dibujar en su lugar',
-    sig_hint_draw: 'Firme con su dedo',
-    sig_hint_typed: 'Toque "Firmar y Enviar" para sellar su nombre',
-    clear: 'Borrar', sign_submit: 'Firmar y Enviar', mark_off: 'Marcar Ausente',
+    brand: 'Registro de Foreman',
     saving: 'Guardando…', saved: 'Guardado.', hrs: 'hrs',
-    history_title: 'Mi Asistencia', history_sub: 'Últimos 30 días',
-    loading: 'Cargando…',
     no_history: 'Sin historial. Regístrese hoy para empezar.',
-    week_ending: 'Semana terminando', current_tag: 'actual',
-    off_upper: 'AUSENTE', off_lower: 'Ausente', injury_reported: 'lesión reportada',
-    who_signing: '¿Quién se está registrando?',
-    who_sub: 'Toque su nombre para comenzar. El gerente controla esta lista.',
-    loading_roster: 'Cargando equipo…',
     no_foremen_user: 'Aún no hay foremen. Pregunte a su gerente.',
-    mgr_access_title: 'Acceso de Gerente',
-    mgr_access_sub: 'Ingrese el PIN para administrar el equipo, editar asistencia y exportar PDFs.',
-    pin: 'PIN', unlock: 'Desbloquear', export: 'Exportar',
-    week_end_date: 'Fecha de fin de semana',
-    export_week: 'Exportar semana como PDF', export_day: 'Exportar un día',
-    week_view: 'Vista Semanal',
-    pick_week: 'Seleccione una fecha de fin de semana arriba para cargar.',
-    no_active_foremen: 'No hay foremen activos.',
-    week_ending_short: 'Semana terminando',
-    foreman_col: 'Foreman',
-    roster: 'Equipo', add_foreman: '+ Agregar Foreman',
     no_foremen_mgr: 'Aún no hay foremen. Agregue uno arriba.',
-    project_config: 'Configuración del Proyecto',
-    prime_contractor: 'Contratista Principal', project_name: 'Nombre del Proyecto',
-    subcontractor: 'Nombre del Subcontratista', mgr_pin: 'PIN del Gerente',
-    save_config: 'Guardar configuración', lock_mgr: 'Bloquear gerente',
-    edit_foreman_title: 'Editar Foreman', add_foreman_title: 'Agregar Foreman',
-    fm_sub: 'Configure cómo aparece este foreman en el selector y en el PDF.',
-    name_printed: 'Nombre (impreso)', work_classification: 'Clasificación de Trabajo',
-    cls_placeholder: 'ej. Carpintero Journeyman',
-    active: 'Activo', active_yes: 'Sí — mostrar en selector', active_no: 'No — ocultar',
-    delete_btn: 'Eliminar', cancel: 'Cancelar', save: 'Guardar',
-    edit_entry: 'Editar Registro', hours_label: 'Horas', status_label: 'Estado',
-    signed_in: 'Registrado', status_off_opt: 'Ausente', injured_label: 'Lesionado',
+    no_active_foremen: 'No hay foremen activos.',
     pick_name_first: 'Seleccione su nombre primero',
     enter_times: 'Ingrese hora de entrada y salida',
     time_out_after: 'La hora de salida debe ser después de la entrada',
@@ -1189,27 +843,17 @@ const T = {
     shared_toast: 'Compartido', pdf_downloaded: 'PDF descargado',
     firebase_err: 'Firebase no disponible',
     incorrect_pin: 'PIN incorrecto', config_saved: 'Configuración guardada',
-    delete_fm_confirm: '¿Eliminar a este foreman? Los registros de asistencia históricos se conservarán.',
+    delete_fm_confirm: '¿Eliminar a este foreman? Los registros históricos se conservarán.',
     deleted: 'Eliminado', saved_toast: 'Guardado', name_required: 'Nombre requerido',
     entry_saved: 'Registro guardado', entry_deleted: 'Registro eliminado',
     delete_entry_confirm: '¿Eliminar este registro?',
-    selected_worker: 'TRABAJADOR SELECCIONADO', today: 'HOY',
-    hours_log: 'Registro de Horas', safety_declaration: 'Declaración de Seguridad',
-    brand_full: 'Portal Foreman', brand_sub_long: 'Asistencia · LACC',
-    manager_mode_on: 'Modo gerente', lock_manager: 'Bloquear',
-    hist_start_label: 'Desde', hist_end_label: 'Hasta',
-    hist_foreman_label: 'Foreman', hist_foreman_all: 'Todos los foremen',
-    hist_clear_label: 'Borrar registros anteriores a', hist_clear_btn: 'Borrar',
     clear_old_confirm: '¿Eliminar permanentemente {n} día(s) de registros antes de {date}?',
-    clear_old_done: '{n} día(s) borrado(s)', clear_old_empty: 'Seleccione una fecha de corte primero',
+    clear_old_done: '{n} día(s) borrado(s)',
     clear_old_none: 'No hay registros anteriores a {date}',
-    hist_export_label: 'Semana terminando', hist_export_btn: 'Exportar',
-    export_report: 'Exportar Reporte',
-    export_report_sub: 'Genere un PDF de asistencia semanal para la fecha de fin de semana seleccionada.',
-    hist_no_results: 'No hay registros en este rango',
-    hist_group_count: '{n} registros',
-    history_title_mgr: 'Toda la Asistencia',
-    history_sub_mgr: 'Todos los foremen · seleccione un rango de fechas abajo'
+    loading: 'Cargando…', hist_no_results: 'No hay registros en este rango',
+    not_signed_in: 'Sin registrar aún', signed_in: 'Registrado',
+    signed_count: 'registrados', off_lower: 'Ausente',
+    edit_foreman_title: 'Editar Foreman', add_foreman_title: 'Agregar Foreman'
   }
 };
 
@@ -1236,7 +880,6 @@ function fbRemove(path)     { return db.ref(`${NS}/${path}`).remove(); }
 // ── STATE ───────────────────────────────────────────────────────────────────
 const state = {
   lang: localStorage.getItem('lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
-  theme: localStorage.getItem('theme') || 'dark',
   profile: null,
   foremen: {},
   config: {
@@ -1245,46 +888,28 @@ const state = {
     subcontractor: 'Webcor Concrete',
     managerPin: '050103'
   },
-  signin: {
-    date: ymd(new Date()),
-    timeIn: '', timeOut: '', totalHours: 0,
-    injured: false,
-    sigMode: 'drawn'
-  },
+  signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, sigMode: 'drawn' },
   attendanceCache: {},
-  manager: {
-    unlocked: false,
-    weekEnd: null,
-    weekEndStr: '',
-    weekData: null,
-    editingForemanId: null,
-    editingEntry: null
-  },
+  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, editingForemanId: null, editingEntry: null },
   sigPad: null
 };
+state.signin.date = '';
 
 function t(key, fallback) {
   return (T[state.lang]?.[key]) ?? (T.en[key]) ?? (fallback ?? key);
 }
 
 // ── HELPERS ─────────────────────────────────────────────────────────────────
+function $(sel) { return document.querySelector(sel); }
+function $$(sel) { return [...document.querySelectorAll(sel)]; }
 function ymd(d) {
   const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
   return `${y}-${m}-${day}`;
 }
 function parseYmd(s) { const [y,m,d] = s.split('-').map(Number); return new Date(y, m-1, d); }
-function dayOfWeek(date) {
-  const en = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
-  const es = ['DOMINGO','LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO'];
-  return state.lang === 'es' ? es[date.getDay()] : en[date.getDay()];
-}
 function dayOfWeekEs(date) { return ['DOMINGO','LUNES','MARTES','MIERCOLES','JUEVES','VIERNES','SABADO'][date.getDay()]; }
 function dayOfWeekEn(date) { return ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'][date.getDay()]; }
-function dayShort(date) {
-  const en = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const es = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
-  return (state.lang === 'es' ? es : en)[date.getDay()];
-}
+function dayShort(date) { return ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][date.getDay()]; }
 function fmtDateUS(s) { const d = parseYmd(s); return `${d.getMonth()+1}/${d.getDate()}/${d.getFullYear()}`; }
 function hoursBetween(tIn, tOut) {
   if (!tIn || !tOut) return 0;
@@ -1293,16 +918,6 @@ function hoursBetween(tIn, tOut) {
   const m = (ho*60+mo) - (hi*60+mi);
   return m > 0 ? Math.round((m/60)*100)/100 : 0;
 }
-function toast(msg, kind='') {
-  const t = $('#toast');
-  t.textContent = msg;
-  t.className = ''; if (kind) t.classList.add(kind);
-  t.classList.add('show');
-  clearTimeout(toast._t);
-  toast._t = setTimeout(() => t.classList.remove('show'), 2400);
-}
-function $(sel) { return document.querySelector(sel); }
-function $$(sel) { return [...document.querySelectorAll(sel)]; }
 function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -1315,97 +930,162 @@ function weekEndingFor(date) {
 }
 function weekDates(weekEnd) {
   const out = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date(weekEnd); d.setDate(d.getDate() - i); out.push(d);
-  }
+  for (let i = 6; i >= 0; i--) { const d = new Date(weekEnd); d.setDate(d.getDate() - i); out.push(d); }
   return out;
 }
+function toast(msg, kind='') {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.className = ''; if (kind) el.classList.add(kind);
+  el.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('show'), 2600);
+}
+function initialsOf(name) {
+  return String(name||'').trim().split(/\s+/).map(w => w[0] || '').slice(0,2).join('').toUpperCase() || '—';
+}
+function hashStr(s) { let h = 0; for (const c of String(s)) h = (h*31 + c.charCodeAt(0)) >>> 0; return h; }
+function accentFor(id) { return ['marigold','terracotta','teal','cocoa','green'][hashStr(id) % 5]; }
+function fmtTime12(hhmm) {
+  if (!hhmm) return '';
+  const [h, m] = hhmm.split(':').map(Number);
+  const ap = h < 12 ? 'AM' : 'PM';
+  const h12 = ((h + 11) % 12) + 1;
+  return `${h12}:${String(m).padStart(2,'0')} ${ap}`;
+}
+function weekNumber(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - dayNum + 3);
+  const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
+  const fd = (firstThursday.getUTCDay() + 6) % 7;
+  firstThursday.setUTCDate(firstThursday.getUTCDate() - fd + 3);
+  return 1 + Math.round((date - firstThursday) / (7 * 864e5));
+}
+const ES_MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const ES_DOW = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+function esLongDate(d) { return `${ES_DOW[d.getDay()]}, ${d.getDate()} de ${ES_MONTHS[d.getMonth()]} de ${d.getFullYear()}`; }
+function enLongDate(d) { return d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }); }
 
-// ── PREFS (lang + theme) ────────────────────────────────────────────────────
-function applyLang(lang) {
-  state.lang = lang;
-  localStorage.setItem('lang', lang);
-  document.documentElement.lang = lang;
-  $$('#pref-lang .opt').forEach(o => o.classList.toggle('active', o.dataset.lang === lang));
-  $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
-  $$('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.dataset.i18nPh); });
-  // Re-render dynamic content
-  updateDowLabel(state.signin.date);
-  recalcHours();
-  renderNamePicker();
-  if (state.profile) loadHistory();
-  if (state.manager.unlocked) {
-    renderRoster();
-    if (state.manager.weekData) {
-      $('#week-view-label').textContent = `${t('week_ending_short')} ${fmtDateUS(state.manager.weekEndStr)}`;
-      renderWeekGrid();
-    }
-  }
-  // Toggle sig-hint based on current mode
-  $('#sig-hint').textContent = state.signin.sigMode === 'typed' ? t('sig_hint_typed') : t('sig_hint_draw');
-  $('#sig-mode-toggle').textContent = state.signin.sigMode === 'typed' ? t('draw_instead') : t('type_instead');
+// ── DECORATIVE SVG ──────────────────────────────────────────────────────────
+const PICADO_COLORS = ['var(--marigold)','var(--terracotta)','var(--teal-deep)','var(--webcor-green)','var(--marigold)','var(--cocoa)'];
+function picadoFlagSvg(color, h) {
+  return `<svg width="80" height="${h}" viewBox="0 0 80 96" aria-hidden="true">`
+    + `<line x1="0" y1="2" x2="80" y2="2" stroke="${color}" stroke-width="1" opacity="0.5"/>`
+    + `<path d="M4 2 H76 V74 L60 86 L40 78 L20 86 L4 74 Z" fill="${color}" opacity="0.92"/>`
+    + `<g fill="var(--cream)">`
+    + `<circle cx="40" cy="34" r="5"/><circle cx="40" cy="22" r="3"/><circle cx="40" cy="46" r="3"/>`
+    + `<circle cx="28" cy="34" r="3"/><circle cx="52" cy="34" r="3"/>`
+    + `<circle cx="31" cy="25" r="2"/><circle cx="49" cy="25" r="2"/><circle cx="31" cy="43" r="2"/><circle cx="49" cy="43" r="2"/>`
+    + `<circle cx="14" cy="14" r="2"/><circle cx="66" cy="14" r="2"/><circle cx="14" cy="58" r="2"/><circle cx="66" cy="58" r="2"/>`
+    + `<path d="M40 60 L46 66 L40 72 L34 66 Z"/></g>`
+    + `<g fill="var(--cream)"><circle cx="4" cy="20" r="3"/><circle cx="4" cy="38" r="3"/><circle cx="4" cy="56" r="3"/>`
+    + `<circle cx="76" cy="20" r="3"/><circle cx="76" cy="38" r="3"/><circle cx="76" cy="56" r="3"/></g></svg>`;
 }
-function applyTheme(theme) {
-  state.theme = theme;
-  localStorage.setItem('theme', theme);
-  document.documentElement.setAttribute('data-theme', theme);
-  $$('#pref-theme .opt').forEach(o => o.classList.toggle('active', o.dataset.theme === theme));
-  // Re-init signature pad pen color to match theme
-  if (state.sigPad) {
-    state.sigPad.penColor = theme === 'dark' ? '#e7e0e8' : '#1d1b20';
-  }
+function picadoBannerHtml(flags, height) {
+  let out = `<div class="picado-banner" aria-hidden="true" style="display:flex;justify-content:space-between;align-items:flex-start;height:${height}px;opacity:.85;pointer-events:none">`;
+  for (let i = 0; i < flags; i++) out += picadoFlagSvg(PICADO_COLORS[i % PICADO_COLORS.length], height);
+  return out + '</div>';
 }
+function marigoldMarkSvg(size, color, center) {
+  color = color || 'var(--marigold)'; center = center || 'var(--cocoa)';
+  let petals = '';
+  for (let i = 0; i < 8; i++) {
+    const a = (i/8) * Math.PI * 2;
+    petals += `<circle cx="${(16+Math.cos(a)*9).toFixed(2)}" cy="${(16+Math.sin(a)*9).toFixed(2)}" r="4.2"/>`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 32 32" aria-hidden="true"><g fill="${color}">${petals}</g><circle cx="16" cy="16" r="4" fill="${center}"/></svg>`;
+}
+function sunBurstSvg(size, opacity) {
+  let rays = '';
+  for (let i = 0; i < 16; i++) rays += `<rect x="98" y="6" width="4" height="46" rx="2" transform="rotate(${(i/16)*360} 100 100)"/>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 200 200" aria-hidden="true" style="opacity:${opacity}">`
+    + `<g fill="var(--marigold)">${rays}</g>`
+    + `<circle cx="100" cy="100" r="44" fill="none" stroke="var(--marigold)" stroke-width="2"/>`
+    + `<circle cx="100" cy="100" r="28" fill="none" stroke="var(--marigold)" stroke-width="1.5" stroke-dasharray="2 4"/></svg>`;
+}
+function petalSvg() {
+  let g = '';
+  for (let i = 0; i < 8; i++) {
+    const a = (i/8) * Math.PI * 2;
+    g += `<circle cx="${(28+Math.cos(a)*22).toFixed(2)}" cy="${(28+Math.sin(a)*22).toFixed(2)}" r="7"/>`;
+  }
+  return `<svg class="wp-tile__petal" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><g opacity="0.18" fill="currentColor">${g}</g></svg>`;
+}
+
+// ── PREFS / RESPONSIVE ──────────────────────────────────────────────────────
 function initPrefs() {
-  applyTheme(state.theme);
-  applyLang(state.lang);
-  $('#pref-lang').onclick = () => applyLang(state.lang === 'en' ? 'es' : 'en');
-  $('#pref-theme').onclick = () => applyTheme(state.theme === 'light' ? 'dark' : 'light');
+  document.documentElement.lang = state.lang;
+}
+function initResponsive() {
+  const mq = window.matchMedia('(max-width: 1023px)');
+  const apply = () => document.body.classList.toggle('is-tight', mq.matches);
+  apply();
+  mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
 }
 
 // ── BOOT ────────────────────────────────────────────────────────────────────
 async function boot() {
   initPrefs();
-  if (!initFirebase()) {
-    toast(t('firebase_err'), 'error');
-    return;
-  }
+  initResponsive();
+  // inject decorative chrome
+  $('#picker-logo').src = LOGO_DATA_URI;
+  $('#app-logo').src = LOGO_DATA_URI;
+  $('#picker-picado').innerHTML = picadoBannerHtml(10, 64);
+  $('#app-picado').innerHTML = picadoBannerHtml(10, 64);
+  $('#greet-picado').innerHTML = picadoBannerHtml(5, 56);
+  $('#greet-bg').innerHTML = sunBurstSvg(280, 0.10);
+  $('#pin-decor').innerHTML = sunBurstSvg(240, 0.08);
+  $('#sig-corner').innerHTML = marigoldMarkSvg(16);
+  $('#wp-kicker').innerHTML = marigoldMarkSvg(20) + '<span lang="es">Buenos días, equipo</span>';
+  $('#greet-kicker').innerHTML = marigoldMarkSvg(16) + ' <span lang="es">Buenos días</span>';
+  $('#hist-kicker').innerHTML = marigoldMarkSvg(18) + ' <span lang="es">Mi historial</span>';
+  $('#mgr-kicker').innerHTML = marigoldMarkSvg(18) + ' <span lang="es">Panel de administrador</span>';
+  $('#ds-meta-hint').innerHTML = marigoldMarkSvg(14) + ' Backfill up to 7 days · <span lang="es">Hasta 7 días atrás</span>';
+
+  // Restore profile + show a screen IMMEDIATELY — never block the UI on Firebase.
+  const saved = localStorage.getItem('foreman_profile');
+  if (saved) { try { state.profile = JSON.parse(saved); } catch(e) {} }
+  if (state.profile?.id === '__manager__') { localStorage.removeItem('foreman_profile'); state.profile = null; }
+
+  initTabs();
+  initSignInForm();
+  initSignaturePad();
+  initManager();
+  fillPickerIntro();
+
+  if (state.profile) showApp();
+  else showPicker();
+
+  if (!initFirebase()) { toast(t('firebase_err'), 'error'); return; }
   await ensureSeed();
   await ensureFausto();
   fbListen('config', cfg => {
     if (cfg) state.config = Object.assign(state.config, cfg);
     renderBrand();
     renderConfigForm();
+    renderPinDots();
   });
   fbListen('foremen', fm => {
     state.foremen = fm || {};
-    renderNamePicker();
+    state.foremenLoaded = true;
+    if (state.profile) {
+      const f = state.foremen[state.profile.id];
+      if (f) {
+        state.profile.name = f.name;
+        state.profile.classification = f.classification;
+        localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
+        if ($('#screen-app').classList.contains('active')) fillGreeting();
+      } else {
+        localStorage.removeItem('foreman_profile');
+        state.profile = null;
+        showPicker();
+      }
+    }
+    renderPicker();
     renderRoster();
     if (state.manager.weekData) renderWeekGrid();
   });
-
-  const saved = localStorage.getItem('foreman_profile');
-  if (saved) { try { state.profile = JSON.parse(saved); } catch(e) {} }
-  // Legacy: older builds stored a '__manager__' pseudo-profile. Clear it so the user re-picks a real foreman.
-  if (state.profile?.id === '__manager__') {
-    localStorage.removeItem('foreman_profile');
-    state.profile = null;
-  }
-  setTimeout(() => {
-    if (state.profile && state.foremen[state.profile.id]) {
-      const fm = state.foremen[state.profile.id];
-      state.profile.name = fm.name;
-      state.profile.classification = fm.classification;
-      localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
-      showApp();
-    } else {
-      showNamePicker();
-    }
-  }, 400);
-
-  initTabs();
-  initSignInForm();
-  initSignaturePad();
-  initManager();
 }
 
 async function ensureSeed() {
@@ -1426,59 +1106,76 @@ async function ensureSeed() {
     for (const s of seed) await fbPush('foremen', { ...s, active: true });
   }
 }
-
 async function ensureFausto() {
-  // Idempotent: adds Fausto to the roster if no foreman named "Fausto" exists.
   const fm = await fbGet('foremen');
   if (!fm) return;
-  const hasFausto = Object.values(fm).some(f =>
-    (f?.name || '').trim().toLowerCase() === 'fausto');
+  const hasFausto = Object.values(fm).some(f => (f?.name || '').trim().toLowerCase() === 'fausto');
   if (hasFausto) return;
-  await fbPush('foremen', {
-    name: 'Fausto',
-    classification: 'Carpenter Foreman',
-    order: 0,
-    active: true
-  });
+  await fbPush('foremen', { name: 'Fausto', classification: 'Carpenter Foreman', order: 0, active: true });
 }
 
 function renderBrand() {
-  $('#brand-sub').textContent = `${state.config.subcontractor} · ${state.config.projectName}`;
+  const name = state.config.projectName || 'LA Convention Center';
+  const meta = `${state.config.subcontractor || ''}`;
+  $('#hdr-project-name').textContent = name;
+  $('#hdr-project-meta').textContent = meta;
+  $('#picker-project-name').textContent = name;
+  $('#picker-project-meta').textContent = meta;
+  $('#exp-preview-sub').textContent = name;
 }
 
-// ── NAME PICKER ─────────────────────────────────────────────────────────────
-function showNamePicker() { renderNamePicker(); $('#overlay-namepicker').classList.add('show'); }
-function hideNamePicker() { $('#overlay-namepicker').classList.remove('show'); }
-function showApp() {
-  hideNamePicker();
-  $('#g-name').textContent = state.profile.name.split(' ')[0];
-  $('#signin-name').textContent = state.profile.name;
-  $('#signin-cls').textContent = state.profile.classification || '';
-  updateManagerBadge();
-  loadHistory();
+// ── SCREEN SWITCH / PICKER ──────────────────────────────────────────────────
+function showPicker() {
+  $('#screen-app').classList.remove('active');
+  $('#screen-picker').classList.add('active');
+  renderPicker();
 }
-function renderNamePicker() {
-  const grid = $('#name-grid');
-  const list = Object.entries(state.foremen)
-    .filter(([_, f]) => f.active)
-    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
-  if (list.length === 0) {
-    grid.innerHTML = `<p class="muted center small">${escapeHtml(t('no_foremen_user'))}</p>`;
-  } else {
-    grid.innerHTML = list.map(([id, f]) => `
-      <button class="name-btn" data-id="${id}" type="button">
-        <span class="name-meta">
-          <span class="avatar"><span class="material-symbols-outlined">person</span></span>
-          <span class="text">
-            <span>${escapeHtml(f.name)}</span>
-            <span class="cls">${escapeHtml(f.classification || '')}</span>
-          </span>
-        </span>
-        <span class="material-symbols-outlined arrow">arrow_forward</span>
-      </button>
-    `).join('');
+function showApp() {
+  $('#screen-picker').classList.remove('active');
+  $('#screen-app').classList.add('active');
+  fillGreeting();
+  loadHistory();
+  updateMgrStatus();
+  _sigLastDims = null;
+  resizeCanvas($('#sig-canvas'));
+}
+function fillPickerIntro() {
+  const today = new Date();
+  $('#wp-date').innerHTML = `${escapeHtml(enLongDate(today))}<span class="wp-intro__sep">·</span>${escapeHtml(esLongDate(today))}`;
+}
+function renderPicker() {
+  const grid = $('#wp-grid');
+  if (!grid) return;
+  const list = Object.entries(state.foremen).filter(([_, f]) => f.active).sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
+  // Show skeleton tiles while we wait for the first foremen payload.
+  if (!state.foremenLoaded) {
+    $('#wp-roster-count').textContent = '';
+    $('#wp-count').textContent = '— signed in';
+    grid.innerHTML = Array.from({length:6}, () =>
+      `<div class="wp-skel" aria-hidden="true"><div class="wp-skel__avatar"></div><div><div class="wp-skel__bar"></div><div class="wp-skel__bar wp-skel__bar--sm"></div></div><div></div></div>`
+    ).join('');
+    return;
   }
-  grid.querySelectorAll('.name-btn').forEach(btn => {
+  $('#wp-roster-count').textContent = `${list.length} active foremen on roster`;
+  if (list.length === 0) {
+    grid.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_foremen_user'))}</p>`;
+    $('#wp-count').textContent = `0 ${t('signed_count')}`;
+    return;
+  }
+  grid.innerHTML = list.map(([id, f]) => {
+    const accent = accentFor(id);
+    const aria = `Sign in as ${f.name}${f.classification ? ', ' + f.classification : ''}`;
+    return `<button class="wp-tile is-${accent}" data-id="${escapeHtml(id)}" type="button" aria-label="${escapeHtml(aria)}">
+      <div class="wp-tile__avatar" aria-hidden="true"><span>${escapeHtml(initialsOf(f.name))}</span>${petalSvg()}</div>
+      <div class="wp-tile__body">
+        <div class="wp-tile__name">${escapeHtml(f.name)}</div>
+        <div class="wp-tile__role">${escapeHtml(f.classification || '')}</div>
+        <div class="wp-tile__status" data-status hidden><span class="wp-tile__dot"></span><span data-status-text></span></div>
+      </div>
+      <div class="wp-tile__arrow" aria-hidden="true">&rarr;</div>
+    </button>`;
+  }).join('');
+  grid.querySelectorAll('.wp-tile').forEach(btn => {
     btn.onclick = () => {
       const id = btn.dataset.id;
       const f = state.foremen[id];
@@ -1487,30 +1184,41 @@ function renderNamePicker() {
       showApp();
     };
   });
+  annotatePickerStatus();
 }
-function updateManagerBadge() {
-  const on = !!state.manager.unlocked;
-  $('#g-mgr-badge').classList.toggle('hidden', !on);
-  $('#g-mgr-lock').classList.toggle('hidden', !on);
+async function annotatePickerStatus() {
+  try {
+    const today = ymd(new Date());
+    const day = (await fbGet(`attendance/${today}`)) || {};
+    let count = 0;
+    $$('#wp-grid .wp-tile').forEach(tile => {
+      const e = day[tile.dataset.id];
+      const statusEl = tile.querySelector('[data-status]');
+      if (e && e.signatureType !== 'off' && e.timeIn) {
+        count++;
+        tile.classList.add('is-checked');
+        if (statusEl) {
+          statusEl.hidden = false;
+          statusEl.querySelector('[data-status-text]').textContent = `${t('signed_in')} ${fmtTime12(e.timeIn)}`;
+        }
+      }
+    });
+    $('#wp-count').textContent = `${count} ${t('signed_count')}`;
+  } catch (e) { /* ignore */ }
 }
-$('#g-switch').onclick = () => showNamePicker();
-$('#g-mgr-lock').onclick = () => {
-  lockManager();
-  loadHistory();
-  updateManagerBadge();
-};
+$('#hdr-switch').onclick = () => showPicker();
 
 // ── TABS ────────────────────────────────────────────────────────────────────
 function initTabs() {
-  $$('#tabs button').forEach(b => {
+  $$('#tabs .fs-tab').forEach(b => {
     b.onclick = () => {
-      $$('#tabs button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
+      $$('#tabs .fs-tab').forEach(x => x.classList.remove('is-active'));
+      b.classList.add('is-active');
       const tab = b.dataset.tab;
-      $$('.panel').forEach(p => p.classList.remove('active'));
+      $$('#screen-app .panel').forEach(p => p.classList.remove('active'));
       $(`#panel-${tab}`).classList.add('active');
-      if (tab === 'history') { updateManagerBadge(); loadHistory(); }
-      if (tab === 'manager') { updateManagerBadge(); refreshManagerView(); }
+      if (tab === 'history') loadHistory();
+      if (tab === 'manager') { updateMgrStatus(); refreshManagerView(); }
     };
   });
 }
@@ -1519,35 +1227,64 @@ function initTabs() {
 function initSignInForm() {
   const today = ymd(new Date());
   const minDate = new Date(); minDate.setDate(minDate.getDate() - 6);
-  const min = ymd(minDate);
   const dateInput = $('#signin-date');
-  dateInput.min = min; dateInput.max = today; dateInput.value = today;
+  dateInput.min = ymd(minDate); dateInput.max = today; dateInput.value = today;
   state.signin.date = today;
-  updateDowLabel(today);
-  dateInput.onchange = e => { state.signin.date = e.target.value; updateDowLabel(e.target.value); };
-  $('#time-in').oninput = e => { state.signin.timeIn = e.target.value; recalcHours(); };
+  dateInput.onchange = e => {
+    state.signin.date = e.target.value || today;
+    fillGreetingDate();
+    updateGreetingStatus();
+  };
+  $('#time-in').oninput  = e => { state.signin.timeIn  = e.target.value; recalcHours(); };
   $('#time-out').oninput = e => { state.signin.timeOut = e.target.value; recalcHours(); };
-  $('#injured-no').onclick = () => setInjured(false);
+  $('#injured-no').onclick  = () => setInjured(false);
   $('#injured-yes').onclick = () => setInjured(true);
-  $('#sig-mode-toggle').onclick = toggleSigMode;
+  $('#sig-mode-draw').onclick = () => setSigMode('drawn');
+  $('#sig-mode-type').onclick = () => setSigMode('typed');
   $('#sig-clear').onclick = clearSig;
   $('#btn-sign-submit').onclick = submitSignIn;
   $('#btn-mark-off').onclick = markOff;
 }
-function updateDowLabel(dateStr) {
-  if (!dateStr) return;
-  const d = parseYmd(dateStr);
-  $('#dow-label').textContent = `${dayOfWeekEn(d)} / ${dayOfWeekEs(d)}`;
+function fillGreeting() {
+  if (!state.profile) return;
+  $('#greet-avatar').textContent = initialsOf(state.profile.name);
+  $('#greet-name').textContent = state.profile.name;
+  $('#greet-role').textContent = state.profile.classification || '';
+  $('#signin-date').value = state.signin.date || ymd(new Date());
+  fillGreetingDate();
+  updateGreetingStatus();
+}
+function fillGreetingDate() {
+  const d = parseYmd(state.signin.date || ymd(new Date()));
+  $('#greet-date-en').textContent = enLongDate(d);
+  $('#greet-date-es').textContent = esLongDate(d);
+  $('#greet-week').textContent = `Week ${weekNumber(d)} · Sem. ${weekNumber(d)}`;
+}
+async function updateGreetingStatus() {
+  const chip = $('#greet-status-chip');
+  if (!state.profile) return;
+  try {
+    const e = await fbGet(`attendance/${state.signin.date}/${state.profile.id}`);
+    if (e && e.signatureType === 'off') {
+      chip.textContent = t('marked_off'); chip.className = 'fs-chip';
+    } else if (e && e.timeIn) {
+      chip.textContent = `${t('signed_in')} ${fmtTime12(e.timeIn)}`; chip.className = 'fs-chip fs-chip--green';
+    } else {
+      chip.textContent = t('not_signed_in'); chip.className = 'fs-chip fs-chip--marigold';
+    }
+  } catch (_) {
+    chip.textContent = t('not_signed_in'); chip.className = 'fs-chip fs-chip--marigold';
+  }
 }
 function recalcHours() {
   const h = hoursBetween(state.signin.timeIn, state.signin.timeOut);
   state.signin.totalHours = h;
-  $('#total-hours').textContent = h ? `${h.toFixed(2)} ${t('hrs')}` : '—';
+  $('#total-hours-num').textContent = h ? h.toFixed(2) : '—';
 }
 function setInjured(yes) {
   state.signin.injured = yes;
-  $('#injured-no').classList.toggle('on-no', !yes);
-  $('#injured-yes').classList.toggle('on-yes', yes);
+  $('#injured-no').classList.toggle('is-active', !yes);
+  $('#injured-yes').classList.toggle('is-active', yes);
 }
 
 // ── SIGNATURE ───────────────────────────────────────────────────────────────
@@ -1556,13 +1293,9 @@ function initSignaturePad() {
   const canvas = $('#sig-canvas');
   resizeCanvas(canvas);
   state.sigPad = new SignaturePad(canvas, {
-    penColor: state.theme === 'dark' ? '#e7e0e8' : '#1d1b20',
-    minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
+    penColor: '#3A2E1F', minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
   });
-  // Toggle placeholder visibility based on whether any strokes exist
-  state.sigPad.addEventListener('beginStroke', () => {
-    $('#sig-wrap').classList.add('has-stroke');
-  });
+  state.sigPad.addEventListener('beginStroke', () => { $('#sig-wrap').classList.add('has-stroke'); });
   state.sigPad.addEventListener('endStroke', () => {
     if (state.sigPad.isEmpty()) $('#sig-wrap').classList.remove('has-stroke');
   });
@@ -1570,11 +1303,11 @@ function initSignaturePad() {
 }
 function resizeCanvas(c) {
   const w = c.offsetWidth, h = c.offsetHeight;
+  if (!w || !h) return;
   if (_sigLastDims && _sigLastDims.w === w && _sigLastDims.h === h) return;
   const ratio = Math.max(window.devicePixelRatio || 1, 1);
   const data = state.sigPad ? state.sigPad.toData() : null;
-  c.width  = w * ratio;
-  c.height = h * ratio;
+  c.width = w * ratio; c.height = h * ratio;
   c.getContext('2d').scale(ratio, ratio);
   _sigLastDims = { w, h };
   if (state.sigPad) {
@@ -1582,20 +1315,19 @@ function resizeCanvas(c) {
     else state.sigPad.clear();
   }
 }
-function toggleSigMode() {
-  state.signin.sigMode = state.signin.sigMode === 'drawn' ? 'typed' : 'drawn';
+function setSigMode(mode) {
+  state.signin.sigMode = mode;
   const wrap = $('#sig-wrap');
-  if (state.signin.sigMode === 'typed') {
+  $('#sig-mode-draw').classList.toggle('is-active', mode === 'drawn');
+  $('#sig-mode-type').classList.toggle('is-active', mode === 'typed');
+  if (mode === 'typed') {
     wrap.classList.add('mode-typed');
     $('#sig-typed').textContent = state.profile?.name || '—';
-    $('#sig-mode-toggle').textContent = t('draw_instead');
-    $('#sig-hint').textContent = t('sig_hint_typed');
     $('#sig-clear').style.display = 'none';
   } else {
     wrap.classList.remove('mode-typed');
-    $('#sig-mode-toggle').textContent = t('type_instead');
-    $('#sig-hint').textContent = t('sig_hint_draw');
     $('#sig-clear').style.display = '';
+    resizeCanvas($('#sig-canvas'));
   }
 }
 function clearSig() {
@@ -1626,9 +1358,8 @@ async function submitSignIn() {
 async function markOff() {
   if (!state.profile) { toast(t('pick_name_first'), 'error'); return; }
   await writeEntry({
-    timeIn: null, timeOut: null, totalHours: 0,
-    injured: false, signatureType: 'off',
-    signatureDataUrl: null, signatureText: null,
+    timeIn: null, timeOut: null, totalHours: 0, injured: false,
+    signatureType: 'off', signatureDataUrl: null, signatureText: null,
     signedAt: Date.now(), signedBy: 'self'
   });
 }
@@ -1642,6 +1373,7 @@ async function writeEntry(entry) {
     toast(entry.signatureType === 'off' ? t('marked_off') : t('signed_success'), 'success');
     $('#signin-status').textContent = t('saved');
     clearSig();
+    updateGreetingStatus();
     loadHistory();
   } catch (e) {
     toast(t('error_saving') + e.message, 'error');
@@ -1651,16 +1383,12 @@ async function writeEntry(entry) {
 
 // ── HISTORY ─────────────────────────────────────────────────────────────────
 function dateRangeInclusive(startStr, endStr) {
-  // Returns YYYY-MM-DD strings inclusive from startStr to endStr (assumes startStr <= endStr).
   const out = [];
   const start = parseYmd(startStr), end = parseYmd(endStr);
-  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    out.push(ymd(d));
-  }
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) out.push(ymd(d));
   return out;
 }
 async function fetchHistory({ startDate, endDate, foremanFilter }) {
-  // foremanFilter === 'all' fetches every foreman per day; otherwise just that id.
   const dates = dateRangeInclusive(startDate, endDate);
   const entries = [];
   await Promise.all(dates.map(async date => {
@@ -1669,119 +1397,102 @@ async function fetchHistory({ startDate, endDate, foremanFilter }) {
       if (day) {
         for (const fid of Object.keys(day)) {
           const fm = state.foremen[fid];
-          entries.push({
-            date, foremanId: fid,
-            foremanName: fm?.name || fid,
-            foremanCls: fm?.classification || '',
-            ...day[fid]
-          });
+          entries.push({ date, foremanId: fid, foremanName: fm?.name || fid, foremanCls: fm?.classification || '', ...day[fid] });
         }
       }
     } else {
       const e = await fbGet(`attendance/${date}/${foremanFilter}`);
       if (e) {
         const fm = state.foremen[foremanFilter];
-        entries.push({
-          date, foremanId: foremanFilter,
-          foremanName: fm?.name || foremanFilter,
-          foremanCls: fm?.classification || '',
-          ...e
-        });
+        entries.push({ date, foremanId: foremanFilter, foremanName: fm?.name || foremanFilter, foremanCls: fm?.classification || '', ...e });
       }
     }
   }));
-  entries.sort((a, b) =>
-    b.date.localeCompare(a.date) || a.foremanName.localeCompare(b.foremanName));
+  entries.sort((a, b) => b.date.localeCompare(a.date) || a.foremanName.localeCompare(b.foremanName));
   return entries;
 }
-function renderHistRow(e, opts = {}) {
+function ensureHistDefaults() {
+  const today = new Date();
+  const start = new Date(today); start.setDate(today.getDate() - 29);
+  if (!$('#hist-start').value) $('#hist-start').value = ymd(start);
+  if (!$('#hist-end').value) $('#hist-end').value = ymd(today);
+}
+function populateHistForemanFilter() {
+  const sel = $('#hist-foreman-filter');
+  const current = sel.value;
+  const list = Object.entries(state.foremen).sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
+  sel.innerHTML = `<option value="all">All foremen · Todos</option>` +
+    list.map(([id, f]) => `<option value="${escapeHtml(id)}">${escapeHtml(f.name)}</option>`).join('');
+  if (current && (current === 'all' || state.foremen[current])) sel.value = current;
+}
+function statusPillHtml(e) {
+  if (e.signatureType === 'off') return `<span class="fs-chip">Off · Descanso</span>`;
+  if (e.injured) return `<span class="fs-chip fs-chip--terracotta">Injury logged</span>`;
+  if (!e.timeOut) return `<span class="fs-chip fs-chip--green">● On site</span>`;
+  return `<span class="fs-chip fs-chip--marigold">Complete · Listo</span>`;
+}
+function histRowHtml(e, opts) {
+  opts = opts || {};
   const d = parseYmd(e.date);
   const isOff = e.signatureType === 'off';
-  const hrsLabel = (e.totalHours || 0).toFixed(2) + ' ' + t('hrs');
-  const injIcon = e.injured
-    ? `<span class="material-symbols-outlined" style="font-size:14px;color:var(--danger);vertical-align:middle;margin-right:4px;">warning</span>`
-    : '';
-  const timeRange = isOff
-    ? t('off_lower')
-    : `${injIcon}${e.timeIn || '—'} – ${e.timeOut || '—'}`;
-  const cls = `hist-item${isOff ? ' off' : ''}${opts.editable ? ' editable' : ''}`;
-  const attrs = opts.editable
-    ? ` data-fid="${escapeHtml(e.foremanId)}" data-date="${escapeHtml(e.date)}"`
-    : '';
-  return `<div class="${cls}"${attrs}>
-    <div class="left">
-      <div class="date">${fmtDateUS(e.date)} <span class="dow">${dayShort(d)}</span></div>
-      <div class="small muted">${timeRange}</div>
-    </div>
-    <div class="hrs">${isOff ? t('off_upper') : hrsLabel}</div>
+  const isActive = !isOff && e.timeIn && !e.timeOut;
+  const hrs = (e.totalHours || 0) > 0 ? (e.totalHours).toFixed(1) : '—';
+  const attrs = opts.editable ? ` data-fid="${escapeHtml(e.foremanId)}" data-date="${escapeHtml(e.date)}"` : '';
+  return `<div class="hist-row ${isActive ? 'is-active' : ''} ${opts.editable ? 'is-editable' : ''}"${attrs}>
+    <span class="hist-row__date"><strong>${escapeHtml(fmtDateUS(e.date))}</strong><span class="hist-row__dow">${dayShort(d)}</span></span>
+    <span class="hist-row__num">${isOff ? '—' : escapeHtml(e.timeIn || '—')}</span>
+    <span class="hist-row__num">${isOff ? '—' : escapeHtml(e.timeOut || '—')}</span>
+    <span class="hist-row__num hist-row__hrs">${isOff ? '—' : hrs}</span>
+    <span>${statusPillHtml(e)}</span>
+    <span class="hist-row__act">${opts.editable ? 'Edit' : ''}</span>
   </div>`;
 }
 async function loadHistory() {
   if (!state.profile) return;
-  const list = $('#hist-list');
-  const totalsWrap = $('#week-totals');
-  const controls = $('#hist-mgr-controls');
-  const titleEl = $('#history-title');
-  const subEl = $('#history-sub');
-  list.innerHTML = `<p class="muted center small">${escapeHtml(t('loading'))}</p>`;
-
-  const exportCard = $('#hist-export-card');
-  if (state.manager.unlocked) {
-    controls.classList.remove('hidden');
-    if (exportCard) exportCard.classList.remove('hidden');
-    totalsWrap.classList.add('hidden');
-    titleEl.textContent = t('history_title_mgr');
-    subEl.textContent = t('history_sub_mgr');
-    ensureHistMgrDefaults();
-    populateHistForemanFilter();
-    const startDate = $('#hist-start').value;
-    const endDate = $('#hist-end').value;
-    const foremanFilter = $('#hist-foreman-filter').value || 'all';
-    const entries = await fetchHistory({ startDate, endDate, foremanFilter });
-    renderManagerHistory(entries);
-  } else {
-    controls.classList.add('hidden');
-    if (exportCard) exportCard.classList.add('hidden');
-    totalsWrap.classList.remove('hidden');
-    titleEl.textContent = t('history_title');
-    subEl.textContent = t('history_sub');
-    const today = new Date();
-    const start = new Date(today); start.setDate(today.getDate() - 29);
-    const entries = await fetchHistory({
-      startDate: ymd(start), endDate: ymd(today), foremanFilter: state.profile.id
-    });
-    renderPersonalHistory(entries, today);
-  }
+  ensureHistDefaults();
+  const mgr = !!state.manager.unlocked;
+  $('#hist-foreman-wrap').style.display = mgr ? '' : 'none';
+  $('#hist-export-btn').classList.toggle('hidden', !mgr);
+  $('#hist-title').textContent = mgr ? 'All Attendance' : 'My Attendance';
+  $('#hist-sub').textContent = mgr ? 'Todos los foremen · All foremen' : 'Últimos 30 días · Last 30 days';
+  if (mgr) populateHistForemanFilter();
+  const startDate = $('#hist-start').value;
+  const endDate = $('#hist-end').value;
+  const foremanFilter = mgr ? ($('#hist-foreman-filter').value || 'all') : state.profile.id;
+  const table = $('#hist-table');
+  table.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('loading'))}</p>`;
+  const entries = await fetchHistory({ startDate, endDate, foremanFilter });
+  renderHistStats(entries);
+  if (mgr) renderManagerHistory(entries);
+  else renderPersonalHistory(entries);
 }
-function renderPersonalHistory(entries, today) {
-  const list = $('#hist-list');
+function renderHistStats(entries) {
+  const totalHrs = entries.reduce((s, e) => s + (e.totalHours || 0), 0);
+  const fullDays = entries.filter(e => e.signatureType !== 'off' && (e.totalHours || 0) > 0).length;
+  const injuries = entries.filter(e => e.injured).length;
+  const present = entries.filter(e => e.signatureType !== 'off').length;
+  const off = entries.filter(e => e.signatureType === 'off').length;
+  const pct = (present + off) ? Math.round(present / (present + off) * 100) : 100;
+  $('#hist-stat-hours').textContent = totalHrs.toFixed(1);
+  $('#hist-stat-days').textContent = String(fullDays);
+  $('#hist-stat-injuries').textContent = String(injuries);
+  $('#hist-stat-attendance').innerHTML = `${pct}<span style="font-size:18px">%</span>`;
+}
+function tableHeadHtml() {
+  return `<div class="hist-row hist-row--head"><span>Date</span><span>In</span><span>Out</span><span>Hours</span><span>Status</span><span></span></div>`;
+}
+function renderPersonalHistory(entries) {
+  const table = $('#hist-table');
   if (entries.length === 0) {
-    list.innerHTML = `<p class="muted center small">${escapeHtml(t('no_history'))}</p>`;
-  } else {
-    list.innerHTML = entries.map(e => renderHistRow(e)).join('');
+    table.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_history'))}</p>`;
+    return;
   }
-  const totalsWrap = $('#week-totals');
-  const weeks = [];
-  const todayEnd = weekEndingFor(today);
-  for (let w = 0; w < 4; w++) {
-    const end = new Date(todayEnd); end.setDate(end.getDate() - 7*w);
-    const days = weekDates(end);
-    const total = entries
-      .filter(e => days.some(d => ymd(d) === e.date))
-      .reduce((sum, e) => sum + (e.totalHours || 0), 0);
-    weeks.push({ end, total });
-  }
-  totalsWrap.innerHTML = weeks.map((w,i) => `
-    <div class="wt">
-      <div class="lbl">${escapeHtml(t('week_ending'))} ${fmtDateUS(ymd(w.end))}${i === 0 ? ' · ' + escapeHtml(t('current_tag')) : ''}</div>
-      <div class="val">${w.total.toFixed(2)} ${escapeHtml(t('hrs'))}</div>
-    </div>
-  `).join('');
+  table.innerHTML = tableHeadHtml() + entries.map(e => histRowHtml(e)).join('');
 }
 function renderManagerHistory(entries) {
-  const list = $('#hist-list');
+  const table = $('#hist-table');
   if (entries.length === 0) {
-    list.innerHTML = `<p class="muted center small">${escapeHtml(t('hist_no_results'))}</p>`;
+    table.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('hist_no_results'))}</p>`;
     return;
   }
   const groups = new Map();
@@ -1789,109 +1500,104 @@ function renderManagerHistory(entries) {
     if (!groups.has(e.foremanId)) groups.set(e.foremanId, { name: e.foremanName, rows: [] });
     groups.get(e.foremanId).rows.push(e);
   }
-  const sortedGroups = [...groups.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
-  list.innerHTML = sortedGroups.map(([fid, g]) => `
-    <div class="hist-group-header">
-      ${escapeHtml(g.name)}
-      <span class="count">${t('hist_group_count').replace('{n}', g.rows.length)}</span>
-    </div>
-    ${g.rows.map(e => renderHistRow(e, { editable: true })).join('')}
-  `).join('');
-  list.querySelectorAll('.hist-item.editable').forEach(node => {
+  const sorted = [...groups.entries()].sort((a, b) => a[1].name.localeCompare(b[1].name));
+  table.innerHTML = sorted.map(([fid, g]) =>
+    `<div class="hist-group">${escapeHtml(g.name)} <span class="count">${g.rows.length} entries</span></div>`
+    + tableHeadHtml()
+    + g.rows.map(e => histRowHtml(e, { editable: true })).join('')
+  ).join('');
+  table.querySelectorAll('.hist-row.is-editable').forEach(node => {
     node.onclick = () => openEntryEditor(node.dataset.fid, node.dataset.date);
   });
 }
-function ensureHistMgrDefaults() {
-  const today = new Date();
-  const start = new Date(today); start.setDate(today.getDate() - 29);
-  if (!$('#hist-start').value) $('#hist-start').value = ymd(start);
-  if (!$('#hist-end').value) $('#hist-end').value = ymd(today);
-  if (!$('#hist-export-week-end').value) {
-    $('#hist-export-week-end').value = ymd(weekEndingFor(today));
-  }
-}
-function populateHistForemanFilter() {
-  const sel = $('#hist-foreman-filter');
-  const current = sel.value;
-  const list = Object.entries(state.foremen)
-    .sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99));
-  sel.innerHTML = `<option value="all">${escapeHtml(t('hist_foreman_all'))}</option>` +
-    list.map(([id, f]) => `<option value="${escapeHtml(id)}">${escapeHtml(f.name)}</option>`).join('');
-  if (current && (current === 'all' || state.foremen[current])) sel.value = current;
-}
-async function clearOldRecords() {
-  const cutoff = $('#hist-clear-cutoff').value;
-  if (!cutoff) { toast(t('clear_old_empty'), 'error'); return; }
-  const node = await fbGet('attendance');
-  const targets = Object.keys(node || {}).filter(d => d < cutoff);
-  if (targets.length === 0) {
-    toast(t('clear_old_none').replace('{date}', fmtDateUS(cutoff)), 'error');
-    return;
-  }
-  const msg = t('clear_old_confirm')
-    .replace('{n}', targets.length)
-    .replace('{date}', fmtDateUS(cutoff));
-  if (!confirm(msg)) return;
-  await Promise.all(targets.map(d => fbSet('attendance/' + d, null)));
-  toast(t('clear_old_done').replace('{n}', targets.length), 'success');
-  loadHistory();
-}
-function exportPdfFromHistory() {
-  const v = $('#hist-export-week-end').value;
-  if (!v) { toast(t('pick_week_first'), 'error'); return; }
-  state.manager.weekEnd = parseYmd(v);
-  exportPDF('week');
-}
+function isHistoryPanelActive() { return $('#panel-history').classList.contains('active'); }
+$('#hist-start').onchange = loadHistory;
+$('#hist-end').onchange = loadHistory;
+$('#hist-export-btn').onclick = () => {
+  $$('#tabs .fs-tab').forEach(x => x.classList.remove('is-active'));
+  $('#tabs .fs-tab[data-tab="manager"]').classList.add('is-active');
+  $$('#screen-app .panel').forEach(p => p.classList.remove('active'));
+  $('#panel-manager').classList.add('active');
+  updateMgrStatus(); refreshManagerView();
+};
 
 // ── MANAGER ─────────────────────────────────────────────────────────────────
+let pinEntry = '';
+function pinLen() { return (state.config.managerPin || '050103').length; }
+function renderPinDots() {
+  const wrap = $('#pin-dots');
+  if (!wrap) return;
+  const len = pinLen();
+  wrap.innerHTML = Array.from({ length: len }, (_, i) =>
+    `<span class="pin-dot ${pinEntry.length > i ? 'is-filled' : ''}"></span>`).join('');
+  $('#mgr-unlock').disabled = pinEntry.length !== len;
+}
+function tryUnlock() {
+  if (pinEntry === state.config.managerPin) {
+    state.manager.unlocked = true;
+    pinEntry = ''; renderPinDots();
+    const sat = weekEndingFor(new Date());
+    $('#export-week-end').value = ymd(sat);
+    onWeekEndChange();
+    updateMgrStatus();
+    refreshManagerView();
+  } else {
+    toast(t('incorrect_pin'), 'error');
+    pinEntry = ''; renderPinDots();
+  }
+}
 function initManager() {
-  $('#mgr-unlock').onclick = () => {
-    const pin = $('#mgr-pin').value;
-    if (pin === state.config.managerPin) {
-      state.manager.unlocked = true;
-      $('#mgr-locked').classList.add('hidden');
-      $('#mgr-unlocked').classList.remove('hidden');
-      $('#mgr-pin').value = '';
-      const sat = weekEndingFor(new Date());
-      $('#export-week-end').value = ymd(sat);
-      onWeekEndChange();
-      updateManagerBadge();
-    } else { toast(t('incorrect_pin'), 'error'); }
-  };
-  $('#mgr-pin').onkeydown = e => { if (e.key === 'Enter') $('#mgr-unlock').click(); };
+  $$('#pin-keys .pin-key').forEach(k => {
+    if (k.disabled) return;
+    k.onclick = () => {
+      const v = k.dataset.key;
+      if (v === 'back') pinEntry = pinEntry.slice(0, -1);
+      else if (pinEntry.length < pinLen()) pinEntry += v;
+      renderPinDots();
+      if (pinEntry.length === pinLen()) tryUnlock();
+    };
+  });
+  $('#mgr-unlock').onclick = tryUnlock;
   $('#btn-mgr-lock').onclick = lockManager;
   $('#export-week-end').onchange = onWeekEndChange;
   $('#btn-export-week').onclick = () => exportPDF('week');
   $('#btn-export-day').onclick = () => exportPDF('day');
   $('#btn-add-foreman').onclick = () => openForemanEditor(null);
   $('#btn-save-config').onclick = saveConfig;
+  $('#btn-clear-old').onclick = clearOldRecords;
   $('#fm-cancel').onclick = closeForemanEditor;
   $('#fm-save').onclick = saveForemanEditor;
   $('#fm-delete').onclick = deleteForeman;
   $('#entry-cancel').onclick = () => $('#overlay-entry').classList.remove('show');
   $('#entry-save').onclick = saveEntryEditor;
   $('#entry-delete').onclick = deleteEntry;
-  // History tab manager controls
-  $('#hist-start').onchange = loadHistory;
-  $('#hist-end').onchange = loadHistory;
-  $('#hist-foreman-filter').onchange = loadHistory;
-  $('#btn-hist-clear').onclick = clearOldRecords;
-  $('#btn-hist-export-week').onclick = exportPdfFromHistory;
+  renderPinDots();
 }
 function lockManager() {
   state.manager.unlocked = false;
-  $('#mgr-locked').classList.remove('hidden');
-  $('#mgr-unlocked').classList.add('hidden');
-  updateManagerBadge();
+  state.manager.weekData = null;
+  pinEntry = ''; renderPinDots();
+  updateMgrStatus();
+  if (isHistoryPanelActive()) loadHistory();
+}
+function updateMgrStatus() {
+  const on = !!state.manager.unlocked;
+  $('#mgr-locked').classList.toggle('hidden', on);
+  $('#mgr-unlocked').classList.toggle('hidden', !on);
+  const chip = $('#mgr-status-chip');
+  const icon = `<span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px">${on?'lock_open':'lock'}</span>`;
+  if (on) { chip.className = 'fs-chip fs-chip--green'; chip.innerHTML = icon + ' Unlocked &middot; <span lang="es">Desbloqueado</span>'; }
+  else { chip.className = 'fs-chip fs-chip--terracotta'; chip.innerHTML = icon + ' Locked &middot; <span lang="es">Bloqueado</span>'; }
 }
 function refreshManagerView() {
   if (state.manager.unlocked) {
     renderRoster();
     renderConfigForm();
-    if (state.manager.weekData) renderWeekGrid();
+    if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
   }
 }
 function renderConfigForm() {
+  if (!$('#cfg-prime')) return;
   $('#cfg-prime').value = state.config.primeContractor || '';
   $('#cfg-project').value = state.config.projectName || '';
   $('#cfg-sub').value = state.config.subcontractor || '';
@@ -1910,21 +1616,23 @@ async function saveConfig() {
 function renderRoster() {
   const wrap = $('#roster-list');
   if (!wrap) return;
-  const list = Object.entries(state.foremen).sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+  const list = Object.entries(state.foremen).sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
   if (list.length === 0) {
-    wrap.innerHTML = `<p class="muted center small">${escapeHtml(t('no_foremen_mgr'))}</p>`;
+    wrap.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_foremen_mgr'))}</p>`;
     return;
   }
   wrap.innerHTML = list.map(([id, f], idx) => `
-    <div class="roster-item ${f.active ? '' : 'inactive'}">
-      <div class="info">
-        <div class="name">${escapeHtml(f.name)}</div>
-        <div class="cls">${escapeHtml(f.classification || '')}</div>
+    <div class="roster-row ${f.active ? '' : 'is-inactive'}">
+      <div class="roster-row__avatar">${escapeHtml(initialsOf(f.name))}</div>
+      <div>
+        <div class="roster-row__name">${escapeHtml(f.name)}</div>
+        <div class="roster-row__role">${escapeHtml(f.classification || '')}</div>
       </div>
-      <div class="actions">
-        <button class="btn ghost" data-act="up" data-id="${id}" ${idx === 0 ? 'disabled' : ''}>↑</button>
-        <button class="btn ghost" data-act="down" data-id="${id}" ${idx === list.length-1 ? 'disabled' : ''}>↓</button>
-        <button class="btn secondary" data-act="edit" data-id="${id}">${escapeHtml(state.lang === 'es' ? 'Editar' : 'Edit')}</button>
+      <div class="roster-row__toggle">
+        <button class="roster-row__ord" data-act="up" data-id="${id}" ${idx === 0 ? 'disabled' : ''} type="button">↑</button>
+        <button class="roster-row__ord" data-act="down" data-id="${id}" ${idx === list.length-1 ? 'disabled' : ''} type="button">↓</button>
+        <button class="roster-toggle ${f.active ? 'is-on' : ''}" data-act="toggle" data-id="${id}" type="button" aria-label="Active"><span class="roster-toggle__dot"></span></button>
+        <button class="roster-row__edit" data-act="edit" data-id="${id}" type="button">Edit</button>
       </div>
     </div>
   `).join('');
@@ -1934,7 +1642,12 @@ function renderRoster() {
 }
 async function handleRosterAction(act, id) {
   if (act === 'edit') return openForemanEditor(id);
-  const list = Object.entries(state.foremen).sort((a,b)=>(a[1].order??99)-(b[1].order??99));
+  if (act === 'toggle') {
+    const f = state.foremen[id];
+    if (f) await fbUpdate(`foremen/${id}`, { active: !f.active });
+    return;
+  }
+  const list = Object.entries(state.foremen).sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
   const idx = list.findIndex(([k]) => k === id);
   if (idx < 0) return;
   if (act === 'up' && idx > 0) {
@@ -1986,15 +1699,16 @@ async function deleteForeman() {
   toast(t('deleted'), 'success');
 }
 
-// ── WEEK VIEW ───────────────────────────────────────────────────────────────
+// ── WEEK VIEW + EXPORT META ─────────────────────────────────────────────────
 async function onWeekEndChange() {
   const v = $('#export-week-end').value;
   if (!v) return;
   state.manager.weekEndStr = v;
   state.manager.weekEnd = parseYmd(v);
-  $('#week-view-label').textContent = `${t('week_ending_short')} ${fmtDateUS(v)}`;
+  $('#week-view-label').textContent = `Week ending ${fmtDateUS(v)}`;
   await loadWeekData();
   renderWeekGrid();
+  renderExportMeta();
 }
 async function loadWeekData() {
   const days = weekDates(state.manager.weekEnd);
@@ -2005,35 +1719,46 @@ async function loadWeekData() {
   }));
   state.manager.weekData = data;
 }
+function renderExportMeta() {
+  if (!state.manager.weekData) return;
+  const activeForemen = Object.values(state.foremen).filter(f => f.active).length;
+  let totalHours = 0, injuries = 0;
+  for (const day of Object.values(state.manager.weekData)) {
+    for (const e of Object.values(day)) {
+      totalHours += e.totalHours || 0;
+      if (e.injured) injuries++;
+    }
+  }
+  $('#exp-meta-foremen').textContent = String(activeForemen);
+  $('#exp-meta-hours').textContent = totalHours.toFixed(1);
+  $('#exp-meta-injuries').textContent = String(injuries);
+}
 function renderWeekGrid() {
   const grid = $('#week-grid');
-  if (!state.manager.weekData) return;
+  if (!grid || !state.manager.weekData) return;
   const days = weekDates(state.manager.weekEnd);
   const foremen = Object.entries(state.foremen)
     .filter(([_, f]) => f.active)
-    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+    .sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
   if (foremen.length === 0) {
-    grid.innerHTML = `<p class="muted center small" style="padding:20px;">${escapeHtml(t('no_active_foremen'))}</p>`;
+    grid.innerHTML = `<p class="wp-foot__meta" style="padding:16px">${escapeHtml(t('no_active_foremen'))}</p>`;
     return;
   }
-  const headerCols = days.map(d => `<th>${dayShort(d)}<br><span class="small muted">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
+  const headerCols = days.map(d => `<th>${dayShort(d)}<br><span style="font-weight:400">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
   const rows = foremen.map(([fid, f]) => {
     const cells = days.map(d => {
       const k = ymd(d);
       const e = state.manager.weekData[k]?.[fid];
       let cls = 'cell', label = '—';
       if (e) {
-        if (e.signatureType === 'off') { cls += ' off'; label = t('off_upper'); }
+        if (e.signatureType === 'off') { cls += ' off'; label = 'OFF'; }
         else { cls += ' signed'; label = (e.totalHours || 0).toFixed(1); }
       }
       return `<td class="${cls}" data-fid="${fid}" data-date="${k}">${label}</td>`;
     }).join('');
-    return `<tr><td class="name">${escapeHtml(f.name)}<br><span class="small muted">${escapeHtml(f.classification||'')}</span></td>${cells}</tr>`;
+    return `<tr><td class="name">${escapeHtml(f.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(f.classification||'')}</span></td>${cells}</tr>`;
   }).join('');
-  grid.innerHTML = `<table>
-    <thead><tr><th style="text-align:left;">${escapeHtml(t('foreman_col'))}</th>${headerCols}</tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  grid.innerHTML = `<table><thead><tr><th style="text-align:left">Foreman</th>${headerCols}</tr></thead><tbody>${rows}</tbody></table>`;
   grid.querySelectorAll('td.cell').forEach(td => {
     td.onclick = () => openEntryEditor(td.dataset.fid, td.dataset.date);
   });
@@ -2045,7 +1770,7 @@ async function openEntryEditor(fid, date) {
   state.manager.editingForemanId = fid;
   state.manager.editingEntry = { date };
   $('#entry-title').textContent = f?.name || fid;
-  $('#entry-sub').textContent = `${dayOfWeek(parseYmd(date))} · ${fmtDateUS(date)}`;
+  $('#entry-sub').textContent = `${dayOfWeekEn(parseYmd(date))} · ${fmtDateUS(date)}`;
   $('#entry-tin').value = e.timeIn || '';
   $('#entry-tout').value = e.timeOut || '';
   $('#entry-hours').value = e.totalHours || '';
@@ -2053,9 +1778,6 @@ async function openEntryEditor(fid, date) {
   $('#entry-injured').value = String(!!e.injured);
   $('#entry-delete').style.display = e.signatureType ? '' : 'none';
   $('#overlay-entry').classList.add('show');
-}
-function isHistoryPanelActive() {
-  return $('#panel-history').classList.contains('active');
 }
 async function saveEntryEditor() {
   const fid = state.manager.editingForemanId;
@@ -2076,7 +1798,7 @@ async function saveEntryEditor() {
   }
   await fbSet(`attendance/${date}/${fid}`, entry);
   $('#overlay-entry').classList.remove('show');
-  if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); }
+  if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); renderExportMeta(); }
   if (isHistoryPanelActive()) loadHistory();
   toast(t('entry_saved'), 'success');
 }
@@ -2086,9 +1808,27 @@ async function deleteEntry() {
   if (!confirm(t('delete_entry_confirm'))) return;
   await fbRemove(`attendance/${date}/${fid}`);
   $('#overlay-entry').classList.remove('show');
-  if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); }
+  if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); renderExportMeta(); }
   if (isHistoryPanelActive()) loadHistory();
   toast(t('entry_deleted'), 'success');
+}
+
+// ── MAINTENANCE ─────────────────────────────────────────────────────────────
+async function clearOldRecords() {
+  const days = parseInt($('#clear-window').value, 10) || 90;
+  const cutoffDate = new Date(); cutoffDate.setDate(cutoffDate.getDate() - days);
+  const cutoff = ymd(cutoffDate);
+  const node = await fbGet('attendance');
+  const targets = Object.keys(node || {}).filter(d => d < cutoff);
+  if (targets.length === 0) {
+    toast(t('clear_old_none').replace('{date}', fmtDateUS(cutoff)), 'error');
+    return;
+  }
+  const msg = t('clear_old_confirm').replace('{n}', targets.length).replace('{date}', fmtDateUS(cutoff));
+  if (!confirm(msg)) return;
+  await Promise.all(targets.map(d => fbSet('attendance/' + d, null)));
+  toast(t('clear_old_done').replace('{n}', targets.length), 'success');
+  if (isHistoryPanelActive()) loadHistory();
 }
 
 // ── PDF EXPORT ──────────────────────────────────────────────────────────────
@@ -2120,7 +1860,6 @@ async function pickDayFromWeek(days) {
   if (n >= 1 && n <= 7) return [days[n-1]];
   return null;
 }
-
 function renderPdfPage(doc, date) {
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
@@ -2128,7 +1867,6 @@ function renderPdfPage(doc, date) {
   const weekEnd = state.manager.weekEnd;
   const dateStr = ymd(date);
 
-  // Title (always bilingual on PDF — matches the paper form)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(13);
   doc.text('SUBCONTRACTOR DAILY EMPLOYEE SIGN-IN SHEET', pageW/2, 32, { align: 'center' });
@@ -2175,12 +1913,9 @@ function renderPdfPage(doc, date) {
   doc.autoTable({
     startY: 124,
     head: [[
-      '#',
-      'DATE\nFECHA',
-      'EMPLOYEE NAME (PRINT)\nNOMBRE DEL EMPLEADO',
+      '#', 'DATE\nFECHA', 'EMPLOYEE NAME (PRINT)\nNOMBRE DEL EMPLEADO',
       'EMPLOYEE WORK CLASSIFICATION\nCLASIFICACION DE EMPLEADO',
-      'TIME IN\nHORA DE ENTRADA',
-      'TIME OUT\nHORA DE SALIDA',
+      'TIME IN\nHORA DE ENTRADA', 'TIME OUT\nHORA DE SALIDA',
       'TOTAL WORK HOURS\nTOTALES DEL TRABAJO',
       'Were you injured today at work?\nTe lastimaste en el trabajo hoy?',
       'EMPLOYEE SIGNATURE\nFIRMA DEL EMPLEADO'
@@ -2190,14 +1925,10 @@ function renderPdfPage(doc, date) {
     headStyles: { fillColor: [240,240,240], textColor: 30, fontSize: 7, fontStyle: 'bold', halign: 'center', valign: 'middle', lineColor: [120,120,120] },
     bodyStyles: { fontSize: 9, cellPadding: 4, minCellHeight: 28, valign: 'middle', lineColor: [180,180,180] },
     columnStyles: {
-      0: { cellWidth: 18, halign: 'center' },
-      1: { cellWidth: 58, halign: 'center' },
-      2: { cellWidth: 140 },
-      3: { cellWidth: 110 },
-      4: { cellWidth: 58, halign: 'center' },
-      5: { cellWidth: 58, halign: 'center' },
-      6: { cellWidth: 58, halign: 'center' },
-      7: { cellWidth: 60, halign: 'center' },
+      0: { cellWidth: 18, halign: 'center' }, 1: { cellWidth: 58, halign: 'center' },
+      2: { cellWidth: 140 }, 3: { cellWidth: 110 },
+      4: { cellWidth: 58, halign: 'center' }, 5: { cellWidth: 58, halign: 'center' },
+      6: { cellWidth: 58, halign: 'center' }, 7: { cellWidth: 60, halign: 'center' },
       8: { cellWidth: 160 }
     },
     margin: { left: 36, right: 36 },
@@ -2226,23 +1957,18 @@ function renderPdfPage(doc, date) {
   doc.setFontSize(28);
   doc.text(`${dayOfWeekEn(date)} / ${dayOfWeekEs(date)}`, pageW/2, pageH - 28, { align: 'center' });
 }
-
 function isTouchDevice() {
-  return (navigator.maxTouchPoints || 0) > 0 ||
-         /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  return (navigator.maxTouchPoints || 0) > 0 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 }
 async function sharePdf(blob, filename) {
   const file = new File([blob], filename, { type: 'application/pdf' });
-  // Only use the share sheet on touch devices (iOS/Android). On macOS/Windows
-  // desktop, navigator.share() either dismisses silently or has no useful
-  // destinations — download is what the user actually expects.
   if (isTouchDevice() && navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: filename });
       toast(t('shared_toast'), 'success');
       return;
     } catch (e) {
-      if (e.name === 'AbortError') return; // user cancelled, don't also download
+      if (e.name === 'AbortError') return;
       console.warn(e);
     }
   }
