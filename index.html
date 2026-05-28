@@ -52,6 +52,118 @@
   --font-display: "Newsreader", "Source Serif 4", Georgia, serif;
   --font-ui: "Manrope", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
 }
+
+/* ---------- Dark theme ---------- */
+[data-theme="dark"] {
+  --webcor-green: #2EBE7E;
+  --webcor-green-deep: #1E8C5C;
+  --webcor-green-ink: #C8F0DC;
+  --terracotta: #D5697A;
+  --marigold:   #F0A852;
+  --marigold-soft: #C89254;
+  --teal-deep:  #5BB2C7;
+  --cocoa:      #E5DCC8;
+  --cream:      #2A1F18;
+  --paper:      #1A1410;
+  --paper-2:    #221A14;
+  --hairline:   #3A2E1F;
+  --hairline-2: #4A3F33;
+  --ink:        #F4ECD8;
+  --ink-2:      #D8CCB4;
+  --ink-mute:   #9C8B72;
+  --ink-on-dark:#F7F1E3;
+  --shadow-1: 0 1px 0 rgba(0,0,0,0.20), 0 1px 2px rgba(0,0,0,0.30);
+  --shadow-2: 0 2px 4px rgba(0,0,0,0.30), 0 8px 24px rgba(0,0,0,0.40);
+  --shadow-3: 0 4px 8px rgba(0,0,0,0.40), 0 16px 40px rgba(0,0,0,0.55);
+}
+[data-theme="dark"] .fs-app { background: var(--paper); }
+[data-theme="dark"] .greet-card { background: linear-gradient(180deg, #221A14 0%, var(--paper) 100%); }
+[data-theme="dark"] .hours-total__display { background: linear-gradient(135deg, rgba(240,168,82,0.16), rgba(46,190,126,0.14)); }
+[data-theme="dark"] input.fs-input[data-fmt="time"],
+[data-theme="dark"] input.fs-input[data-fmt="date"] {
+  background: linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 1px 2px rgba(0,0,0,0.30);
+}
+[data-theme="dark"] input.fs-input[data-fmt="time"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F0A852' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><polyline points='12 7 12 12 15.5 14'/></svg>"), linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+}
+[data-theme="dark"] input.fs-input[data-fmt="date"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F0A852' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='2'/><line x1='3' y1='10' x2='21' y2='10'/><line x1='8' y1='3' x2='8' y2='7'/><line x1='16' y1='3' x2='16' y2='7'/></svg>"), linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+}
+[data-theme="dark"] .sig-pad { background: var(--paper-2); border-color: var(--hairline-2); }
+[data-theme="dark"] .sig-pad__typed { color: var(--marigold); }
+[data-theme="dark"] .pin-key { background: var(--paper-2); color: var(--ink); border-color: var(--hairline-2); }
+[data-theme="dark"] .pin-key:hover:not(:disabled) { background: var(--cream); }
+[data-theme="dark"] .pin-dot { background: var(--cream); border-color: var(--hairline-2); }
+[data-theme="dark"] .ds-card,
+[data-theme="dark"] .fs-card,
+[data-theme="dark"] .mgr-card,
+[data-theme="dark"] .hist-stat { background: var(--paper); border-color: var(--hairline); }
+[data-theme="dark"] .hist-stat--accent { background: linear-gradient(135deg, rgba(240,168,82,0.14), rgba(46,190,126,0.10)); }
+[data-theme="dark"] .wp-tile { background: var(--paper); color: var(--ink); }
+[data-theme="dark"] .wp-tile.is-checked { background: linear-gradient(180deg, rgba(46,190,126,0.10), var(--paper)); border-color: rgba(46,190,126,0.30); }
+[data-theme="dark"] .wp-tile__avatar { background: var(--cream); }
+[data-theme="dark"] .wp-foreman-tab { background: var(--paper); color: var(--ink-2); border-color: var(--hairline-2); }
+[data-theme="dark"] .wp-foreman-tab:hover { background: var(--cream); }
+[data-theme="dark"] .wp-foreman-tab.is-active { background: var(--webcor-green); color: var(--paper); border-color: var(--webcor-green-deep); }
+[data-theme="dark"] .fs-input, [data-theme="dark"] .fs-select { background: var(--paper-2); color: var(--ink); border-color: var(--hairline-2); }
+[data-theme="dark"] .fs-btn--ghost { color: var(--ink); border-color: var(--hairline-2); }
+[data-theme="dark"] .fs-btn--ghost:hover { background: var(--cream); }
+[data-theme="dark"] .fs-chip { background: var(--paper-2); border-color: var(--hairline-2); color: var(--ink-2); }
+[data-theme="dark"] .fs-chip--green { background: rgba(46,190,126,0.16); border-color: rgba(46,190,126,0.32); color: var(--webcor-green-ink); }
+[data-theme="dark"] .fs-chip--marigold { background: rgba(240,168,82,0.18); border-color: rgba(240,168,82,0.36); color: var(--marigold); }
+[data-theme="dark"] .fs-chip--terracotta { background: rgba(213,105,122,0.16); border-color: rgba(213,105,122,0.32); color: var(--terracotta); }
+[data-theme="dark"] .fs-chip--teal { background: rgba(91,178,199,0.16); border-color: rgba(91,178,199,0.32); color: var(--teal-deep); }
+[data-theme="dark"] .fs-header { background: var(--paper); border-color: var(--hairline); }
+[data-theme="dark"] .fs-header__nav { background: var(--cream); border-color: var(--hairline); }
+[data-theme="dark"] .fs-tab.is-active { background: var(--paper-2); }
+[data-theme="dark"] .week-grid { border-color: var(--hairline); }
+[data-theme="dark"] .week-grid th { background: var(--cream); color: var(--ink-mute); }
+[data-theme="dark"] .week-grid th, [data-theme="dark"] .week-grid td { border-color: var(--hairline); }
+[data-theme="dark"] .week-grid td.name { background: var(--paper); color: var(--ink); }
+[data-theme="dark"] .week-grid td.cell.signed { background: rgba(46,190,126,0.18); color: var(--webcor-green-ink); }
+[data-theme="dark"] .week-grid td.cell.off { background: var(--cream); color: var(--ink-mute); }
+[data-theme="dark"] .roster-row { border-color: var(--hairline); }
+[data-theme="dark"] .roster-row__avatar { background: var(--cream); color: var(--ink); }
+[data-theme="dark"] .roster-toggle { background: var(--hairline-2); }
+[data-theme="dark"] .tp-btn, [data-theme="dark"] .tp-ampm__btn { background: var(--paper-2); color: var(--ink); border-color: var(--hairline-2); }
+[data-theme="dark"] .tp-btn:hover { background: var(--cream); }
+[data-theme="dark"] .dp-nav { background: var(--paper-2); color: var(--ink); border-color: var(--hairline-2); }
+[data-theme="dark"] .dp-nav:hover:not(:disabled) { background: var(--cream); }
+[data-theme="dark"] .dp-day:hover:not(:disabled) { background: var(--cream); }
+[data-theme="dark"] .dp-day { color: var(--ink); }
+[data-theme="dark"] .overlay { background: rgba(0,0,0,0.65); }
+[data-theme="dark"] .overlay .modal { background: var(--paper); border-color: var(--hairline-2); }
+[data-theme="dark"] .hist-row { border-color: var(--hairline); }
+[data-theme="dark"] .hist-row.is-editable:hover { background: rgba(240,168,82,0.10); }
+[data-theme="dark"] .ds-bottom-meta { border-color: var(--hairline-2); }
+[data-theme="dark"] .wp-foot { border-color: var(--hairline-2); }
+[data-theme="dark"] .greet-card__avatar { background: var(--cream); color: var(--marigold); }
+[data-theme="dark"] .safety-opt { background: var(--paper-2); border-color: var(--hairline-2); color: var(--ink-2); }
+[data-theme="dark"] .safety-opt.is-active { background: rgba(46,190,126,0.12); border-color: var(--webcor-green); color: var(--ink); }
+[data-theme="dark"] .safety-opt.is-active .safety-opt__en { color: var(--ink); }
+[data-theme="dark"] .safety-opt.is-danger.is-active { background: rgba(213,105,122,0.14); border-color: var(--terracotta); }
+[data-theme="dark"] .safety-opt__mark { background: var(--paper); color: var(--ink-mute); }
+[data-theme="dark"] .sig-mode { background: var(--cream); border-color: var(--hairline-2); }
+[data-theme="dark"] .sig-mode__btn.is-active { background: var(--paper-2); color: var(--ink); }
+[data-theme="dark"] .exp-preview { background: var(--cream); border-color: var(--hairline); }
+[data-theme="dark"] .exp-preview__doc { background: var(--paper-2); border-color: var(--hairline); }
+[data-theme="dark"] .exp-preview__cell { background: var(--hairline); }
+[data-theme="dark"] .pin-card__icon { background: var(--cream); color: var(--marigold); border-color: var(--hairline-2); }
+[data-theme="dark"] .mgr-card--danger { background: linear-gradient(180deg, rgba(213,105,122,0.06), var(--paper)); border-color: rgba(213,105,122,0.24); }
+[data-theme="dark"] .danger-row { border-color: var(--hairline); }
+[data-theme="dark"] .fs-greca { opacity: 0.35; }
+[data-theme="dark"] .fs-rail { opacity: 0.55; }
+
+.theme-toggle {
+  background: transparent; border: 1px solid var(--hairline-2);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  color: var(--ink-2); transition: all .15s ease;
+}
+.theme-toggle:hover { background: var(--cream); color: var(--marigold); border-color: var(--marigold); }
+.theme-toggle svg { width: 18px; height: 18px; }
 .fs-app, .fs-app * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 .fs-app {
@@ -106,6 +218,132 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
   transition: border-color .15s ease, box-shadow .15s ease;
 }
 .fs-input:focus, .fs-select:focus { outline: none; border-color: var(--webcor-green); box-shadow: 0 0 0 4px rgba(0,154,92,0.12); }
+
+/* ---------- Modern date & time picker field ---------- */
+input.fs-input[data-fmt="time"],
+input.fs-input[data-fmt="date"] {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: 0.01em;
+  color: var(--cocoa);
+  background: linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+  border: 1.5px solid var(--hairline-2);
+  border-radius: var(--r-md);
+  height: 56px;
+  padding: 0 16px 0 44px;
+  cursor: pointer;
+  caret-color: transparent;
+  user-select: none;
+  position: relative;
+  transition: border-color .15s ease, box-shadow .15s ease, transform .08s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 1px 2px rgba(58,46,31,0.04);
+  background-repeat: no-repeat;
+  background-position: 14px center, 0 0;
+  background-size: 18px 18px, auto;
+}
+input.fs-input[data-fmt="time"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23D97706' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><polyline points='12 7 12 12 15.5 14'/></svg>"), linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+}
+input.fs-input[data-fmt="date"] {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23D97706' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='2'/><line x1='3' y1='10' x2='21' y2='10'/><line x1='8' y1='3' x2='8' y2='7'/><line x1='16' y1='3' x2='16' y2='7'/></svg>"), linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+}
+input.fs-input[data-fmt="time"]:hover,
+input.fs-input[data-fmt="date"]:hover {
+  border-color: var(--marigold);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 2px 6px rgba(217,119,6,0.10);
+}
+input.fs-input[data-fmt="time"]:focus,
+input.fs-input[data-fmt="date"]:focus {
+  outline: none;
+  border-color: var(--webcor-green);
+  box-shadow: 0 0 0 4px rgba(0,154,92,0.14), inset 0 1px 0 rgba(255,255,255,0.6);
+}
+input.fs-input[data-fmt="time"]::selection,
+input.fs-input[data-fmt="date"]::selection { background: transparent; }
+
+/* ---------- Custom time picker overlay ---------- */
+.tp-display {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--cocoa);
+  padding: 6px 0 14px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.tp-display__ampm { font-size: 22px; color: var(--marigold); font-style: italic; margin-left: 8px; vertical-align: baseline; }
+.tp-ampm { display: flex; justify-content: center; gap: 8px; margin-bottom: 22px; }
+.tp-ampm__btn { width: 88px; height: 36px; border-radius: 999px; background: var(--paper-2); border: 1.5px solid var(--hairline-2); color: var(--ink-2); font-family: var(--font-display); font-style: italic; font-weight: 600; cursor: pointer; transition: all .12s ease; }
+.tp-ampm__btn.is-active { background: var(--marigold); color: #fff; border-color: var(--marigold); box-shadow: 0 2px 6px rgba(217,119,6,0.25); }
+.tp-section { margin-bottom: 18px; }
+.tp-section__label { font-family: var(--font-display); font-style: italic; font-size: 13px; color: var(--marigold); margin-bottom: 10px; display: block; text-transform: lowercase; letter-spacing: 0.02em; }
+.tp-grid { display: grid; gap: 6px; }
+.tp-grid--hours { grid-template-columns: repeat(6, 1fr); }
+.tp-grid--minutes { grid-template-columns: repeat(6, 1fr); }
+.tp-btn {
+  min-height: 44px;
+  border-radius: var(--r-md);
+  background: var(--paper-2);
+  border: 1px solid var(--hairline);
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all .12s ease;
+  font-variant-numeric: tabular-nums;
+}
+.tp-btn:hover { background: var(--cream); border-color: var(--hairline-2); }
+.tp-btn.is-active {
+  background: var(--webcor-green);
+  color: #fff;
+  border-color: var(--webcor-green-deep);
+  box-shadow: 0 2px 6px rgba(0,154,92,0.25);
+  transform: translateY(-1px);
+}
+
+/* ---------- Custom date picker overlay ---------- */
+.dp-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0 16px; }
+.dp-header__title { font-family: var(--font-display); font-size: 20px; font-weight: 600; color: var(--ink); flex: 1; text-align: center; letter-spacing: -0.01em; }
+.dp-nav {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--paper-2); border: 1.5px solid var(--hairline-2);
+  color: var(--cocoa); font-size: 18px; cursor: pointer;
+  display: grid; place-items: center;
+  transition: all .12s ease;
+}
+.dp-nav:hover:not(:disabled) { background: var(--cream); border-color: var(--marigold); color: var(--marigold); }
+.dp-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+.dp-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 6px; }
+.dp-dow__cell { text-align: center; font-size: 11px; font-weight: 700; color: var(--ink-mute); padding: 8px 0; text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--font-ui); }
+.dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.dp-day {
+  height: 40px; min-width: 0;
+  border-radius: var(--r-md); background: transparent; border: 1.5px solid transparent;
+  color: var(--ink); font-weight: 500; font-size: 14px; cursor: pointer;
+  transition: all .12s ease; font-variant-numeric: tabular-nums;
+  font-family: var(--font-ui);
+}
+.dp-day:hover:not(:disabled) { background: var(--cream); }
+.dp-day.is-other-month { color: var(--hairline-2); }
+.dp-day.is-today { border-color: var(--marigold); border-style: dashed; color: var(--marigold); font-weight: 700; }
+.dp-day.is-selected {
+  background: var(--marigold); color: #fff; border-color: var(--marigold); border-style: solid;
+  box-shadow: 0 2px 6px rgba(217,119,6,0.30);
+  transform: scale(1.02);
+}
+.dp-day:disabled { opacity: 0.25; cursor: not-allowed; }
+.dp-today-row { margin-top: 14px; display: flex; justify-content: center; }
+.dp-today-btn {
+  background: transparent; border: 1px dashed var(--marigold); color: var(--marigold);
+  padding: 6px 18px; border-radius: 999px; font-family: var(--font-display); font-style: italic;
+  font-size: 13px; cursor: pointer; transition: all .12s ease;
+}
+.dp-today-btn:hover { background: rgba(217,119,6,0.08); }
 .fs-chip {
   display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px;
   border-radius: 999px; background: var(--paper-2); border: 1px solid var(--hairline-2);
@@ -171,16 +409,21 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 .wp-intro__en { font-family: var(--font-ui); font-size: 16px; font-weight: 500; color: var(--ink-mute); letter-spacing: 0; }
 .wp-intro__meta { margin: 14px 0 0; color: var(--ink-mute); font-size: 13px; }
 .wp-intro__sep { margin: 0 8px; color: var(--hairline-2); }
-.wp-foreman-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--hairline); scroll-snap-type: x proximity; }
-.wp-foreman-tabs::-webkit-scrollbar { height: 6px; }
-.wp-foreman-tabs::-webkit-scrollbar-thumb { background: var(--hairline-2); border-radius: 999px; }
-.wp-foreman-tab { display: inline-flex; flex-direction: column; align-items: flex-start; padding: 10px 16px; border-radius: 999px; background: var(--paper); border: 1px solid var(--hairline-2); color: var(--ink-2); font-weight: 600; font-size: 14px; white-space: nowrap; scroll-snap-align: start; transition: all .15s ease; min-width: max-content; }
+.wp-foreman-section { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--hairline); }
+.wp-foreman-section__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.wp-foreman-section__title { font-family: var(--font-display); font-style: italic; font-size: 14px; color: var(--marigold); margin: 0; }
+.wp-foreman-section__add { white-space: nowrap; height: 34px; padding: 0 12px; font-size: 13px; }
+.wp-foreman-tabs { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+.wp-foreman-tab { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 10px 14px; border-radius: var(--r-md); background: var(--paper); border: 1px solid var(--hairline-2); color: var(--ink-2); font-weight: 600; font-size: 14px; transition: all .15s ease; text-align: left; min-width: 0; }
+.wp-foreman-tab > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%; }
 .wp-foreman-tab:hover { background: var(--cream); }
 .wp-foreman-tab.is-active { background: var(--webcor-green); color: #fff; border-color: var(--webcor-green-deep); box-shadow: var(--shadow-1); }
 .wp-foreman-tab__sub { font-family: var(--font-display); font-style: italic; font-size: 11px; opacity: 0.85; font-weight: 500; }
 .wp-foreman-tab.is-active .wp-foreman-tab__sub { color: rgba(255,255,255,0.92); }
-.wp-foreman-tab--add { background: transparent; border-style: dashed; color: var(--marigold); }
-.wp-foreman-tab--add:hover { background: rgba(217,119,6,0.08); color: var(--marigold); }
+.is-tight .wp-foreman-tabs { display: flex; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x proximity; gap: 8px; }
+.is-tight .wp-foreman-tabs::-webkit-scrollbar { height: 6px; }
+.is-tight .wp-foreman-tabs::-webkit-scrollbar-thumb { background: var(--hairline-2); border-radius: 999px; }
+.is-tight .wp-foreman-tab { flex: 0 0 auto; min-width: 140px; scroll-snap-align: start; }
 .wp-crew-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
 .wp-crew-header__title { font-family: var(--font-display); font-size: 18px; color: var(--ink); margin: 0; font-weight: 600; }
 .wp-crew-header__es { font-style: italic; color: var(--marigold); font-size: 13px; margin-left: 8px; }
@@ -239,7 +482,7 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 .greet-card__date { margin-top: 8px; font-size: 13px; color: var(--ink-mute); }
 .greet-card__es { font-family: var(--font-display); font-style: italic; color: var(--ink-2); }
 .greet-card__sep { margin: 0 8px; color: var(--hairline-2); }
-.greet-card__dateinput { height: 38px; max-width: 190px; margin-top: 8px; font-size: 13px; }
+.greet-card__dateinput.fs-input { height: 42px; max-width: 220px; margin-top: 8px; font-size: 15px; padding: 0 12px; }
 .greet-card__chips { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
 .greet-card__livedot { width: 6px; height: 6px; border-radius: 50%; background: var(--webcor-green); }
 .ds-card { background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--r-lg); padding: 22px; box-shadow: var(--shadow-1); }
@@ -248,10 +491,9 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 .ds-card__title { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); }
 .hours-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .hours-input { position: relative; }
-.hours-input__icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--marigold); font-size: 16px; z-index: 1; }
-.hours-input .fs-input { padding-left: 36px; font-variant-numeric: tabular-nums; font-weight: 600; letter-spacing: 0.02em; }
-.hours-total__display { height: 48px; padding: 0 14px; border-radius: var(--r-md); background: linear-gradient(135deg, rgba(217,119,6,0.10), rgba(0,154,92,0.08)); border: 1px solid var(--hairline-2); display: flex; align-items: baseline; gap: 6px; }
-.hours-total__num { font-family: var(--font-display); font-size: 24px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.hours-input__icon { display: none; }
+.hours-total__display { height: 56px; padding: 0 18px; border-radius: var(--r-md); background: linear-gradient(135deg, rgba(217,119,6,0.12), rgba(0,154,92,0.10)); border: 1.5px solid var(--hairline-2); display: flex; align-items: baseline; gap: 8px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.5); }
+.hours-total__num { font-family: var(--font-display); font-size: 28px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
 .hours-total__unit { font-size: 13px; color: var(--ink-mute); }
 .safety-q { margin: 0 0 14px; display: flex; flex-direction: column; gap: 2px; }
 .safety-q__es { font-family: var(--font-display); font-style: italic; font-size: 15px; color: var(--ink-2); }
@@ -462,6 +704,9 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
           <div class="fs-header__project-meta" id="picker-project-meta">Webcor Concrete</div>
         </div>
       </div>
+      <div class="fs-header__right">
+        <button class="theme-toggle" id="theme-toggle-picker" type="button" aria-label="Toggle theme"></button>
+      </div>
     </div>
     <div class="fs-header__greca"><div class="fs-greca" style="height:8px;opacity:.55"></div></div>
   </header>
@@ -474,7 +719,13 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
       </h1>
       <p class="wp-intro__meta" id="wp-date"></p>
     </section>
-    <nav class="wp-foreman-tabs" id="wp-foreman-tabs" aria-label="Crews"></nav>
+    <section class="wp-foreman-section">
+      <div class="wp-foreman-section__head">
+        <h2 class="wp-foreman-section__title">Foremen &middot; <span lang="es">Capataces</span></h2>
+        <button class="fs-btn fs-btn--ghost wp-foreman-section__add" id="btn-add-foreman-picker" type="button">+ Add foreman</button>
+      </div>
+      <nav class="wp-foreman-tabs" id="wp-foreman-tabs" aria-label="Crews"></nav>
+    </section>
     <div class="wp-crew-header" id="wp-crew-header"></div>
     <div class="wp-grid" id="wp-grid"><p class="wp-foot__meta">Loading roster&hellip;</p></div>
     <footer class="wp-foot">
@@ -505,6 +756,7 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
           <button class="fs-tab" data-tab="crew" type="button" id="tab-crew" hidden><span class="fs-tab__es" lang="es">Cuadrilla</span><span class="fs-tab__en">Crew</span></button>
           <button class="fs-tab" data-tab="manager" type="button" id="tab-manager" hidden><span class="fs-tab__es" lang="es">Super</span><span class="fs-tab__en">Super</span></button>
         </nav>
+        <button class="theme-toggle" id="theme-toggle-app" type="button" aria-label="Toggle theme"></button>
         <button class="fs-header__switch" id="hdr-switch" type="button"><span class="es" lang="es">Cambiar</span><span>Switch user</span></button>
       </div>
     </div>
@@ -528,7 +780,7 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
               <span class="greet-card__sep">&middot;</span>
               <span class="greet-card__es" id="greet-date-es" lang="es"></span>
             </div>
-            <input type="date" id="signin-date" class="fs-input greet-card__dateinput" />
+            <input type="text" id="signin-date" class="fs-input greet-card__dateinput" data-fmt="date" readonly inputmode="none" placeholder="Pick date" />
           </div>
           <div class="greet-card__chips">
             <span class="fs-chip fs-chip--marigold" id="greet-status-chip">Not signed in yet</span>
@@ -547,11 +799,11 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
           <div class="hours-grid">
             <div class="hours-cell">
               <label class="fs-label"><span class="es" lang="es">Hora de entrada</span><span class="en">Time In</span></label>
-              <div class="hours-input"><span class="hours-input__icon" aria-hidden="true">&#8618;</span><input class="fs-input" type="time" id="time-in" /></div>
+              <div class="hours-input"><input class="fs-input" type="text" id="time-in" data-fmt="time" readonly inputmode="none" placeholder="--:--" /></div>
             </div>
             <div class="hours-cell">
               <label class="fs-label"><span class="es" lang="es">Hora de salida</span><span class="en">Time Out</span></label>
-              <div class="hours-input"><span class="hours-input__icon" aria-hidden="true">&#8617;</span><input class="fs-input" type="time" id="time-out" /></div>
+              <div class="hours-input"><input class="fs-input" type="text" id="time-out" data-fmt="time" readonly inputmode="none" placeholder="--:--" /></div>
             </div>
             <div class="hours-cell hours-total">
               <label class="fs-label"><span class="es" lang="es">Total de horas</span><span class="en">Total Hours</span></label>
@@ -623,8 +875,8 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
         <div class="hist-stat hist-stat--accent"><div class="hist-stat__num" id="hist-stat-attendance">100<span style="font-size:18px">%</span></div><div class="hist-stat__lbl"><span class="es" lang="es">Asistencia</span><span class="en">Attendance</span></div></div>
       </div>
       <div class="hist-filters">
-        <div class="hist-filter"><span class="hist-filter__lbl">From &middot; Desde</span><input class="fs-input" type="date" id="hist-start" /></div>
-        <div class="hist-filter"><span class="hist-filter__lbl">To &middot; Hasta</span><input class="fs-input" type="date" id="hist-end" /></div>
+        <div class="hist-filter"><span class="hist-filter__lbl">From &middot; Desde</span><input class="fs-input" type="text" id="hist-start" data-fmt="date" readonly inputmode="none" placeholder="Pick date" /></div>
+        <div class="hist-filter"><span class="hist-filter__lbl">To &middot; Hasta</span><input class="fs-input" type="text" id="hist-end" data-fmt="date" readonly inputmode="none" placeholder="Pick date" /></div>
         <div class="hist-filter hist-filter--wide" id="hist-foreman-wrap"><span class="hist-filter__lbl">Foreman</span><select class="fs-select" id="hist-foreman-filter"></select></div>
       </div>
       <section class="hist-table-wrap fs-card">
@@ -667,12 +919,13 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
           <p class="mgr-card__intro">Generate reports scoped to your crew.<br/><em>Reportes solo para su cuadrilla.</em></p>
           <div class="exp-row">
             <label class="fs-label"><span class="es" lang="es">Semana terminando</span><span class="en">Week ending</span></label>
-            <input type="date" class="fs-input" id="crew-week-end" />
+            <input type="text" class="fs-input" id="crew-week-end" data-fmt="date" readonly inputmode="none" placeholder="Pick week ending" />
           </div>
           <div class="exp-actions" style="flex-wrap:wrap">
-            <button class="fs-btn fs-btn--ghost" id="btn-export-crew-day" type="button"><span class="material-symbols-rounded">today</span> Single day</button>
-            <button class="fs-btn fs-btn--primary" id="btn-export-crew-week" type="button"><span class="material-symbols-rounded">picture_as_pdf</span> Export week PDF</button>
-            <button class="fs-btn fs-btn--ghost" id="btn-export-crew-csv" type="button" style="flex:1;min-width:160px"><span class="material-symbols-rounded">table_view</span> All-time CSV</button>
+            <button class="fs-btn fs-btn--ghost" id="btn-export-crew-day" type="button"><span class="material-symbols-rounded">today</span> Single day PDF</button>
+            <button class="fs-btn fs-btn--primary" id="btn-export-crew-week" type="button"><span class="material-symbols-rounded">picture_as_pdf</span> Week PDF</button>
+            <button class="fs-btn fs-btn--ghost" id="btn-export-crew-week-csv" type="button"><span class="material-symbols-rounded">table_view</span> Week CSV</button>
+            <button class="fs-btn fs-btn--ghost" id="btn-export-crew-csv" type="button" style="flex:1;min-width:160px"><span class="material-symbols-rounded">history</span> All-time CSV</button>
           </div>
         </section>
 
@@ -740,7 +993,7 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
             <p class="mgr-card__intro">Generate a weekly attendance PDF for the chosen week-ending date.<br/><em>Genera un PDF semanal de asistencia.</em></p>
             <div class="exp-row">
               <label class="fs-label"><span class="es" lang="es">Semana terminando</span><span class="en">Week ending</span></label>
-              <input type="date" class="fs-input" id="export-week-end" />
+              <input type="text" class="fs-input" id="export-week-end" data-fmt="date" readonly inputmode="none" placeholder="Pick week ending" />
             </div>
             <div class="exp-preview">
               <div class="exp-preview__doc">
@@ -766,9 +1019,10 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
               </div>
             </div>
             <div class="exp-actions" style="flex-wrap:wrap">
-              <button class="fs-btn fs-btn--ghost" id="btn-export-day" type="button"><span class="material-symbols-rounded">today</span> Single day &middot; D&iacute;a</button>
-              <button class="fs-btn fs-btn--primary" id="btn-export-week" type="button"><span class="material-symbols-rounded">picture_as_pdf</span> Export week &middot; Exportar</button>
-              <button class="fs-btn fs-btn--ghost" id="btn-export-all-csv" type="button" style="flex:1;min-width:160px"><span class="material-symbols-rounded">table_view</span> All-time CSV</button>
+              <button class="fs-btn fs-btn--ghost" id="btn-export-day" type="button"><span class="material-symbols-rounded">today</span> Single day PDF</button>
+              <button class="fs-btn fs-btn--primary" id="btn-export-week" type="button"><span class="material-symbols-rounded">picture_as_pdf</span> Week PDF</button>
+              <button class="fs-btn fs-btn--ghost" id="btn-export-week-csv" type="button"><span class="material-symbols-rounded">table_view</span> Week CSV</button>
+              <button class="fs-btn fs-btn--ghost" id="btn-export-all-csv" type="button" style="flex:1;min-width:160px"><span class="material-symbols-rounded">history</span> All-time CSV</button>
             </div>
           </section>
 
@@ -892,8 +1146,8 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
     <h3 id="entry-title">Edit Entry</h3>
     <p class="modal-sub" id="entry-sub"></p>
     <div style="display:flex;gap:12px">
-      <div style="flex:1"><label class="fs-label"><span class="es" lang="es">Hora de entrada</span><span class="en">Time In</span></label><input class="fs-input" type="time" id="entry-tin" /></div>
-      <div style="flex:1"><label class="fs-label"><span class="es" lang="es">Hora de salida</span><span class="en">Time Out</span></label><input class="fs-input" type="time" id="entry-tout" /></div>
+      <div style="flex:1"><label class="fs-label"><span class="es" lang="es">Hora de entrada</span><span class="en">Time In</span></label><input class="fs-input" type="text" id="entry-tin" data-fmt="time" readonly inputmode="none" placeholder="--:--" /></div>
+      <div style="flex:1"><label class="fs-label"><span class="es" lang="es">Hora de salida</span><span class="en">Time Out</span></label><input class="fs-input" type="text" id="entry-tout" data-fmt="time" readonly inputmode="none" placeholder="--:--" /></div>
     </div>
     <label class="fs-label" style="margin-top:14px"><span class="es" lang="es">Horas</span><span class="en">Hours</span></label>
     <input class="fs-input" type="number" step="0.25" id="entry-hours" />
@@ -905,6 +1159,53 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
       <button class="fs-btn fs-btn--danger" id="entry-delete" type="button">Delete</button>
       <button class="fs-btn fs-btn--ghost" id="entry-cancel" type="button">Cancel</button>
       <button class="fs-btn fs-btn--primary" id="entry-save" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TIME PICKER OVERLAY -->
+<div class="overlay" id="overlay-time">
+  <div class="modal" style="max-width:420px">
+    <h3 id="tp-title">Pick a time</h3>
+    <p class="modal-sub" id="tp-sub">Hora &middot; Time</p>
+    <div class="tp-display"><span id="tp-disp-h">7</span><span style="color:var(--ink-mute)">:</span><span id="tp-disp-m">30</span><span class="tp-display__ampm" id="tp-disp-ap">AM</span></div>
+    <div class="tp-ampm">
+      <button type="button" class="tp-ampm__btn" data-ap="AM">AM</button>
+      <button type="button" class="tp-ampm__btn" data-ap="PM">PM</button>
+    </div>
+    <div class="tp-section">
+      <span class="tp-section__label">Hour &middot; <span lang="es">hora</span></span>
+      <div class="tp-grid tp-grid--hours" id="tp-hours"></div>
+    </div>
+    <div class="tp-section">
+      <span class="tp-section__label">Minute &middot; <span lang="es">minuto</span></span>
+      <div class="tp-grid tp-grid--minutes" id="tp-minutes"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="fs-btn fs-btn--ghost" id="tp-cancel" type="button">Cancel</button>
+      <button class="fs-btn fs-btn--primary" id="tp-done" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- DATE PICKER OVERLAY -->
+<div class="overlay" id="overlay-date">
+  <div class="modal" style="max-width:380px">
+    <h3 id="dp-title">Pick a date</h3>
+    <p class="modal-sub" id="dp-sub">Fecha &middot; Date</p>
+    <div class="dp-header">
+      <button type="button" class="dp-nav" id="dp-prev" aria-label="Previous month">&lsaquo;</button>
+      <div class="dp-header__title" id="dp-month-title">May 2026</div>
+      <button type="button" class="dp-nav" id="dp-next" aria-label="Next month">&rsaquo;</button>
+    </div>
+    <div class="dp-dow">
+      <div class="dp-dow__cell">S</div><div class="dp-dow__cell">M</div><div class="dp-dow__cell">T</div><div class="dp-dow__cell">W</div><div class="dp-dow__cell">T</div><div class="dp-dow__cell">F</div><div class="dp-dow__cell">S</div>
+    </div>
+    <div class="dp-grid" id="dp-grid"></div>
+    <div class="dp-today-row"><button class="dp-today-btn" id="dp-today" type="button">Jump to today &middot; <span lang="es">Hoy</span></button></div>
+    <div class="modal-actions">
+      <button class="fs-btn fs-btn--ghost" id="dp-cancel" type="button">Cancel</button>
+      <button class="fs-btn fs-btn--primary" id="dp-done" type="button">Done</button>
     </div>
   </div>
 </div>
@@ -1013,6 +1314,211 @@ const T = {
     promoted: '{name} es ahora foreman', demoted: '{name} movido a cuadrilla'
   }
 };
+
+// ── CUSTOM DATE/TIME PICKER ─────────────────────────────────────────────────
+const pickerState = {
+  target: null,     // current input element being edited
+  ampm: 'AM',
+  hour12: 7,        // 1-12
+  minute: 0,        // 0-59
+  dateView: null,   // first day of currently-shown month
+  selectedYmd: null,
+  min: null, max: null
+};
+function isoOf(el) { return el?.dataset.iso || ''; }
+function displayForFmt(fmt, iso) {
+  if (!iso) return '';
+  if (fmt === 'time') {
+    const [h, m] = iso.split(':').map(Number);
+    if (isNaN(h) || isNaN(m)) return '';
+    const ap = h < 12 ? 'AM' : 'PM';
+    const h12 = ((h + 11) % 12) + 1;
+    return `${h12}:${String(m).padStart(2,'0')} ${ap}`;
+  }
+  if (fmt === 'date') {
+    const d = parseYmd(iso);
+    if (isNaN(d.getTime())) return '';
+    const dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+    const mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+    return `${dow}, ${mo} ${d.getDate()}, ${d.getFullYear()}`;
+  }
+  return iso;
+}
+function setIso(el, iso, opts) {
+  if (!el) return;
+  el.dataset.iso = iso || '';
+  el.value = displayForFmt(el.dataset.fmt, iso);
+  if (!opts || !opts.silent) el.dispatchEvent(new Event('change', { bubbles: true }));
+}
+function initPickerBindings() {
+  $$('input[data-fmt="time"], input[data-fmt="date"]').forEach(el => {
+    if (el.dataset.pickerBound) return;
+    el.dataset.pickerBound = '1';
+    // sync display if value attribute is set
+    if (el.value && !el.dataset.iso) { el.dataset.iso = el.value; el.value = displayForFmt(el.dataset.fmt, el.dataset.iso); }
+    const open = (e) => {
+      e.preventDefault();
+      el.blur();
+      if (el.dataset.fmt === 'time') openTimePicker(el);
+      else openDatePicker(el);
+    };
+    el.addEventListener('click', open);
+    el.addEventListener('focus', e => { el.blur(); });
+    el.addEventListener('keydown', e => { e.preventDefault(); });
+  });
+}
+
+// ── TIME PICKER ─────────────────────────────────────────────────────────────
+function openTimePicker(el) {
+  pickerState.target = el;
+  const iso = el.dataset.iso || '';
+  let h = 7, m = 0;
+  if (/^\d{1,2}:\d{2}$/.test(iso)) {
+    [h, m] = iso.split(':').map(Number);
+  } else {
+    const now = new Date();
+    h = now.getHours(); m = Math.round(now.getMinutes() / 5) * 5;
+    if (m === 60) { m = 0; h++; }
+  }
+  pickerState.ampm = h < 12 ? 'AM' : 'PM';
+  pickerState.hour12 = ((h + 11) % 12) + 1;
+  pickerState.minute = m;
+  renderTimePicker();
+  $('#overlay-time').classList.add('show');
+}
+function renderTimePicker() {
+  $('#tp-disp-h').textContent = String(pickerState.hour12);
+  $('#tp-disp-m').textContent = String(pickerState.minute).padStart(2, '0');
+  $('#tp-disp-ap').textContent = pickerState.ampm;
+  $$('.tp-ampm__btn').forEach(b => b.classList.toggle('is-active', b.dataset.ap === pickerState.ampm));
+  const hoursWrap = $('#tp-hours');
+  hoursWrap.innerHTML = '';
+  for (let i = 1; i <= 12; i++) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tp-btn' + (i === pickerState.hour12 ? ' is-active' : '');
+    b.textContent = String(i);
+    b.onclick = () => { pickerState.hour12 = i; renderTimePicker(); };
+    hoursWrap.appendChild(b);
+  }
+  const minsWrap = $('#tp-minutes');
+  minsWrap.innerHTML = '';
+  for (let m = 0; m < 60; m += 5) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'tp-btn' + (m === pickerState.minute ? ' is-active' : '');
+    b.textContent = String(m).padStart(2, '0');
+    b.onclick = () => { pickerState.minute = m; renderTimePicker(); };
+    minsWrap.appendChild(b);
+  }
+}
+function closeTimePicker() { $('#overlay-time').classList.remove('show'); }
+function confirmTimePicker() {
+  let h24 = pickerState.hour12 % 12;
+  if (pickerState.ampm === 'PM') h24 += 12;
+  const iso = `${String(h24).padStart(2,'0')}:${String(pickerState.minute).padStart(2,'0')}`;
+  setIso(pickerState.target, iso);
+  closeTimePicker();
+}
+
+// ── DATE PICKER ─────────────────────────────────────────────────────────────
+function openDatePicker(el) {
+  pickerState.target = el;
+  pickerState.min = el.dataset.min || null;
+  pickerState.max = el.dataset.max || null;
+  const iso = el.dataset.iso || '';
+  let d;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) {
+    d = parseYmd(iso);
+    pickerState.selectedYmd = iso;
+  } else {
+    d = new Date();
+    pickerState.selectedYmd = null;
+  }
+  pickerState.dateView = new Date(d.getFullYear(), d.getMonth(), 1);
+  renderDatePicker();
+  $('#overlay-date').classList.add('show');
+}
+function renderDatePicker() {
+  const v = pickerState.dateView;
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  $('#dp-month-title').textContent = `${monthNames[v.getMonth()]} ${v.getFullYear()}`;
+  const grid = $('#dp-grid');
+  grid.innerHTML = '';
+  const firstDow = v.getDay();   // 0=Sun
+  const daysInMonth = new Date(v.getFullYear(), v.getMonth() + 1, 0).getDate();
+  const prevMonthDays = new Date(v.getFullYear(), v.getMonth(), 0).getDate();
+  const todayStr = ymd(new Date());
+  const minDate = pickerState.min ? parseYmd(pickerState.min) : null;
+  const maxDate = pickerState.max ? parseYmd(pickerState.max) : null;
+  const cells = [];
+  // leading days from previous month
+  for (let i = firstDow - 1; i >= 0; i--) {
+    const day = prevMonthDays - i;
+    const d = new Date(v.getFullYear(), v.getMonth() - 1, day);
+    cells.push({ d, otherMonth: true });
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const d = new Date(v.getFullYear(), v.getMonth(), day);
+    cells.push({ d, otherMonth: false });
+  }
+  while (cells.length % 7 !== 0 || cells.length < 42) {
+    const last = cells[cells.length - 1].d;
+    const nd = new Date(last); nd.setDate(nd.getDate() + 1);
+    cells.push({ d: nd, otherMonth: nd.getMonth() !== v.getMonth() });
+    if (cells.length >= 42) break;
+  }
+  for (const { d, otherMonth } of cells) {
+    const ymdStr = ymd(d);
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'dp-day';
+    b.textContent = String(d.getDate());
+    if (otherMonth) b.classList.add('is-other-month');
+    if (ymdStr === todayStr) b.classList.add('is-today');
+    if (ymdStr === pickerState.selectedYmd) b.classList.add('is-selected');
+    if ((minDate && d < minDate) || (maxDate && d > maxDate)) {
+      b.disabled = true;
+    } else {
+      b.onclick = () => {
+        pickerState.selectedYmd = ymdStr;
+        if (otherMonth) {
+          pickerState.dateView = new Date(d.getFullYear(), d.getMonth(), 1);
+        }
+        renderDatePicker();
+      };
+    }
+    grid.appendChild(b);
+  }
+}
+function closeDatePicker() { $('#overlay-date').classList.remove('show'); }
+function confirmDatePicker() {
+  if (!pickerState.selectedYmd) { toast('Pick a date first', 'error'); return; }
+  setIso(pickerState.target, pickerState.selectedYmd);
+  closeDatePicker();
+}
+function initPickerWiring() {
+  $$('.tp-ampm__btn').forEach(b => {
+    b.onclick = () => { pickerState.ampm = b.dataset.ap; renderTimePicker(); };
+  });
+  $('#tp-cancel').onclick = closeTimePicker;
+  $('#tp-done').onclick = confirmTimePicker;
+  $('#dp-cancel').onclick = closeDatePicker;
+  $('#dp-done').onclick = confirmDatePicker;
+  $('#dp-prev').onclick = () => {
+    const v = pickerState.dateView;
+    pickerState.dateView = new Date(v.getFullYear(), v.getMonth() - 1, 1);
+    renderDatePicker();
+  };
+  $('#dp-next').onclick = () => {
+    const v = pickerState.dateView;
+    pickerState.dateView = new Date(v.getFullYear(), v.getMonth() + 1, 1);
+    renderDatePicker();
+  };
+  $('#dp-today').onclick = () => {
+    const today = new Date();
+    pickerState.dateView = new Date(today.getFullYear(), today.getMonth(), 1);
+    pickerState.selectedYmd = ymd(today);
+    renderDatePicker();
+  };
+}
 
 // ── FIREBASE ────────────────────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
@@ -1187,10 +1693,51 @@ function petalSvg() {
   return `<svg class="wp-tile__petal" width="56" height="56" viewBox="0 0 56 56" aria-hidden="true"><g opacity="0.18" fill="currentColor">${g}</g></svg>`;
 }
 
-// ── PREFS / RESPONSIVE ──────────────────────────────────────────────────────
+// ── PREFS / RESPONSIVE / THEME ──────────────────────────────────────────────
 function initPrefs() {
   document.documentElement.lang = state.lang;
+  initTheme();
 }
+const THEME_ICONS = {
+  light: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>',
+  dark:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+};
+function currentTheme() {
+  return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+}
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'dark' ? '#1A1410' : '#F5EFE4');
+  // Toggle icon shows the action (clicking flips to the other theme)
+  const icon = theme === 'dark' ? THEME_ICONS.light : THEME_ICONS.dark;
+  const btnApp = document.getElementById('theme-toggle-app');
+  const btnPicker = document.getElementById('theme-toggle-picker');
+  if (btnApp) btnApp.innerHTML = icon;
+  if (btnPicker) btnPicker.innerHTML = icon;
+  if (btnApp) btnApp.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  if (btnPicker) btnPicker.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+  // SignaturePad pen color follows ink
+  if (state.sigPad && state.sigPad.penColor !== undefined) {
+    state.sigPad.penColor = theme === 'dark' ? '#F4ECD8' : '#1A1410';
+  }
+}
+function initTheme() {
+  let saved = localStorage.getItem('theme');
+  if (saved !== 'dark' && saved !== 'light') {
+    saved = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  applyTheme(saved);
+}
+function toggleTheme() {
+  const next = currentTheme() === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', next);
+  applyTheme(next);
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('#theme-toggle-app, #theme-toggle-picker');
+  if (t) { e.preventDefault(); toggleTheme(); }
+});
 function initResponsive() {
   const mq = window.matchMedia('(max-width: 1023px)');
   const apply = () => document.body.classList.toggle('is-tight', mq.matches);
@@ -1221,6 +1768,8 @@ async function boot() {
   if (saved) { try { state.profile = JSON.parse(saved); } catch(e) {} }
   if (state.profile?.id === '__manager__') { localStorage.removeItem('foreman_profile'); state.profile = null; }
 
+  initPickerWiring();
+  initPickerBindings();
   initTabs();
   initSignInForm();
   initSignaturePad();
@@ -1396,32 +1945,29 @@ function renderForemanTabs() {
     nav.innerHTML = '';
     return;
   }
-  const foremen = sortedForemen(true);
+  const foremen = sortedForemen(true)
+    .sort((a, b) => (a[1].name || '').localeCompare(b[1].name || '', undefined, { sensitivity: 'base' }));
   if (!state.pickerForemanId || !state.foremen[state.pickerForemanId] || !state.foremen[state.pickerForemanId].active) {
     state.pickerForemanId = foremen[0]?.[0] || null;
   }
-  const tabsHtml = foremen.map(([id, f]) => {
+  nav.innerHTML = foremen.map(([id, f]) => {
     const isActive = id === state.pickerForemanId;
     const badge = f.role === 'super' ? `<span class="wp-foreman-tab__sub">${t('super_label')}</span>` : '';
     return `<button class="wp-foreman-tab ${isActive ? 'is-active' : ''}" data-id="${escapeHtml(id)}" type="button">
       <span>${escapeHtml(f.name)}</span>${badge}
     </button>`;
   }).join('');
-  const addBtn = `<button class="wp-foreman-tab wp-foreman-tab--add" data-add="foreman" type="button">${escapeHtml(t('add_foreman_btn'))}</button>`;
-  nav.innerHTML = tabsHtml + addBtn;
   nav.querySelectorAll('.wp-foreman-tab').forEach(btn => {
-    if (btn.dataset.add === 'foreman') {
-      btn.onclick = () => openForemanEditor(null);
-    } else {
-      btn.onclick = () => {
-        state.pickerForemanId = btn.dataset.id;
-        localStorage.setItem('lastForemanTab', state.pickerForemanId);
-        renderPicker();
-      };
-    }
+    btn.onclick = () => {
+      state.pickerForemanId = btn.dataset.id;
+      localStorage.setItem('lastForemanTab', state.pickerForemanId);
+      renderPicker();
+    };
   });
-  const activeTab = nav.querySelector('.wp-foreman-tab.is-active');
-  if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  if (document.body.classList.contains('is-tight')) {
+    const activeTab = nav.querySelector('.wp-foreman-tab.is-active');
+    if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+  }
 }
 function renderCrewGrid() {
   const grid = $('#wp-grid');
@@ -1518,6 +2064,7 @@ async function annotatePickerStatus() {
   } catch (e) { /* ignore */ }
 }
 $('#hdr-switch').onclick = () => showPicker();
+$('#btn-add-foreman-picker').onclick = () => openForemanEditor(null);
 
 // ── TABS ────────────────────────────────────────────────────────────────────
 function initTabs() {
@@ -1555,15 +2102,17 @@ function initSignInForm() {
   const today = ymd(new Date());
   const minDate = new Date(); minDate.setDate(minDate.getDate() - 6);
   const dateInput = $('#signin-date');
-  dateInput.min = ymd(minDate); dateInput.max = today; dateInput.value = today;
+  dateInput.dataset.min = ymd(minDate);
+  dateInput.dataset.max = today;
+  setIso(dateInput, today, { silent: true });
   state.signin.date = today;
   dateInput.onchange = e => {
-    state.signin.date = e.target.value || today;
+    state.signin.date = isoOf(e.target) || today;
     fillGreetingDate();
     updateGreetingStatus();
   };
-  $('#time-in').oninput  = e => { state.signin.timeIn  = e.target.value; recalcHours(); };
-  $('#time-out').oninput = e => { state.signin.timeOut = e.target.value; recalcHours(); };
+  $('#time-in').onchange  = e => { state.signin.timeIn  = isoOf(e.target); recalcHours(); };
+  $('#time-out').onchange = e => { state.signin.timeOut = isoOf(e.target); recalcHours(); };
   $('#injured-no').onclick  = () => setInjured(false);
   $('#injured-yes').onclick = () => setInjured(true);
   $('#sig-mode-draw').onclick = () => setSigMode('drawn');
@@ -1585,7 +2134,7 @@ function fillGreeting() {
     if (f) badge = ` <span class="fs-chip" style="font-size:11px;height:22px">${escapeHtml(t('member_of'))} ${escapeHtml(f.name)}</span>`;
   }
   $('#greet-role').innerHTML = escapeHtml(cls) + badge;
-  $('#signin-date').value = state.signin.date || ymd(new Date());
+  setIso($('#signin-date'), state.signin.date || ymd(new Date()), { silent: true });
   fillGreetingDate();
   updateGreetingStatus();
 }
@@ -1627,8 +2176,9 @@ let _sigLastDims = null;
 function initSignaturePad() {
   const canvas = $('#sig-canvas');
   resizeCanvas(canvas);
+  const penColor = currentTheme() === 'dark' ? '#F4ECD8' : '#3A2E1F';
   state.sigPad = new SignaturePad(canvas, {
-    penColor: '#3A2E1F', minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
+    penColor, minWidth: 0.7, maxWidth: 2.2, backgroundColor: 'rgba(255,255,255,0)'
   });
   state.sigPad.addEventListener('beginStroke', () => { $('#sig-wrap').classList.add('has-stroke'); });
   state.sigPad.addEventListener('endStroke', () => {
@@ -1749,8 +2299,8 @@ async function fetchHistory({ startDate, endDate, foremanFilter }) {
 function ensureHistDefaults() {
   const today = new Date();
   const start = new Date(today); start.setDate(today.getDate() - 29);
-  if (!$('#hist-start').value) $('#hist-start').value = ymd(start);
-  if (!$('#hist-end').value) $('#hist-end').value = ymd(today);
+  if (!isoOf($('#hist-start'))) setIso($('#hist-start'), ymd(start), { silent: true });
+  if (!isoOf($('#hist-end'))) setIso($('#hist-end'), ymd(today), { silent: true });
 }
 function populateHistForemanFilter() {
   const sel = $('#hist-foreman-filter');
@@ -1797,8 +2347,8 @@ async function loadHistory() {
   $('#hist-title').textContent = mgr ? 'All Attendance' : 'My Attendance';
   $('#hist-sub').textContent = mgr ? 'Todos los foremen · All foremen' : 'Últimos 30 días · Last 30 days';
   if (mgr) populateHistForemanFilter();
-  const startDate = $('#hist-start').value;
-  const endDate = $('#hist-end').value;
+  const startDate = isoOf($('#hist-start'));
+  const endDate = isoOf($('#hist-end'));
   const foremanFilter = mgr ? ($('#hist-foreman-filter').value || 'all') : state.profile.id;
   const table = $('#hist-table');
   table.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('loading'))}</p>`;
@@ -1880,7 +2430,7 @@ function refreshCrewView() {
     const fri = weekEndingFor(new Date());
     state.manager.crewWeekEnd = fri;
     state.manager.crewWeekEndStr = ymd(fri);
-    $('#crew-week-end').value = state.manager.crewWeekEndStr;
+    setIso($('#crew-week-end'), state.manager.crewWeekEndStr, { silent: true });
   }
   renderCrewMembersList();
   loadCrewWeekData().then(renderCrewWeekGrid);
@@ -1986,7 +2536,7 @@ function initCrewView() {
     openMemberEditor(null, fid);
   };
   $('#crew-week-end').onchange = async (e) => {
-    const v = e.target.value;
+    const v = isoOf(e.target);
     if (!v) return;
     state.manager.crewWeekEndStr = v;
     state.manager.crewWeekEnd = parseYmd(v);
@@ -1995,6 +2545,7 @@ function initCrewView() {
   };
   $('#btn-export-crew-day').onclick = () => exportCrewPDF('day');
   $('#btn-export-crew-week').onclick = () => exportCrewPDF('week');
+  $('#btn-export-crew-week-csv').onclick = () => exportWeeklyCsv({ scope: 'crew', weekEnd: state.manager.crewWeekEnd });
   $('#btn-export-crew-csv').onclick = () => exportAllTimeCsv({ scope: 'crew' });
 }
 async function exportCrewPDF(mode) {
@@ -2023,7 +2574,7 @@ function tryUnlock() {
     state.manager.unlocked = true;
     pinEntry = ''; renderPinDots();
     const sat = weekEndingFor(new Date());
-    $('#export-week-end').value = ymd(sat);
+    setIso($('#export-week-end'), ymd(sat), { silent: true });
     onWeekEndChange();
     updateMgrStatus();
     refreshManagerView();
@@ -2049,6 +2600,7 @@ function initManager() {
   $('#btn-export-week').onclick = () => exportPDF('week');
   $('#btn-export-day').onclick = () => exportPDF('day');
   if ($('#btn-export-all-csv')) $('#btn-export-all-csv').onclick = () => exportAllTimeCsv({ scope: 'all' });
+  if ($('#btn-export-week-csv')) $('#btn-export-week-csv').onclick = () => exportWeeklyCsv({ scope: 'all', weekEnd: state.manager.weekEnd });
   $('#btn-add-foreman').onclick = () => openForemanEditor(null);
   $('#btn-save-config').onclick = saveConfig;
   $('#btn-clear-old').onclick = clearOldRecords;
@@ -2126,46 +2678,91 @@ async function toggleRole(id) {
   toast(t('saved_toast'), 'success');
 }
 
-// ── ALL-TIME CSV EXPORT ─────────────────────────────────────────────────────
+// ── CSV EXPORT ──────────────────────────────────────────────────────────────
 async function exportAllTimeCsv(opts) {
   opts = opts || {};
-  let scopeIds = null;
-  let scopeLabel = 'all';
-  if (opts.scope === 'crew') {
-    const fid = crewScopeForemanId();
-    if (!fid) { toast(t('pick_foreman_first'), 'error'); return; }
-    scopeIds = new Set([fid, ...membersOf(fid).map(([id]) => id)]);
-    scopeLabel = state.foremen[fid]?.name || 'Crew';
-  }
+  const { scopeIds, scopeLabel } = resolveCsvScope(opts);
+  if (opts.scope === 'crew' && !scopeIds) return;
   const all = await fbGet('attendance');
   if (!all) { toast('No data', 'error'); return; }
-  const rows = [['Date', 'Foreman', 'Person', 'Kind', 'Classification', 'TimeIn', 'TimeOut', 'Hours', 'Injured', 'SignedBy']];
+  const rows = csvHeader();
   const dates = Object.keys(all).sort();
   for (const date of dates) {
     const day = all[date];
     if (!day) continue;
     for (const pid of Object.keys(day)) {
       if (scopeIds && !scopeIds.has(pid)) continue;
-      const p = personById(pid);
-      const e = day[pid];
-      const foremanName = p?.kind === 'member' ? (state.foremen[p.foremanId]?.name || '') : (p?.name || '');
-      rows.push([
-        date,
-        csvEsc(foremanName),
-        csvEsc(p?.name || pid),
-        p?.kind || '',
-        csvEsc(p?.classification || ''),
-        e.timeIn || '',
-        e.timeOut || '',
-        e.totalHours != null ? e.totalHours : '',
-        e.injured ? 'Yes' : 'No',
-        e.signatureType === 'off' ? 'OFF' : (e.signedBy || '')
-      ]);
+      rows.push(csvRowForEntry(date, pid, day[pid]));
     }
   }
+  await downloadCsv(rows, `Attendance_AllTime_${scopeLabel.replace(/\s+/g,'_')}_${ymd(new Date())}.csv`);
+}
+async function exportWeeklyCsv(opts) {
+  opts = opts || {};
+  const weekEnd = opts.weekEnd;
+  if (!weekEnd) { toast(t('pick_week_first'), 'error'); return; }
+  const { scopeIds, scopeLabel, personList } = resolveCsvScope(opts);
+  if (opts.scope === 'crew' && !scopeIds) return;
+  const days = weekDates(weekEnd);
+  const rows = csvHeader();
+  const ids = personList || allPersonIds();
+  for (const d of days) {
+    const dateStr = ymd(d);
+    const day = (await fbGet(`attendance/${dateStr}`)) || {};
+    for (const pid of ids) {
+      const e = day[pid];
+      if (e) {
+        rows.push(csvRowForEntry(dateStr, pid, e));
+      } else {
+        // blank row so the user can fill it in their spreadsheet
+        const p = personById(pid);
+        if (!p) continue;
+        const foremanName = p.kind === 'member' ? (state.foremen[p.foremanId]?.name || '') : p.name;
+        rows.push([dateStr, csvEsc(foremanName), csvEsc(p.name), p.kind || '', csvEsc(p.classification || ''), '', '', '', '', '']);
+      }
+    }
+  }
+  await downloadCsv(rows, `Attendance_Week_${scopeLabel.replace(/\s+/g,'_')}_${ymd(weekEnd)}.csv`);
+}
+function csvHeader() {
+  return [['Date', 'Foreman', 'Person', 'Kind', 'Classification', 'TimeIn', 'TimeOut', 'Hours', 'Injured', 'SignedBy']];
+}
+function csvRowForEntry(date, pid, e) {
+  const p = personById(pid);
+  const foremanName = p?.kind === 'member' ? (state.foremen[p.foremanId]?.name || '') : (p?.name || '');
+  return [
+    date,
+    csvEsc(foremanName),
+    csvEsc(p?.name || pid),
+    p?.kind || '',
+    csvEsc(p?.classification || ''),
+    e.timeIn || '',
+    e.timeOut || '',
+    e.totalHours != null ? e.totalHours : '',
+    e.injured ? 'Yes' : 'No',
+    e.signatureType === 'off' ? 'OFF' : (e.signedBy || '')
+  ];
+}
+function resolveCsvScope(opts) {
+  if (opts.scope === 'crew') {
+    const fid = crewScopeForemanId();
+    if (!fid) { toast(t('pick_foreman_first'), 'error'); return { scopeIds: null, scopeLabel: 'Crew', personList: null }; }
+    const ids = [fid, ...membersOf(fid).filter(([_, m]) => m.active).map(([id]) => id)];
+    return { scopeIds: new Set(ids), scopeLabel: state.foremen[fid]?.name || 'Crew', personList: ids };
+  }
+  return { scopeIds: null, scopeLabel: 'All', personList: allPersonIds() };
+}
+function allPersonIds() {
+  const ids = [];
+  for (const [fid, f] of sortedForemen(true)) {
+    ids.push(fid);
+    for (const [mid, _] of membersOf(fid).filter(([_, m]) => m.active)) ids.push(mid);
+  }
+  return ids;
+}
+async function downloadCsv(rows, fname) {
   const csv = rows.map(r => r.join(',')).join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-  const fname = `Attendance_AllTime_${scopeLabel.replace(/\s+/g,'_')}_${ymd(new Date())}.csv`;
   await shareCsv(blob, fname);
 }
 function csvEsc(s) {
@@ -2357,7 +2954,7 @@ async function deleteMember() {
 
 // ── WEEK VIEW + EXPORT META ─────────────────────────────────────────────────
 async function onWeekEndChange() {
-  const v = $('#export-week-end').value;
+  const v = isoOf($('#export-week-end'));
   if (!v) return;
   state.manager.weekEndStr = v;
   state.manager.weekEnd = parseYmd(v);
@@ -2430,8 +3027,8 @@ async function openEntryEditor(pid, date) {
   state.manager.editingEntry = { date };
   $('#entry-title').textContent = p?.name || pid;
   $('#entry-sub').textContent = `${dayOfWeekEn(parseYmd(date))} · ${fmtDateUS(date)}`;
-  $('#entry-tin').value = e.timeIn || '';
-  $('#entry-tout').value = e.timeOut || '';
+  setIso($('#entry-tin'), e.timeIn || '', { silent: true });
+  setIso($('#entry-tout'), e.timeOut || '', { silent: true });
   $('#entry-hours').value = e.totalHours || '';
   $('#entry-status').value = e.signatureType === 'off' ? 'off' : 'signed';
   $('#entry-injured').value = String(!!e.injured);
@@ -2445,8 +3042,8 @@ async function saveEntryEditor() {
   const p = personById(pid);
   const signedBy = isSuperProfile() && state.manager.unlocked ? 'super' : 'foreman';
   const entry = {
-    timeIn: $('#entry-tin').value || null,
-    timeOut: $('#entry-tout').value || null,
+    timeIn: isoOf($('#entry-tin')) || null,
+    timeOut: isoOf($('#entry-tout')) || null,
     totalHours: parseFloat($('#entry-hours').value) || 0,
     injured: $('#entry-injured').value === 'true',
     signatureType: status === 'off' ? 'off' : 'typed',
