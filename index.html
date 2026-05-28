@@ -81,15 +81,18 @@
 [data-theme="dark"] .hours-total__display { background: linear-gradient(135deg, rgba(240,168,82,0.16), rgba(46,190,126,0.14)); }
 [data-theme="dark"] input.fs-input[data-fmt="time"],
 [data-theme="dark"] input.fs-input[data-fmt="date"] {
-  background: linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+  background-color: var(--paper-2);
   color: var(--ink);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 1px 2px rgba(0,0,0,0.30);
+  border-color: var(--hairline-2);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.30);
 }
 [data-theme="dark"] input.fs-input[data-fmt="time"] {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F0A852' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><polyline points='12 7 12 12 15.5 14'/></svg>"), linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F0A852' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><polyline points='12 7 12 12 15.5 14'/></svg>");
+  background-blend-mode: normal;
 }
 [data-theme="dark"] input.fs-input[data-fmt="date"] {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F0A852' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='2'/><line x1='3' y1='10' x2='21' y2='10'/><line x1='8' y1='3' x2='8' y2='7'/><line x1='16' y1='3' x2='16' y2='7'/></svg>"), linear-gradient(135deg, var(--paper-2) 0%, var(--cream) 100%);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23F0A852' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='2'/><line x1='3' y1='10' x2='21' y2='10'/><line x1='8' y1='3' x2='8' y2='7'/><line x1='16' y1='3' x2='16' y2='7'/></svg>");
+  background-blend-mode: normal;
 }
 [data-theme="dark"] .sig-pad { background: var(--paper-2); border-color: var(--hairline-2); }
 [data-theme="dark"] .sig-pad__typed { color: var(--marigold); }
