@@ -133,8 +133,8 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 
 /* ---------- Header ---------- */
 .fs-header { background: var(--paper); border-bottom: 1px solid var(--hairline); position: sticky; top: 0; z-index: 30; }
-.fs-header__picado { padding: 0 24px; margin-bottom: -8px; overflow: hidden; }
-.fs-header__bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 18px 28px 16px; max-width: 1180px; margin: 0 auto; }
+.fs-header__picado { display: none; }
+.fs-header__bar { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 28px 12px; max-width: 1180px; margin: 0 auto; }
 .fs-header__brand { display: flex; align-items: center; gap: 18px; min-width: 0; }
 .fs-header__logo { height: 34px; width: auto; display: block; }
 .fs-header__project { padding-left: 18px; border-left: 1px solid var(--hairline-2); min-width: 0; }
@@ -152,7 +152,16 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 .fs-header__switch { background: transparent; border: none; color: var(--ink-mute); font-size: 12px; font-weight: 600; display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.15; }
 .fs-header__switch .es { font-family: var(--font-display); font-style: italic; color: var(--marigold); }
 .fs-header__switch:hover { color: var(--ink); }
-.fs-header__greca { padding: 0 28px 8px; }
+.fs-header__greca { padding: 0 28px 6px; opacity: 0.55; }
+
+/* ---------- Decorative side rails ---------- */
+.fs-rail { position: fixed; top: 0; bottom: 0; width: 24px; pointer-events: none; z-index: 5; overflow: hidden; opacity: 0.7; }
+.fs-rail-left { left: 0; }
+.fs-rail-right { right: 0; }
+.fs-rail__strip { display: flex; flex-direction: column; gap: 0; padding-top: 16px; }
+.fs-rail__strip svg { display: block; margin: 0 auto; }
+.is-tight .fs-rail-left, .is-tight .fs-rail-right { display: none; }
+.greet-card__picado { display: none; }
 
 /* ---------- Worker picker ---------- */
 .wp-main { padding: 28px; }
@@ -162,7 +171,26 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 .wp-intro__en { font-family: var(--font-ui); font-size: 16px; font-weight: 500; color: var(--ink-mute); letter-spacing: 0; }
 .wp-intro__meta { margin: 14px 0 0; color: var(--ink-mute); font-size: 13px; }
 .wp-intro__sep { margin: 0 8px; color: var(--hairline-2); }
-.wp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+.wp-foreman-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--hairline); scroll-snap-type: x proximity; }
+.wp-foreman-tabs::-webkit-scrollbar { height: 6px; }
+.wp-foreman-tabs::-webkit-scrollbar-thumb { background: var(--hairline-2); border-radius: 999px; }
+.wp-foreman-tab { display: inline-flex; flex-direction: column; align-items: flex-start; padding: 10px 16px; border-radius: 999px; background: var(--paper); border: 1px solid var(--hairline-2); color: var(--ink-2); font-weight: 600; font-size: 14px; white-space: nowrap; scroll-snap-align: start; transition: all .15s ease; min-width: max-content; }
+.wp-foreman-tab:hover { background: var(--cream); }
+.wp-foreman-tab.is-active { background: var(--webcor-green); color: #fff; border-color: var(--webcor-green-deep); box-shadow: var(--shadow-1); }
+.wp-foreman-tab__sub { font-family: var(--font-display); font-style: italic; font-size: 11px; opacity: 0.85; font-weight: 500; }
+.wp-foreman-tab.is-active .wp-foreman-tab__sub { color: rgba(255,255,255,0.92); }
+.wp-foreman-tab--add { background: transparent; border-style: dashed; color: var(--marigold); }
+.wp-foreman-tab--add:hover { background: rgba(217,119,6,0.08); color: var(--marigold); }
+.wp-crew-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+.wp-crew-header__title { font-family: var(--font-display); font-size: 18px; color: var(--ink); margin: 0; font-weight: 600; }
+.wp-crew-header__es { font-style: italic; color: var(--marigold); font-size: 13px; margin-left: 8px; }
+.wp-crew-header__count { color: var(--ink-mute); font-size: 13px; }
+.wp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.wp-tile--add { background: transparent; border: 1.5px dashed var(--hairline-2); display: flex; align-items: center; justify-content: center; padding: 24px 16px; min-height: 88px; color: var(--marigold); font-weight: 600; font-size: 14px; }
+.wp-tile--add:hover { background: rgba(217,119,6,0.05); border-color: var(--marigold); transform: none; }
+.wp-tile__badge { position: absolute; top: 10px; right: 12px; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: var(--marigold); color: #fff; letter-spacing: 0.04em; text-transform: uppercase; }
+.wp-tile__badge--super { background: var(--teal-deep); }
+.wp-tile__badge--foreman { background: var(--webcor-green); }
 .wp-tile { position: relative; display: grid; grid-template-columns: 64px 1fr auto; align-items: center; gap: 14px; padding: 16px; background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--r-lg); text-align: left; color: var(--ink); transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease; overflow: hidden; }
 .wp-tile::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent, var(--marigold)); }
 .wp-tile:hover { box-shadow: var(--shadow-2); border-color: var(--hairline-2); transform: translateY(-1px); }
@@ -419,6 +447,9 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
 </head>
 <body class="fs-app">
 
+<div class="fs-rail fs-rail-left" aria-hidden="true"><div class="fs-rail__strip" id="rail-left"></div></div>
+<div class="fs-rail fs-rail-right" aria-hidden="true"><div class="fs-rail__strip" id="rail-right"></div></div>
+
 <!-- ============ WORKER PICKER SCREEN ============ -->
 <div class="screen" id="screen-picker">
   <header class="fs-header">
@@ -443,6 +474,8 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
       </h1>
       <p class="wp-intro__meta" id="wp-date"></p>
     </section>
+    <nav class="wp-foreman-tabs" id="wp-foreman-tabs" aria-label="Crews"></nav>
+    <div class="wp-crew-header" id="wp-crew-header"></div>
     <div class="wp-grid" id="wp-grid"><p class="wp-foot__meta">Loading roster&hellip;</p></div>
     <footer class="wp-foot">
       <div class="wp-foot__left">
@@ -469,7 +502,8 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
         <nav class="fs-header__nav" id="tabs" aria-label="Sections">
           <button class="fs-tab is-active" data-tab="signin" type="button"><span class="fs-tab__es" lang="es">Entrada</span><span class="fs-tab__en">Sign In</span></button>
           <button class="fs-tab" data-tab="history" type="button"><span class="fs-tab__es" lang="es">Historial</span><span class="fs-tab__en">History</span></button>
-          <button class="fs-tab" data-tab="manager" type="button"><span class="fs-tab__es" lang="es">Administrador</span><span class="fs-tab__en">Manager</span></button>
+          <button class="fs-tab" data-tab="crew" type="button" id="tab-crew" hidden><span class="fs-tab__es" lang="es">Cuadrilla</span><span class="fs-tab__en">Crew</span></button>
+          <button class="fs-tab" data-tab="manager" type="button" id="tab-manager" hidden><span class="fs-tab__es" lang="es">Super</span><span class="fs-tab__en">Super</span></button>
         </nav>
         <button class="fs-header__switch" id="hdr-switch" type="button"><span class="es" lang="es">Cambiar</span><span>Switch user</span></button>
       </div>
@@ -604,13 +638,62 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
       </section>
     </section>
 
+    <!-- CREW (Foreman's view of their own crew, no PIN) -->
+    <section class="panel mgr-main" id="panel-crew">
+      <section class="mgr-intro">
+        <div>
+          <div class="hist-intro__kicker" id="crew-kicker"></div>
+          <h1 class="hist-intro__title"><span lang="es">Mi Cuadrilla</span> &middot; My Crew</h1>
+          <p class="hist-intro__sub" id="crew-sub">Manage your crew members, edit attendance, export reports.</p>
+        </div>
+        <div><span class="fs-chip fs-chip--green" id="crew-chip">— members</span></div>
+      </section>
+      <div class="mgr-grid">
+        <!-- Crew member roster -->
+        <section class="fs-card mgr-card">
+          <div class="mgr-card__head">
+            <div><div class="ds-card__es" lang="es">Cuadrilla</div><h3 class="ds-card__title">Crew Members</h3></div>
+            <button class="fs-btn fs-btn--ghost" id="btn-add-crew-member" type="button" style="height:36px;font-size:13px;">+ Add member</button>
+          </div>
+          <div class="roster-list" id="crew-members-list"></div>
+        </section>
+
+        <!-- Crew export -->
+        <section class="fs-card mgr-card">
+          <div class="mgr-card__head">
+            <div><div class="ds-card__es" lang="es">Exportar mi cuadrilla</div><h3 class="ds-card__title">Export Crew</h3></div>
+            <span class="fs-chip fs-chip--marigold">PDF / CSV</span>
+          </div>
+          <p class="mgr-card__intro">Generate reports scoped to your crew.<br/><em>Reportes solo para su cuadrilla.</em></p>
+          <div class="exp-row">
+            <label class="fs-label"><span class="es" lang="es">Semana terminando</span><span class="en">Week ending</span></label>
+            <input type="date" class="fs-input" id="crew-week-end" />
+          </div>
+          <div class="exp-actions" style="flex-wrap:wrap">
+            <button class="fs-btn fs-btn--ghost" id="btn-export-crew-day" type="button"><span class="material-symbols-rounded">today</span> Single day</button>
+            <button class="fs-btn fs-btn--primary" id="btn-export-crew-week" type="button"><span class="material-symbols-rounded">picture_as_pdf</span> Export week PDF</button>
+            <button class="fs-btn fs-btn--ghost" id="btn-export-crew-csv" type="button" style="flex:1;min-width:160px"><span class="material-symbols-rounded">table_view</span> All-time CSV</button>
+          </div>
+        </section>
+
+        <!-- Crew week view -->
+        <section class="fs-card mgr-card mgr-card--wide">
+          <div class="mgr-card__head">
+            <div><div class="ds-card__es" lang="es">Vista semanal &middot; cuadrilla</div><h3 class="ds-card__title">Crew Week View</h3></div>
+            <span class="fs-chip" id="crew-week-label"></span>
+          </div>
+          <div class="week-grid" id="crew-week-grid"><p class="wp-foot__meta" style="padding:16px">Pick a week-ending date above to load.</p></div>
+        </section>
+      </div>
+    </section>
+
     <!-- MANAGER -->
     <section class="panel mgr-main" id="panel-manager">
       <section class="mgr-intro">
         <div>
           <div class="hist-intro__kicker" id="mgr-kicker"></div>
-          <h1 class="hist-intro__title">Manager</h1>
-          <p class="hist-intro__sub">Roster, asistencia y exportaci&oacute;n &middot; Manage roster, edit attendance, export PDFs</p>
+          <h1 class="hist-intro__title">Super &middot; <span lang="es">Vista General</span></h1>
+          <p class="hist-intro__sub">All crews, role assignment, weekly &amp; all-time exports &middot; <em>Todas las cuadrillas, asignaci&oacute;n de roles, exportaciones</em></p>
         </div>
         <div><span class="fs-chip fs-chip--terracotta" id="mgr-status-chip">&#128274; Locked &middot; Bloqueado</span></div>
       </section>
@@ -682,10 +765,21 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
                 <div class="exp-preview__metarow"><span>Injuries</span><strong id="exp-meta-injuries">&mdash;</strong></div>
               </div>
             </div>
-            <div class="exp-actions">
+            <div class="exp-actions" style="flex-wrap:wrap">
               <button class="fs-btn fs-btn--ghost" id="btn-export-day" type="button"><span class="material-symbols-rounded">today</span> Single day &middot; D&iacute;a</button>
               <button class="fs-btn fs-btn--primary" id="btn-export-week" type="button"><span class="material-symbols-rounded">picture_as_pdf</span> Export week &middot; Exportar</button>
+              <button class="fs-btn fs-btn--ghost" id="btn-export-all-csv" type="button" style="flex:1;min-width:160px"><span class="material-symbols-rounded">table_view</span> All-time CSV</button>
             </div>
+          </section>
+
+          <!-- Role assignment -->
+          <section class="fs-card mgr-card">
+            <div class="mgr-card__head">
+              <div><div class="ds-card__es" lang="es">Asignaci&oacute;n de rol</div><h3 class="ds-card__title">Role Assignment</h3></div>
+              <span class="fs-chip fs-chip--teal">Super only</span>
+            </div>
+            <p class="mgr-card__intro">Toggle Super role. Supers can see overall view, assign roles, and export all-time reports.<br/><em>Solo los Super pueden asignar este rol.</em></p>
+            <div class="roster-list" id="role-list"></div>
           </section>
 
           <!-- Roster -->
@@ -713,7 +807,7 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
               <div><label class="fs-label"><span class="es" lang="es">Contratista principal</span><span class="en">Prime contractor</span></label><input class="fs-input" type="text" id="cfg-prime" /></div>
               <div><label class="fs-label"><span class="es" lang="es">Nombre del proyecto</span><span class="en">Project name</span></label><input class="fs-input" type="text" id="cfg-project" /></div>
               <div><label class="fs-label"><span class="es" lang="es">Subcontratista</span><span class="en">Subcontractor</span></label><input class="fs-input" type="text" id="cfg-sub" /></div>
-              <div><label class="fs-label"><span class="es" lang="es">PIN de administrador</span><span class="en">Manager PIN</span></label><input class="fs-input" type="text" inputmode="numeric" id="cfg-pin" /></div>
+              <div><label class="fs-label"><span class="es" lang="es">PIN de Super</span><span class="en">Super PIN</span></label><input class="fs-input" type="text" inputmode="numeric" id="cfg-pin" /></div>
             </div>
             <div class="cfg-actions"><button class="fs-btn fs-btn--primary" id="btn-save-config" type="button"><span class="material-symbols-rounded">save</span> Save &middot; Guardar</button></div>
           </section>
@@ -751,14 +845,43 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; max-width: 100%; }
     <label class="fs-label"><span class="es" lang="es">Clasificaci&oacute;n de trabajo</span><span class="en">Work classification</span></label>
     <input class="fs-input" type="text" id="fm-cls" placeholder="e.g. Carpenter Journeyman" style="margin-bottom:14px" />
     <label class="fs-label"><span class="es" lang="es">Activo</span><span class="en">Active</span></label>
-    <select class="fs-select" id="fm-active">
+    <select class="fs-select" id="fm-active" style="margin-bottom:14px">
       <option value="true">Yes &mdash; show in picker</option>
       <option value="false">No &mdash; hide</option>
     </select>
+    <div id="fm-role-wrap" style="display:none">
+      <label class="fs-label"><span class="es" lang="es">Rol</span><span class="en">Role</span></label>
+      <select class="fs-select" id="fm-role">
+        <option value="foreman">Foreman</option>
+        <option value="super">Super (overall view + assign roles)</option>
+      </select>
+    </div>
     <div class="modal-actions">
       <button class="fs-btn fs-btn--danger" id="fm-delete" type="button">Delete</button>
       <button class="fs-btn fs-btn--ghost" id="fm-cancel" type="button">Cancel</button>
       <button class="fs-btn fs-btn--primary" id="fm-save" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MEMBER OVERLAY -->
+<div class="overlay" id="overlay-member">
+  <div class="modal">
+    <h3 id="mb-title">Edit Crew Member</h3>
+    <p class="modal-sub">Set how this crew member appears in the picker and on the PDF.</p>
+    <label class="fs-label"><span class="es" lang="es">Nombre (impreso)</span><span class="en">Name (printed)</span></label>
+    <input class="fs-input" type="text" id="mb-name" style="margin-bottom:14px" />
+    <label class="fs-label"><span class="es" lang="es">Clasificaci&oacute;n de trabajo</span><span class="en">Work classification</span></label>
+    <input class="fs-input" type="text" id="mb-cls" placeholder="e.g. Carpenter Journeyman" style="margin-bottom:14px" />
+    <label class="fs-label"><span class="es" lang="es">Activo</span><span class="en">Active</span></label>
+    <select class="fs-select" id="mb-active">
+      <option value="true">Yes &mdash; show in picker</option>
+      <option value="false">No &mdash; hide</option>
+    </select>
+    <div class="modal-actions">
+      <button class="fs-btn fs-btn--danger" id="mb-delete" type="button">Delete</button>
+      <button class="fs-btn fs-btn--ghost" id="mb-cancel" type="button">Cancel</button>
+      <button class="fs-btn fs-btn--primary" id="mb-save" type="button">Save</button>
     </div>
   </div>
 </div>
@@ -822,7 +945,24 @@ const T = {
     loading: 'Loading…', hist_no_results: 'No entries in this range',
     not_signed_in: 'Not signed in yet', signed_in: 'Signed in',
     signed_count: 'signed in', off_lower: 'Off',
-    edit_foreman_title: 'Edit Foreman', add_foreman_title: 'Add Foreman'
+    edit_foreman_title: 'Edit Foreman', add_foreman_title: 'Add Foreman',
+    edit_member_title: 'Edit Crew Member', add_member_title: 'Add Crew Member',
+    add_foreman_btn: '+ Add foreman', add_member_btn: '+ Add crew member',
+    foreman_label: 'Foreman', super_label: 'Super', member_of: 'Crew of',
+    no_members: 'No crew members yet. Tap + to add.',
+    my_crew: 'My Crew', overall_view: 'Overall View',
+    tab_crew: 'Crew', tab_crew_es: 'Cuadrilla',
+    tab_super: 'Super', tab_super_es: 'Super',
+    pick_foreman_first: 'Pick a foreman tab first',
+    delete_member_confirm: 'Remove this crew member? Historical attendance entries will remain.',
+    role_assign: 'Role assignment', role_super: 'Super', role_foreman: 'Foreman',
+    confirm_promote: 'Promote {name} to Super? Supers can see all crews and assign roles.',
+    confirm_demote: 'Remove Super role from {name}?',
+    last_super_blocked: 'At least one Super is required',
+    export_all_time: 'Export all-time CSV', csv_downloaded: 'CSV downloaded',
+    move_to_crew: 'Move to crew', move_to_foreman: 'Make foreman',
+    pick_target_foreman: 'Move {name} to which crew?',
+    promoted: '{name} is now a foreman', demoted: '{name} moved to crew'
   },
   es: {
     brand: 'Registro de Foreman',
@@ -853,7 +993,24 @@ const T = {
     loading: 'Cargando…', hist_no_results: 'No hay registros en este rango',
     not_signed_in: 'Sin registrar aún', signed_in: 'Registrado',
     signed_count: 'registrados', off_lower: 'Ausente',
-    edit_foreman_title: 'Editar Foreman', add_foreman_title: 'Agregar Foreman'
+    edit_foreman_title: 'Editar Foreman', add_foreman_title: 'Agregar Foreman',
+    edit_member_title: 'Editar Miembro', add_member_title: 'Agregar Miembro',
+    add_foreman_btn: '+ Agregar foreman', add_member_btn: '+ Agregar miembro',
+    foreman_label: 'Foreman', super_label: 'Super', member_of: 'Cuadrilla de',
+    no_members: 'Sin miembros aún. Toque + para agregar.',
+    my_crew: 'Mi Cuadrilla', overall_view: 'Vista General',
+    tab_crew: 'Crew', tab_crew_es: 'Cuadrilla',
+    tab_super: 'Super', tab_super_es: 'Super',
+    pick_foreman_first: 'Seleccione una pestaña de foreman primero',
+    delete_member_confirm: '¿Eliminar a este miembro? Los registros históricos se conservarán.',
+    role_assign: 'Asignación de rol', role_super: 'Super', role_foreman: 'Foreman',
+    confirm_promote: '¿Promover a {name} a Super?',
+    confirm_demote: '¿Quitar el rol de Super a {name}?',
+    last_super_blocked: 'Al menos un Super es requerido',
+    export_all_time: 'Exportar CSV total', csv_downloaded: 'CSV descargado',
+    move_to_crew: 'Mover a cuadrilla', move_to_foreman: 'Hacer foreman',
+    pick_target_foreman: '¿A qué cuadrilla mover a {name}?',
+    promoted: '{name} es ahora foreman', demoted: '{name} movido a cuadrilla'
   }
 };
 
@@ -882,15 +1039,20 @@ const state = {
   lang: localStorage.getItem('lang') || (navigator.language?.startsWith('es') ? 'es' : 'en'),
   profile: null,
   foremen: {},
+  members: {},
+  foremenLoaded: false,
+  membersLoaded: false,
+  pickerForemanId: localStorage.getItem('lastForemanTab') || null,
   config: {
     primeContractor: 'PCL — WEBCOR',
     projectName: 'LA Convention Center',
     subcontractor: 'Webcor Concrete',
-    managerPin: '050103'
+    managerPin: '050103',
+    superPin: '050103'
   },
   signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, sigMode: 'drawn' },
   attendanceCache: {},
-  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, editingForemanId: null, editingEntry: null },
+  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
   sigPad: null
 };
 state.signin.date = '';
@@ -987,6 +1149,18 @@ function picadoBannerHtml(flags, height) {
   for (let i = 0; i < flags; i++) out += picadoFlagSvg(PICADO_COLORS[i % PICADO_COLORS.length], height);
   return out + '</div>';
 }
+function picadoRailHtml(count) {
+  let out = '';
+  for (let i = 0; i < count; i++) {
+    const color = PICADO_COLORS[i % PICADO_COLORS.length];
+    out += `<svg width="20" height="32" viewBox="0 0 24 36" aria-hidden="true">`
+      + `<line x1="12" y1="0" x2="12" y2="4" stroke="${color}" stroke-width="1" opacity="0.5"/>`
+      + `<path d="M2 4 H22 V26 L17 32 L12 28 L7 32 L2 26 Z" fill="${color}" opacity="0.85"/>`
+      + `<g fill="var(--cream)"><circle cx="12" cy="14" r="2.2"/><circle cx="8" cy="18" r="1.2"/><circle cx="16" cy="18" r="1.2"/><circle cx="12" cy="22" r="1.2"/></g>`
+      + `</svg>`;
+  }
+  return out;
+}
 function marigoldMarkSvg(size, color, center) {
   color = color || 'var(--marigold)'; center = center || 'var(--cocoa)';
   let petals = '';
@@ -1031,9 +1205,8 @@ async function boot() {
   // inject decorative chrome
   $('#picker-logo').src = LOGO_DATA_URI;
   $('#app-logo').src = LOGO_DATA_URI;
-  $('#picker-picado').innerHTML = picadoBannerHtml(10, 64);
-  $('#app-picado').innerHTML = picadoBannerHtml(10, 64);
-  $('#greet-picado').innerHTML = picadoBannerHtml(5, 56);
+  $('#rail-left').innerHTML = picadoRailHtml(28);
+  $('#rail-right').innerHTML = picadoRailHtml(28);
   $('#greet-bg').innerHTML = sunBurstSvg(280, 0.10);
   $('#pin-decor').innerHTML = sunBurstSvg(240, 0.08);
   $('#sig-corner').innerHTML = marigoldMarkSvg(16);
@@ -1052,6 +1225,7 @@ async function boot() {
   initSignInForm();
   initSignaturePad();
   initManager();
+  initCrewView();
   fillPickerIntro();
 
   if (state.profile) showApp();
@@ -1060,6 +1234,7 @@ async function boot() {
   if (!initFirebase()) { toast(t('firebase_err'), 'error'); return; }
   await ensureSeed();
   await ensureFausto();
+  await ensureSuper();
   fbListen('config', cfg => {
     if (cfg) state.config = Object.assign(state.config, cfg);
     renderBrand();
@@ -1069,23 +1244,38 @@ async function boot() {
   fbListen('foremen', fm => {
     state.foremen = fm || {};
     state.foremenLoaded = true;
-    if (state.profile) {
-      const f = state.foremen[state.profile.id];
-      if (f) {
-        state.profile.name = f.name;
-        state.profile.classification = f.classification;
-        localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
-        if ($('#screen-app').classList.contains('active')) fillGreeting();
-      } else {
-        localStorage.removeItem('foreman_profile');
-        state.profile = null;
-        showPicker();
-      }
-    }
+    syncProfileFromState();
     renderPicker();
     renderRoster();
     if (state.manager.weekData) renderWeekGrid();
+    if (state.manager.crewWeekData) renderCrewWeekGrid();
+    refreshTabsVisibility();
   });
+  fbListen('members', mm => {
+    state.members = mm || {};
+    state.membersLoaded = true;
+    syncProfileFromState();
+    renderPicker();
+    renderCrewMembersList();
+    if (state.manager.weekData) renderWeekGrid();
+    if (state.manager.crewWeekData) renderCrewWeekGrid();
+  });
+}
+function syncProfileFromState() {
+  if (!state.profile) return;
+  const p = personById(state.profile.id);
+  if (p) {
+    state.profile.name = p.name;
+    state.profile.classification = p.classification;
+    state.profile.kind = p.kind;
+    state.profile.foremanId = p.kind === 'member' ? p.foremanId : null;
+    localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
+    if ($('#screen-app').classList.contains('active')) fillGreeting();
+  } else if (state.foremenLoaded && state.membersLoaded) {
+    localStorage.removeItem('foreman_profile');
+    state.profile = null;
+    showPicker();
+  }
 }
 
 async function ensureSeed() {
@@ -1093,17 +1283,20 @@ async function ensureSeed() {
   if (!cfg) await fbSet('config', state.config);
   const fm = await fbGet('foremen');
   if (!fm || Object.keys(fm).length === 0) {
-    const seed = [
-      { name: 'Fausto',                    classification: 'Carpenter Foreman',       order: 0 },
-      { name: 'Juan Sanchez',              classification: 'Carpenter Foreman',       order: 1 },
-      { name: 'Alejandro Gutierrez',       classification: 'Carpenter Journeyman',    order: 2 },
-      { name: 'Claudio Rosas Hernandez',   classification: 'Carpenter Journeyman',    order: 3 },
-      { name: 'Jesus Juarez',              classification: 'Carpenter Apprentice L3', order: 4 },
-      { name: 'Claudio Hernandez Victoria',classification: 'Carpenter Apprentice L1', order: 5 },
-      { name: 'Alpidio Hernandez',         classification: 'Carpenter Journeyman',    order: 6 },
-      { name: 'Luis Hernandez',            classification: 'Carpenter Journeyman',    order: 7 }
+    const foremenRef = db.ref(`${NS}/foremen`);
+    await foremenRef.push({ name: 'Fausto', classification: 'Carpenter Foreman', order: 0, active: true, role: 'super' });
+    const juanRef = foremenRef.push({ name: 'Juan Sanchez', classification: 'Carpenter Foreman', order: 1, active: true, role: 'foreman' });
+    const juanId = juanRef.key;
+    await juanRef;
+    const memberSeed = [
+      { name: 'Alejandro Gutierrez',       classification: 'Carpenter Journeyman',    order: 0 },
+      { name: 'Claudio Rosas Hernandez',   classification: 'Carpenter Journeyman',    order: 1 },
+      { name: 'Jesus Juarez',              classification: 'Carpenter Apprentice L3', order: 2 },
+      { name: 'Claudio Hernandez Victoria',classification: 'Carpenter Apprentice L1', order: 3 },
+      { name: 'Alpidio Hernandez',         classification: 'Carpenter Journeyman',    order: 4 },
+      { name: 'Luis Hernandez',            classification: 'Carpenter Journeyman',    order: 5 }
     ];
-    for (const s of seed) await fbPush('foremen', { ...s, active: true });
+    for (const m of memberSeed) await fbPush('members', { ...m, active: true, foremanId: juanId });
   }
 }
 async function ensureFausto() {
@@ -1111,7 +1304,55 @@ async function ensureFausto() {
   if (!fm) return;
   const hasFausto = Object.values(fm).some(f => (f?.name || '').trim().toLowerCase() === 'fausto');
   if (hasFausto) return;
-  await fbPush('foremen', { name: 'Fausto', classification: 'Carpenter Foreman', order: 0, active: true });
+  await fbPush('foremen', { name: 'Fausto', classification: 'Carpenter Foreman', order: 0, active: true, role: 'super' });
+}
+async function ensureSuper() {
+  const cfg = (await fbGet('config')) || {};
+  const updates = {};
+  if (!cfg.superPin) updates.superPin = cfg.managerPin || '050103';
+  if (Object.keys(updates).length) await fbUpdate('config', updates);
+
+  const fm = (await fbGet('foremen')) || {};
+  const entries = Object.entries(fm);
+  let hasSuper = entries.some(([_, f]) => f?.role === 'super');
+  for (const [id, f] of entries) {
+    const patch = {};
+    const isFausto = (f?.name || '').trim().toLowerCase() === 'fausto';
+    if (!f.role) patch.role = isFausto ? 'super' : 'foreman';
+    else if (isFausto && f.role !== 'super' && !hasSuper) patch.role = 'super';
+    if (Object.keys(patch).length) await fbUpdate(`foremen/${id}`, patch);
+    if (patch.role === 'super') hasSuper = true;
+  }
+  if (!hasSuper) {
+    const fausto = entries.find(([_, f]) => (f?.name || '').trim().toLowerCase() === 'fausto');
+    if (fausto) await fbUpdate(`foremen/${fausto[0]}`, { role: 'super' });
+  }
+}
+function personById(id) {
+  const f = state.foremen[id];
+  if (f) return { ...f, id, kind: f.role === 'super' ? 'super' : 'foreman' };
+  const m = state.members[id];
+  if (m) return { ...m, id, kind: 'member' };
+  return null;
+}
+function membersOf(foremanId) {
+  return Object.entries(state.members)
+    .filter(([_, m]) => m.foremanId === foremanId)
+    .sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+}
+function sortedForemen(activeOnly) {
+  return Object.entries(state.foremen)
+    .filter(([_, f]) => activeOnly ? f.active : true)
+    .sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+}
+function isSuperProfile() {
+  if (!state.profile) return false;
+  const f = state.foremen[state.profile.id];
+  return f && f.role === 'super';
+}
+function isForemanProfile() {
+  if (!state.profile) return false;
+  return !!state.foremen[state.profile.id];
 }
 
 function renderBrand() {
@@ -1134,6 +1375,7 @@ function showApp() {
   $('#screen-picker').classList.remove('active');
   $('#screen-app').classList.add('active');
   fillGreeting();
+  refreshTabsVisibility();
   loadHistory();
   updateMgrStatus();
   _sigLastDims = null;
@@ -1144,45 +1386,113 @@ function fillPickerIntro() {
   $('#wp-date').innerHTML = `${escapeHtml(enLongDate(today))}<span class="wp-intro__sep">·</span>${escapeHtml(esLongDate(today))}`;
 }
 function renderPicker() {
-  const grid = $('#wp-grid');
-  if (!grid) return;
-  const list = Object.entries(state.foremen).filter(([_, f]) => f.active).sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
-  // Show skeleton tiles while we wait for the first foremen payload.
+  renderForemanTabs();
+  renderCrewGrid();
+}
+function renderForemanTabs() {
+  const nav = $('#wp-foreman-tabs');
+  if (!nav) return;
   if (!state.foremenLoaded) {
+    nav.innerHTML = '';
+    return;
+  }
+  const foremen = sortedForemen(true);
+  if (!state.pickerForemanId || !state.foremen[state.pickerForemanId] || !state.foremen[state.pickerForemanId].active) {
+    state.pickerForemanId = foremen[0]?.[0] || null;
+  }
+  const tabsHtml = foremen.map(([id, f]) => {
+    const isActive = id === state.pickerForemanId;
+    const badge = f.role === 'super' ? `<span class="wp-foreman-tab__sub">${t('super_label')}</span>` : '';
+    return `<button class="wp-foreman-tab ${isActive ? 'is-active' : ''}" data-id="${escapeHtml(id)}" type="button">
+      <span>${escapeHtml(f.name)}</span>${badge}
+    </button>`;
+  }).join('');
+  const addBtn = `<button class="wp-foreman-tab wp-foreman-tab--add" data-add="foreman" type="button">${escapeHtml(t('add_foreman_btn'))}</button>`;
+  nav.innerHTML = tabsHtml + addBtn;
+  nav.querySelectorAll('.wp-foreman-tab').forEach(btn => {
+    if (btn.dataset.add === 'foreman') {
+      btn.onclick = () => openForemanEditor(null);
+    } else {
+      btn.onclick = () => {
+        state.pickerForemanId = btn.dataset.id;
+        localStorage.setItem('lastForemanTab', state.pickerForemanId);
+        renderPicker();
+      };
+    }
+  });
+  const activeTab = nav.querySelector('.wp-foreman-tab.is-active');
+  if (activeTab) activeTab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+}
+function renderCrewGrid() {
+  const grid = $('#wp-grid');
+  const header = $('#wp-crew-header');
+  if (!grid || !header) return;
+  if (!state.foremenLoaded || !state.membersLoaded) {
     $('#wp-roster-count').textContent = '';
     $('#wp-count').textContent = '— signed in';
-    grid.innerHTML = Array.from({length:6}, () =>
+    header.innerHTML = '';
+    grid.innerHTML = Array.from({length:4}, () =>
       `<div class="wp-skel" aria-hidden="true"><div class="wp-skel__avatar"></div><div><div class="wp-skel__bar"></div><div class="wp-skel__bar wp-skel__bar--sm"></div></div><div></div></div>`
     ).join('');
     return;
   }
-  $('#wp-roster-count').textContent = `${list.length} active foremen on roster`;
-  if (list.length === 0) {
+  const foremanId = state.pickerForemanId;
+  const foreman = foremanId ? state.foremen[foremanId] : null;
+  if (!foreman) {
+    header.innerHTML = '';
     grid.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_foremen_user'))}</p>`;
+    $('#wp-roster-count').textContent = '';
     $('#wp-count').textContent = `0 ${t('signed_count')}`;
     return;
   }
-  grid.innerHTML = list.map(([id, f]) => {
-    const accent = accentFor(id);
-    const aria = `Sign in as ${f.name}${f.classification ? ', ' + f.classification : ''}`;
-    return `<button class="wp-tile is-${accent}" data-id="${escapeHtml(id)}" type="button" aria-label="${escapeHtml(aria)}">
-      <div class="wp-tile__avatar" aria-hidden="true"><span>${escapeHtml(initialsOf(f.name))}</span>${petalSvg()}</div>
+  const members = membersOf(foremanId).filter(([_, m]) => m.active);
+  header.innerHTML = `<h2 class="wp-crew-header__title">${escapeHtml(foreman.name)}<span class="wp-crew-header__es">${escapeHtml(t('member_of'))}</span></h2>
+    <span class="wp-crew-header__count">${members.length} crew · ${t('signed_count')}</span>`;
+  $('#wp-roster-count').textContent = `${members.length} crew under ${foreman.name}`;
+
+  const tiles = [];
+  const accent = accentFor(foremanId);
+  const roleLabel = foreman.role === 'super' ? t('super_label') : t('foreman_label');
+  const badgeClass = foreman.role === 'super' ? 'wp-tile__badge--super' : 'wp-tile__badge--foreman';
+  tiles.push(`<button class="wp-tile is-${accent}" data-id="${escapeHtml(foremanId)}" type="button" aria-label="Sign in as ${escapeHtml(foreman.name)}">
+    <span class="wp-tile__badge ${badgeClass}">${escapeHtml(roleLabel)}</span>
+    <div class="wp-tile__avatar" aria-hidden="true"><span>${escapeHtml(initialsOf(foreman.name))}</span>${petalSvg()}</div>
+    <div class="wp-tile__body">
+      <div class="wp-tile__name">${escapeHtml(foreman.name)}</div>
+      <div class="wp-tile__role">${escapeHtml(foreman.classification || '')}</div>
+      <div class="wp-tile__status" data-status hidden><span class="wp-tile__dot"></span><span data-status-text></span></div>
+    </div>
+    <div class="wp-tile__arrow" aria-hidden="true">&rarr;</div>
+  </button>`);
+
+  for (const [mid, m] of members) {
+    const a = accentFor(mid);
+    tiles.push(`<button class="wp-tile is-${a}" data-id="${escapeHtml(mid)}" type="button" aria-label="Sign in as ${escapeHtml(m.name)}">
+      <div class="wp-tile__avatar" aria-hidden="true"><span>${escapeHtml(initialsOf(m.name))}</span>${petalSvg()}</div>
       <div class="wp-tile__body">
-        <div class="wp-tile__name">${escapeHtml(f.name)}</div>
-        <div class="wp-tile__role">${escapeHtml(f.classification || '')}</div>
+        <div class="wp-tile__name">${escapeHtml(m.name)}</div>
+        <div class="wp-tile__role">${escapeHtml(m.classification || '')}</div>
         <div class="wp-tile__status" data-status hidden><span class="wp-tile__dot"></span><span data-status-text></span></div>
       </div>
       <div class="wp-tile__arrow" aria-hidden="true">&rarr;</div>
-    </button>`;
-  }).join('');
+    </button>`);
+  }
+  tiles.push(`<button class="wp-tile wp-tile--add" data-add="member" type="button">${escapeHtml(t('add_member_btn'))}</button>`);
+
+  grid.innerHTML = tiles.join('');
   grid.querySelectorAll('.wp-tile').forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.dataset.id;
-      const f = state.foremen[id];
-      state.profile = { id, name: f.name, classification: f.classification };
-      localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
-      showApp();
-    };
+    if (btn.dataset.add === 'member') {
+      btn.onclick = () => openMemberEditor(null, foremanId);
+    } else {
+      btn.onclick = () => {
+        const id = btn.dataset.id;
+        const p = personById(id);
+        if (!p) return;
+        state.profile = { id, name: p.name, classification: p.classification, kind: p.kind, foremanId: p.kind === 'member' ? p.foremanId : null };
+        localStorage.setItem('foreman_profile', JSON.stringify(state.profile));
+        showApp();
+      };
+    }
   });
   annotatePickerStatus();
 }
@@ -1192,6 +1502,7 @@ async function annotatePickerStatus() {
     const day = (await fbGet(`attendance/${today}`)) || {};
     let count = 0;
     $$('#wp-grid .wp-tile').forEach(tile => {
+      if (!tile.dataset.id) return;
       const e = day[tile.dataset.id];
       const statusEl = tile.querySelector('[data-status]');
       if (e && e.signatureType !== 'off' && e.timeIn) {
@@ -1218,9 +1529,25 @@ function initTabs() {
       $$('#screen-app .panel').forEach(p => p.classList.remove('active'));
       $(`#panel-${tab}`).classList.add('active');
       if (tab === 'history') loadHistory();
+      if (tab === 'crew') refreshCrewView();
       if (tab === 'manager') { updateMgrStatus(); refreshManagerView(); }
     };
   });
+}
+function refreshTabsVisibility() {
+  const crewTab = $('#tab-crew');
+  const mgrTab = $('#tab-manager');
+  if (!crewTab || !mgrTab) return;
+  const isForeman = isForemanProfile();
+  const isSuper = isSuperProfile();
+  crewTab.hidden = !isForeman;
+  mgrTab.hidden = !isSuper;
+  if (!isForeman && $('#panel-crew').classList.contains('active')) {
+    $('#tabs .fs-tab[data-tab="signin"]').click();
+  }
+  if (!isSuper && $('#panel-manager').classList.contains('active')) {
+    $('#tabs .fs-tab[data-tab="signin"]').click();
+  }
 }
 
 // ── SIGN-IN FORM ────────────────────────────────────────────────────────────
@@ -1249,7 +1576,15 @@ function fillGreeting() {
   if (!state.profile) return;
   $('#greet-avatar').textContent = initialsOf(state.profile.name);
   $('#greet-name').textContent = state.profile.name;
-  $('#greet-role').textContent = state.profile.classification || '';
+  const cls = state.profile.classification || '';
+  let badge = '';
+  if (state.profile.kind === 'super') badge = ` <span class="fs-chip fs-chip--teal" style="font-size:11px;height:22px">${t('super_label')}</span>`;
+  else if (state.profile.kind === 'foreman') badge = ` <span class="fs-chip fs-chip--green" style="font-size:11px;height:22px">${t('foreman_label')}</span>`;
+  else if (state.profile.kind === 'member' && state.profile.foremanId) {
+    const f = state.foremen[state.profile.foremanId];
+    if (f) badge = ` <span class="fs-chip" style="font-size:11px;height:22px">${escapeHtml(t('member_of'))} ${escapeHtml(f.name)}</span>`;
+  }
+  $('#greet-role').innerHTML = escapeHtml(cls) + badge;
   $('#signin-date').value = state.signin.date || ymd(new Date());
   fillGreetingDate();
   updateGreetingStatus();
@@ -1396,14 +1731,14 @@ async function fetchHistory({ startDate, endDate, foremanFilter }) {
       const day = await fbGet(`attendance/${date}`);
       if (day) {
         for (const fid of Object.keys(day)) {
-          const fm = state.foremen[fid];
+          const fm = personById(fid);
           entries.push({ date, foremanId: fid, foremanName: fm?.name || fid, foremanCls: fm?.classification || '', ...day[fid] });
         }
       }
     } else {
       const e = await fbGet(`attendance/${date}/${foremanFilter}`);
       if (e) {
-        const fm = state.foremen[foremanFilter];
+        const fm = personById(foremanFilter);
         entries.push({ date, foremanId: foremanFilter, foremanName: fm?.name || foremanFilter, foremanCls: fm?.classification || '', ...e });
       }
     }
@@ -1420,10 +1755,16 @@ function ensureHistDefaults() {
 function populateHistForemanFilter() {
   const sel = $('#hist-foreman-filter');
   const current = sel.value;
-  const list = Object.entries(state.foremen).sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
-  sel.innerHTML = `<option value="all">All foremen · Todos</option>` +
-    list.map(([id, f]) => `<option value="${escapeHtml(id)}">${escapeHtml(f.name)}</option>`).join('');
-  if (current && (current === 'all' || state.foremen[current])) sel.value = current;
+  const foremen = sortedForemen(false);
+  const opts = [];
+  for (const [id, f] of foremen) {
+    opts.push(`<option value="${escapeHtml(id)}">${escapeHtml(f.name)}</option>`);
+    for (const [mid, m] of membersOf(id)) {
+      opts.push(`<option value="${escapeHtml(mid)}">&nbsp;&nbsp;&nbsp;↳ ${escapeHtml(m.name)}</option>`);
+    }
+  }
+  sel.innerHTML = `<option value="all">All · Todos</option>` + opts.join('');
+  if (current && (current === 'all' || personById(current))) sel.value = current;
 }
 function statusPillHtml(e) {
   if (e.signatureType === 'off') return `<span class="fs-chip">Off · Descanso</span>`;
@@ -1521,9 +1862,154 @@ $('#hist-export-btn').onclick = () => {
   updateMgrStatus(); refreshManagerView();
 };
 
+// ── CREW VIEW (foreman/super, no PIN) ───────────────────────────────────────
+function crewScopeForemanId() {
+  if (!state.profile) return null;
+  if (state.profile.kind === 'super' || state.profile.kind === 'foreman') return state.profile.id;
+  return null;
+}
+function refreshCrewView() {
+  const fid = crewScopeForemanId();
+  if (!fid) return;
+  const f = state.foremen[fid];
+  const members = membersOf(fid).filter(([_, m]) => m.active);
+  $('#crew-chip').textContent = `${members.length} member${members.length === 1 ? '' : 's'}`;
+  $('#crew-sub').innerHTML = `<span lang="es">Administrar miembros, editar asistencia, exportar PDF/CSV.</span> <span style="color:var(--ink-mute)">— ${escapeHtml(f?.name || '')}</span>`;
+  $('#crew-kicker').innerHTML = marigoldMarkSvg(18) + ` <span lang="es">${t('my_crew')}</span>`;
+  if (!state.manager.crewWeekEnd) {
+    const fri = weekEndingFor(new Date());
+    state.manager.crewWeekEnd = fri;
+    state.manager.crewWeekEndStr = ymd(fri);
+    $('#crew-week-end').value = state.manager.crewWeekEndStr;
+  }
+  renderCrewMembersList();
+  loadCrewWeekData().then(renderCrewWeekGrid);
+}
+function renderCrewMembersList() {
+  const wrap = $('#crew-members-list');
+  if (!wrap) return;
+  const fid = crewScopeForemanId();
+  if (!fid) { wrap.innerHTML = ''; return; }
+  const list = membersOf(fid);
+  if (list.length === 0) {
+    wrap.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_members'))}</p>`;
+    return;
+  }
+  wrap.innerHTML = list.map(([id, m], idx) => `
+    <div class="roster-row ${m.active ? '' : 'is-inactive'}">
+      <div class="roster-row__avatar">${escapeHtml(initialsOf(m.name))}</div>
+      <div>
+        <div class="roster-row__name">${escapeHtml(m.name)}</div>
+        <div class="roster-row__role">${escapeHtml(m.classification || '')}</div>
+      </div>
+      <div class="roster-row__toggle">
+        <button class="roster-row__ord" data-mact="up" data-id="${id}" ${idx === 0 ? 'disabled' : ''} type="button">↑</button>
+        <button class="roster-row__ord" data-mact="down" data-id="${id}" ${idx === list.length-1 ? 'disabled' : ''} type="button">↓</button>
+        <button class="roster-toggle ${m.active ? 'is-on' : ''}" data-mact="toggle" data-id="${id}" type="button" aria-label="Active"><span class="roster-toggle__dot"></span></button>
+        <button class="roster-row__edit" data-mact="edit" data-id="${id}" type="button">Edit</button>
+      </div>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('button[data-mact]').forEach(btn => {
+    btn.onclick = () => handleMemberRosterAction(btn.dataset.mact, btn.dataset.id);
+  });
+}
+async function handleMemberRosterAction(act, id) {
+  const fid = crewScopeForemanId();
+  if (act === 'edit') return openMemberEditor(id, fid);
+  if (act === 'toggle') {
+    const m = state.members[id];
+    if (m) await fbUpdate(`members/${id}`, { active: !m.active });
+    return;
+  }
+  const list = membersOf(fid);
+  const idx = list.findIndex(([k]) => k === id);
+  if (idx < 0) return;
+  if (act === 'up' && idx > 0) {
+    const [a, b] = [list[idx-1], list[idx]];
+    await fbUpdate(`members/${a[0]}`, { order: b[1].order ?? idx });
+    await fbUpdate(`members/${b[0]}`, { order: a[1].order ?? idx-1 });
+  }
+  if (act === 'down' && idx < list.length-1) {
+    const [a, b] = [list[idx], list[idx+1]];
+    await fbUpdate(`members/${a[0]}`, { order: b[1].order ?? idx+1 });
+    await fbUpdate(`members/${b[0]}`, { order: a[1].order ?? idx });
+  }
+}
+async function loadCrewWeekData() {
+  if (!state.manager.crewWeekEnd) return;
+  const days = weekDates(state.manager.crewWeekEnd);
+  const data = {};
+  await Promise.all(days.map(async d => {
+    const k = ymd(d);
+    data[k] = (await fbGet(`attendance/${k}`)) || {};
+  }));
+  state.manager.crewWeekData = data;
+}
+function renderCrewWeekGrid() {
+  const grid = $('#crew-week-grid');
+  if (!grid || !state.manager.crewWeekData) return;
+  const fid = crewScopeForemanId();
+  if (!fid) return;
+  const foreman = state.foremen[fid];
+  const members = membersOf(fid).filter(([_, m]) => m.active);
+  const people = [['__foreman__' + fid, foreman, fid]];
+  for (const [mid, m] of members) people.push([mid, m, fid]);
+  $('#crew-week-label').textContent = `Week ending ${fmtDateUS(state.manager.crewWeekEndStr)}`;
+  const days = weekDates(state.manager.crewWeekEnd);
+  const headerCols = days.map(d => `<th>${dayShort(d)}<br><span style="font-weight:400">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
+  const rows = people.map(([rowId, p]) => {
+    const personId = rowId.startsWith('__foreman__') ? fid : rowId;
+    const cells = days.map(d => {
+      const k = ymd(d);
+      const e = state.manager.crewWeekData[k]?.[personId];
+      let cls = 'cell', label = '—';
+      if (e) {
+        if (e.signatureType === 'off') { cls += ' off'; label = 'OFF'; }
+        else { cls += ' signed'; label = (e.totalHours || 0).toFixed(1); }
+      }
+      return `<td class="${cls}" data-fid="${personId}" data-date="${k}">${label}</td>`;
+    }).join('');
+    const isForeman = rowId.startsWith('__foreman__');
+    const badge = isForeman ? `<span style="color:var(--marigold);font-size:11px;font-style:italic">${escapeHtml(t('foreman_label'))}</span> ` : '';
+    return `<tr><td class="name">${badge}${escapeHtml(p.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(p.classification||'')}</span></td>${cells}</tr>`;
+  }).join('');
+  grid.innerHTML = `<table><thead><tr><th style="text-align:left">Member</th>${headerCols}</tr></thead><tbody>${rows}</tbody></table>`;
+  grid.querySelectorAll('td.cell').forEach(td => {
+    td.onclick = () => openEntryEditor(td.dataset.fid, td.dataset.date);
+  });
+}
+function initCrewView() {
+  $('#btn-add-crew-member').onclick = () => {
+    const fid = crewScopeForemanId();
+    if (!fid) { toast(t('pick_foreman_first'), 'error'); return; }
+    openMemberEditor(null, fid);
+  };
+  $('#crew-week-end').onchange = async (e) => {
+    const v = e.target.value;
+    if (!v) return;
+    state.manager.crewWeekEndStr = v;
+    state.manager.crewWeekEnd = parseYmd(v);
+    await loadCrewWeekData();
+    renderCrewWeekGrid();
+  };
+  $('#btn-export-crew-day').onclick = () => exportCrewPDF('day');
+  $('#btn-export-crew-week').onclick = () => exportCrewPDF('week');
+  $('#btn-export-crew-csv').onclick = () => exportAllTimeCsv({ scope: 'crew' });
+}
+async function exportCrewPDF(mode) {
+  const fid = crewScopeForemanId();
+  if (!fid) { toast(t('pick_foreman_first'), 'error'); return; }
+  if (!state.manager.crewWeekEnd) { toast(t('pick_week_first'), 'error'); return; }
+  await loadCrewWeekData();
+  const ids = [fid, ...membersOf(fid).filter(([_, m]) => m.active).map(([id]) => id)];
+  await runPdfExport(mode, { personIds: ids, weekEnd: state.manager.crewWeekEnd, weekData: state.manager.crewWeekData, label: state.foremen[fid]?.name || 'Crew' });
+}
+
 // ── MANAGER ─────────────────────────────────────────────────────────────────
 let pinEntry = '';
-function pinLen() { return (state.config.managerPin || '050103').length; }
+function effectivePin() { return state.config.superPin || state.config.managerPin || '050103'; }
+function pinLen() { return effectivePin().length; }
 function renderPinDots() {
   const wrap = $('#pin-dots');
   if (!wrap) return;
@@ -1533,7 +2019,7 @@ function renderPinDots() {
   $('#mgr-unlock').disabled = pinEntry.length !== len;
 }
 function tryUnlock() {
-  if (pinEntry === state.config.managerPin) {
+  if (pinEntry === effectivePin()) {
     state.manager.unlocked = true;
     pinEntry = ''; renderPinDots();
     const sat = weekEndingFor(new Date());
@@ -1562,12 +2048,16 @@ function initManager() {
   $('#export-week-end').onchange = onWeekEndChange;
   $('#btn-export-week').onclick = () => exportPDF('week');
   $('#btn-export-day').onclick = () => exportPDF('day');
+  if ($('#btn-export-all-csv')) $('#btn-export-all-csv').onclick = () => exportAllTimeCsv({ scope: 'all' });
   $('#btn-add-foreman').onclick = () => openForemanEditor(null);
   $('#btn-save-config').onclick = saveConfig;
   $('#btn-clear-old').onclick = clearOldRecords;
   $('#fm-cancel').onclick = closeForemanEditor;
   $('#fm-save').onclick = saveForemanEditor;
   $('#fm-delete').onclick = deleteForeman;
+  $('#mb-cancel').onclick = closeMemberEditor;
+  $('#mb-save').onclick = saveMemberEditor;
+  $('#mb-delete').onclick = deleteMember;
   $('#entry-cancel').onclick = () => $('#overlay-entry').classList.remove('show');
   $('#entry-save').onclick = saveEntryEditor;
   $('#entry-delete').onclick = deleteEntry;
@@ -1592,23 +2082,125 @@ function updateMgrStatus() {
 function refreshManagerView() {
   if (state.manager.unlocked) {
     renderRoster();
+    renderRoleList();
     renderConfigForm();
     if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
   }
+}
+function renderRoleList() {
+  const wrap = $('#role-list');
+  if (!wrap) return;
+  const list = sortedForemen(false);
+  const supers = list.filter(([_, f]) => f.role === 'super').length;
+  if (list.length === 0) { wrap.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_foremen_mgr'))}</p>`; return; }
+  wrap.innerHTML = list.map(([id, f]) => {
+    const isSuper = f.role === 'super';
+    const disabled = isSuper && supers <= 1;
+    return `<div class="roster-row">
+      <div class="roster-row__avatar">${escapeHtml(initialsOf(f.name))}</div>
+      <div>
+        <div class="roster-row__name">${escapeHtml(f.name)} ${isSuper ? '<span class="fs-chip fs-chip--teal" style="font-size:10px;height:20px;margin-left:4px">'+escapeHtml(t('super_label'))+'</span>' : ''}</div>
+        <div class="roster-row__role">${escapeHtml(f.classification || '')}</div>
+      </div>
+      <div class="roster-row__toggle">
+        <button class="roster-toggle ${isSuper ? 'is-on' : ''}" data-roleid="${id}" type="button" ${disabled ? 'disabled aria-disabled=true' : ''} aria-label="Super role"><span class="roster-toggle__dot"></span></button>
+      </div>
+    </div>`;
+  }).join('');
+  wrap.querySelectorAll('button[data-roleid]').forEach(btn => {
+    btn.onclick = () => toggleRole(btn.dataset.roleid);
+  });
+}
+async function toggleRole(id) {
+  const f = state.foremen[id];
+  if (!f) return;
+  if (f.role === 'super') {
+    const supers = Object.values(state.foremen).filter(x => x.role === 'super').length;
+    if (supers <= 1) { toast(t('last_super_blocked'), 'error'); return; }
+    if (!confirm(t('confirm_demote').replace('{name}', f.name))) return;
+    await fbUpdate(`foremen/${id}`, { role: 'foreman' });
+  } else {
+    if (!confirm(t('confirm_promote').replace('{name}', f.name))) return;
+    await fbUpdate(`foremen/${id}`, { role: 'super' });
+  }
+  toast(t('saved_toast'), 'success');
+}
+
+// ── ALL-TIME CSV EXPORT ─────────────────────────────────────────────────────
+async function exportAllTimeCsv(opts) {
+  opts = opts || {};
+  let scopeIds = null;
+  let scopeLabel = 'all';
+  if (opts.scope === 'crew') {
+    const fid = crewScopeForemanId();
+    if (!fid) { toast(t('pick_foreman_first'), 'error'); return; }
+    scopeIds = new Set([fid, ...membersOf(fid).map(([id]) => id)]);
+    scopeLabel = state.foremen[fid]?.name || 'Crew';
+  }
+  const all = await fbGet('attendance');
+  if (!all) { toast('No data', 'error'); return; }
+  const rows = [['Date', 'Foreman', 'Person', 'Kind', 'Classification', 'TimeIn', 'TimeOut', 'Hours', 'Injured', 'SignedBy']];
+  const dates = Object.keys(all).sort();
+  for (const date of dates) {
+    const day = all[date];
+    if (!day) continue;
+    for (const pid of Object.keys(day)) {
+      if (scopeIds && !scopeIds.has(pid)) continue;
+      const p = personById(pid);
+      const e = day[pid];
+      const foremanName = p?.kind === 'member' ? (state.foremen[p.foremanId]?.name || '') : (p?.name || '');
+      rows.push([
+        date,
+        csvEsc(foremanName),
+        csvEsc(p?.name || pid),
+        p?.kind || '',
+        csvEsc(p?.classification || ''),
+        e.timeIn || '',
+        e.timeOut || '',
+        e.totalHours != null ? e.totalHours : '',
+        e.injured ? 'Yes' : 'No',
+        e.signatureType === 'off' ? 'OFF' : (e.signedBy || '')
+      ]);
+    }
+  }
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const fname = `Attendance_AllTime_${scopeLabel.replace(/\s+/g,'_')}_${ymd(new Date())}.csv`;
+  await shareCsv(blob, fname);
+}
+function csvEsc(s) {
+  const v = String(s ?? '');
+  if (/[",\n]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+  return v;
+}
+async function shareCsv(blob, filename) {
+  const file = new File([blob], filename, { type: 'text/csv' });
+  if (isTouchDevice() && navigator.canShare && navigator.canShare({ files: [file] })) {
+    try { await navigator.share({ files: [file], title: filename }); toast(t('shared_toast'), 'success'); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
+  toast(t('csv_downloaded'), 'success');
 }
 function renderConfigForm() {
   if (!$('#cfg-prime')) return;
   $('#cfg-prime').value = state.config.primeContractor || '';
   $('#cfg-project').value = state.config.projectName || '';
   $('#cfg-sub').value = state.config.subcontractor || '';
-  $('#cfg-pin').value = state.config.managerPin || '';
+  $('#cfg-pin').value = state.config.superPin || state.config.managerPin || '';
 }
 async function saveConfig() {
+  const pin = $('#cfg-pin').value.trim() || '050103';
   const cfg = {
     primeContractor: $('#cfg-prime').value.trim(),
     projectName: $('#cfg-project').value.trim(),
     subcontractor: $('#cfg-sub').value.trim(),
-    managerPin: $('#cfg-pin').value.trim() || '050103'
+    superPin: pin,
+    managerPin: pin
   };
   await fbSet('config', cfg);
   toast(t('config_saved'), 'success');
@@ -1663,11 +2255,13 @@ async function handleRosterAction(act, id) {
 }
 function openForemanEditor(id) {
   state.manager.editingForemanId = id;
-  const f = id ? state.foremen[id] : { name: '', classification: '', active: true };
+  const f = id ? state.foremen[id] : { name: '', classification: '', active: true, role: 'foreman' };
   $('#fm-title').textContent = id ? t('edit_foreman_title') : t('add_foreman_title');
   $('#fm-name').value = f.name || '';
   $('#fm-cls').value = f.classification || '';
   $('#fm-active').value = String(f.active ?? true);
+  $('#fm-role').value = f.role || 'foreman';
+  $('#fm-role-wrap').style.display = isSuperProfile() && state.manager.unlocked ? '' : 'none';
   $('#fm-delete').style.display = id ? '' : 'none';
   $('#overlay-foreman').classList.add('show');
 }
@@ -1679,13 +2273,26 @@ async function saveForemanEditor() {
   const name = $('#fm-name').value.trim();
   const cls = $('#fm-cls').value.trim();
   const active = $('#fm-active').value === 'true';
+  const roleSelectVisible = $('#fm-role-wrap').style.display !== 'none';
   if (!name) { toast(t('name_required'), 'error'); return; }
   if (state.manager.editingForemanId) {
-    await fbUpdate(`foremen/${state.manager.editingForemanId}`, { name, classification: cls, active });
+    const patch = { name, classification: cls, active };
+    if (roleSelectVisible) {
+      const newRole = $('#fm-role').value;
+      const cur = state.foremen[state.manager.editingForemanId];
+      if (cur && cur.role === 'super' && newRole !== 'super') {
+        const supers = Object.values(state.foremen).filter(f => f.role === 'super').length;
+        if (supers <= 1) { toast(t('last_super_blocked'), 'error'); return; }
+      }
+      patch.role = newRole;
+    }
+    await fbUpdate(`foremen/${state.manager.editingForemanId}`, patch);
   } else {
     const orders = Object.values(state.foremen).map(f => f.order ?? 0);
     const nextOrder = (orders.length ? Math.max(...orders) : 0) + 1;
-    await fbPush('foremen', { name, classification: cls, active, order: nextOrder });
+    const payload = { name, classification: cls, active, order: nextOrder, role: 'foreman' };
+    if (roleSelectVisible) payload.role = $('#fm-role').value || 'foreman';
+    await fbPush('foremen', payload);
   }
   closeForemanEditor();
   toast(t('saved_toast'), 'success');
@@ -1693,9 +2300,58 @@ async function saveForemanEditor() {
 async function deleteForeman() {
   const id = state.manager.editingForemanId;
   if (!id) return;
+  const cur = state.foremen[id];
+  if (cur && cur.role === 'super') {
+    const supers = Object.values(state.foremen).filter(f => f.role === 'super').length;
+    if (supers <= 1) { toast(t('last_super_blocked'), 'error'); return; }
+  }
   if (!confirm(t('delete_fm_confirm'))) return;
   await fbRemove(`foremen/${id}`);
   closeForemanEditor();
+  toast(t('deleted'), 'success');
+}
+
+// ── MEMBER EDITOR ───────────────────────────────────────────────────────────
+function openMemberEditor(memberId, foremanId) {
+  state.manager.editingMemberId = memberId;
+  state.manager.editingMemberForemanId = foremanId;
+  const m = memberId ? state.members[memberId] : { name: '', classification: '', active: true };
+  $('#mb-title').textContent = memberId ? t('edit_member_title') : t('add_member_title');
+  $('#mb-name').value = m.name || '';
+  $('#mb-cls').value = m.classification || '';
+  $('#mb-active').value = String(m.active ?? true);
+  $('#mb-delete').style.display = memberId ? '' : 'none';
+  $('#overlay-member').classList.add('show');
+}
+function closeMemberEditor() {
+  $('#overlay-member').classList.remove('show');
+  state.manager.editingMemberId = null;
+  state.manager.editingMemberForemanId = null;
+}
+async function saveMemberEditor() {
+  const name = $('#mb-name').value.trim();
+  const cls = $('#mb-cls').value.trim();
+  const active = $('#mb-active').value === 'true';
+  const memberId = state.manager.editingMemberId;
+  const foremanId = state.manager.editingMemberForemanId;
+  if (!name) { toast(t('name_required'), 'error'); return; }
+  if (!foremanId) { toast(t('pick_foreman_first'), 'error'); return; }
+  if (memberId) {
+    await fbUpdate(`members/${memberId}`, { name, classification: cls, active, foremanId });
+  } else {
+    const orders = membersOf(foremanId).map(([_, m]) => m.order ?? 0);
+    const nextOrder = (orders.length ? Math.max(...orders) : 0) + 1;
+    await fbPush('members', { name, classification: cls, active, order: nextOrder, foremanId });
+  }
+  closeMemberEditor();
+  toast(t('saved_toast'), 'success');
+}
+async function deleteMember() {
+  const id = state.manager.editingMemberId;
+  if (!id) return;
+  if (!confirm(t('delete_member_confirm'))) return;
+  await fbRemove(`members/${id}`);
+  closeMemberEditor();
   toast(t('deleted'), 'success');
 }
 
@@ -1737,39 +2393,42 @@ function renderWeekGrid() {
   const grid = $('#week-grid');
   if (!grid || !state.manager.weekData) return;
   const days = weekDates(state.manager.weekEnd);
-  const foremen = Object.entries(state.foremen)
-    .filter(([_, f]) => f.active)
-    .sort((a,b)=>(a[1].order ?? 99) - (b[1].order ?? 99));
+  const foremen = sortedForemen(true);
   if (foremen.length === 0) {
     grid.innerHTML = `<p class="wp-foot__meta" style="padding:16px">${escapeHtml(t('no_active_foremen'))}</p>`;
     return;
   }
   const headerCols = days.map(d => `<th>${dayShort(d)}<br><span style="font-weight:400">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
-  const rows = foremen.map(([fid, f]) => {
-    const cells = days.map(d => {
-      const k = ymd(d);
-      const e = state.manager.weekData[k]?.[fid];
-      let cls = 'cell', label = '—';
-      if (e) {
-        if (e.signatureType === 'off') { cls += ' off'; label = 'OFF'; }
-        else { cls += ' signed'; label = (e.totalHours || 0).toFixed(1); }
-      }
-      return `<td class="${cls}" data-fid="${fid}" data-date="${k}">${label}</td>`;
-    }).join('');
-    return `<tr><td class="name">${escapeHtml(f.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(f.classification||'')}</span></td>${cells}</tr>`;
+  const buildCells = (personId) => days.map(d => {
+    const k = ymd(d);
+    const e = state.manager.weekData[k]?.[personId];
+    let cls = 'cell', label = '—';
+    if (e) {
+      if (e.signatureType === 'off') { cls += ' off'; label = 'OFF'; }
+      else { cls += ' signed'; label = (e.totalHours || 0).toFixed(1); }
+    }
+    return `<td class="${cls}" data-fid="${personId}" data-date="${k}">${label}</td>`;
   }).join('');
-  grid.innerHTML = `<table><thead><tr><th style="text-align:left">Foreman</th>${headerCols}</tr></thead><tbody>${rows}</tbody></table>`;
+  const sections = foremen.map(([fid, f]) => {
+    const members = membersOf(fid).filter(([_, m]) => m.active);
+    const fRow = `<tr><td class="name"><span style="color:var(--marigold);font-size:11px;font-style:italic">${escapeHtml(t('foreman_label'))}</span> ${escapeHtml(f.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(f.classification||'')}</span></td>${buildCells(fid)}</tr>`;
+    const mRows = members.map(([mid, m]) =>
+      `<tr><td class="name" style="padding-left:20px"><span style="color:var(--ink-mute);font-size:11px">↳</span> ${escapeHtml(m.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(m.classification||'')}</span></td>${buildCells(mid)}</tr>`
+    ).join('');
+    return fRow + mRows;
+  }).join('');
+  grid.innerHTML = `<table><thead><tr><th style="text-align:left">Crew</th>${headerCols}</tr></thead><tbody>${sections}</tbody></table>`;
   grid.querySelectorAll('td.cell').forEach(td => {
     td.onclick = () => openEntryEditor(td.dataset.fid, td.dataset.date);
   });
 }
-async function openEntryEditor(fid, date) {
-  const f = state.foremen[fid];
-  let e = state.manager.weekData?.[date]?.[fid];
-  if (!e) e = (await fbGet(`attendance/${date}/${fid}`)) || {};
-  state.manager.editingForemanId = fid;
+async function openEntryEditor(pid, date) {
+  const p = personById(pid);
+  let e = state.manager.weekData?.[date]?.[pid] || state.manager.crewWeekData?.[date]?.[pid];
+  if (!e) e = (await fbGet(`attendance/${date}/${pid}`)) || {};
+  state.manager.editingForemanId = pid;
   state.manager.editingEntry = { date };
-  $('#entry-title').textContent = f?.name || fid;
+  $('#entry-title').textContent = p?.name || pid;
   $('#entry-sub').textContent = `${dayOfWeekEn(parseYmd(date))} · ${fmtDateUS(date)}`;
   $('#entry-tin').value = e.timeIn || '';
   $('#entry-tout').value = e.timeOut || '';
@@ -1780,9 +2439,11 @@ async function openEntryEditor(fid, date) {
   $('#overlay-entry').classList.add('show');
 }
 async function saveEntryEditor() {
-  const fid = state.manager.editingForemanId;
+  const pid = state.manager.editingForemanId;
   const date = state.manager.editingEntry.date;
   const status = $('#entry-status').value;
+  const p = personById(pid);
+  const signedBy = isSuperProfile() && state.manager.unlocked ? 'super' : 'foreman';
   const entry = {
     timeIn: $('#entry-tin').value || null,
     timeOut: $('#entry-tout').value || null,
@@ -1790,25 +2451,27 @@ async function saveEntryEditor() {
     injured: $('#entry-injured').value === 'true',
     signatureType: status === 'off' ? 'off' : 'typed',
     signatureDataUrl: null,
-    signatureText: status === 'off' ? null : state.foremen[fid]?.name || '',
-    signedAt: Date.now(), signedBy: 'manager'
+    signatureText: status === 'off' ? null : (p?.name || ''),
+    signedAt: Date.now(), signedBy
   };
   if (status === 'signed' && entry.timeIn && entry.timeOut && !$('#entry-hours').value) {
     entry.totalHours = hoursBetween(entry.timeIn, entry.timeOut);
   }
-  await fbSet(`attendance/${date}/${fid}`, entry);
+  await fbSet(`attendance/${date}/${pid}`, entry);
   $('#overlay-entry').classList.remove('show');
   if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); renderExportMeta(); }
+  if (state.manager.crewWeekData) { await loadCrewWeekData(); renderCrewWeekGrid(); }
   if (isHistoryPanelActive()) loadHistory();
   toast(t('entry_saved'), 'success');
 }
 async function deleteEntry() {
-  const fid = state.manager.editingForemanId;
+  const pid = state.manager.editingForemanId;
   const date = state.manager.editingEntry.date;
   if (!confirm(t('delete_entry_confirm'))) return;
-  await fbRemove(`attendance/${date}/${fid}`);
+  await fbRemove(`attendance/${date}/${pid}`);
   $('#overlay-entry').classList.remove('show');
   if (state.manager.weekData) { await loadWeekData(); renderWeekGrid(); renderExportMeta(); }
+  if (state.manager.crewWeekData) { await loadCrewWeekData(); renderCrewWeekGrid(); }
   if (isHistoryPanelActive()) loadHistory();
   toast(t('entry_deleted'), 'success');
 }
@@ -1835,21 +2498,41 @@ async function clearOldRecords() {
 async function exportPDF(mode) {
   if (!state.manager.weekEnd) { toast(t('pick_week_first'), 'error'); return; }
   await loadWeekData();
-  const days = weekDates(state.manager.weekEnd);
+  await runPdfExport(mode, { weekEnd: state.manager.weekEnd, weekData: state.manager.weekData, label: 'All' });
+}
+async function runPdfExport(mode, opts) {
+  const weekEnd = opts.weekEnd || state.manager.weekEnd;
+  const weekData = opts.weekData || state.manager.weekData;
+  if (!weekEnd || !weekData) { toast(t('pick_week_first'), 'error'); return; }
+  const days = weekDates(weekEnd);
   const targetDays = mode === 'day' ? await pickDayFromWeek(days) : days;
   if (!targetDays || targetDays.length === 0) return;
 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'letter' });
 
-  for (let i = 0; i < targetDays.length; i++) {
-    if (i > 0) doc.addPage();
-    renderPdfPage(doc, targetDays[i]);
+  // Determine which foremen / personIds to include per page.
+  // If opts.personIds (single-crew), render one block per page per day.
+  // Otherwise (super export), render one block per foreman per day.
+  const groups = opts.personIds
+    ? [{ label: opts.label || 'Crew', ids: opts.personIds }]
+    : sortedForemen(true).map(([fid, f]) => ({
+        label: f.name,
+        ids: [fid, ...membersOf(fid).filter(([_, m]) => m.active).map(([id]) => id)]
+      }));
+
+  let firstPage = true;
+  for (const day of targetDays) {
+    for (const g of groups) {
+      if (!firstPage) doc.addPage();
+      firstPage = false;
+      renderPdfPage(doc, day, weekEnd, weekData, g.ids, g.label);
+    }
   }
 
   const fname = (mode === 'day'
-    ? `Sign-In_${ymd(targetDays[0])}`
-    : `Sign-In_WeekEnding_${ymd(state.manager.weekEnd)}`) + '.pdf';
+    ? `Sign-In_${(opts.label || 'All').replace(/\s+/g,'_')}_${ymd(targetDays[0])}`
+    : `Sign-In_${(opts.label || 'All').replace(/\s+/g,'_')}_WeekEnding_${ymd(weekEnd)}`) + '.pdf';
   const blob = doc.output('blob');
   await sharePdf(blob, fname);
 }
@@ -1860,11 +2543,10 @@ async function pickDayFromWeek(days) {
   if (n >= 1 && n <= 7) return [days[n-1]];
   return null;
 }
-function renderPdfPage(doc, date) {
+function renderPdfPage(doc, date, weekEnd, weekData, personIds, crewLabel) {
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
   const cfg = state.config;
-  const weekEnd = state.manager.weekEnd;
   const dateStr = ymd(date);
 
   doc.setFont('helvetica', 'bold');
@@ -1884,21 +2566,22 @@ function renderPdfPage(doc, date) {
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
-  doc.text('Foreman', 36, 116);
+  doc.text(`Foreman: ${crewLabel || ''}`, 36, 116);
 
-  const foremen = Object.entries(state.foremen)
-    .filter(([_, f]) => f.active)
-    .sort((a,b) => (a[1].order ?? 99) - (b[1].order ?? 99));
-  const dayEntries = state.manager.weekData[dateStr] || {};
+  const people = (personIds || []).map(id => {
+    const p = personById(id);
+    return p ? [id, p] : null;
+  }).filter(Boolean);
+  const dayEntries = weekData[dateStr] || {};
 
-  const rows = foremen.map(([fid, f], idx) => {
-    const e = dayEntries[fid];
+  const rows = people.map(([pid, p], idx) => {
+    const e = dayEntries[pid];
     const isOff = e && e.signatureType === 'off';
     return [
       String(idx + 1),
       fmtDateUS(dateStr),
-      f.name || '',
-      f.classification || '',
+      p.name || '',
+      p.classification || '',
       isOff ? 'OFF' : (e?.timeIn || ''),
       isOff ? '' : (e?.timeOut || ''),
       isOff ? '' : (e?.totalHours ? e.totalHours.toFixed(2) : ''),
