@@ -604,6 +604,14 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
 .exp-preview__metarow strong { font-family: var(--font-display); font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .exp-actions { display: flex; gap: 8px; }
 .exp-actions .fs-btn--primary { flex: 1; }
+.exp-foremen { display: flex; flex-wrap: wrap; gap: 8px; }
+.exp-chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; border-radius: 999px; border: 1.5px solid var(--hairline-2); background: var(--cream); font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--ink-mute); cursor: pointer; transition: all .12s ease; }
+.exp-chip:hover { border-color: var(--ink-mute); }
+.exp-chip.is-on { border-color: var(--webcor-green); background: rgba(0,154,92,0.10); color: var(--ink); }
+.exp-chip.is-all { border-style: dashed; }
+.exp-chip__tick { font-size: 14px; line-height: 1; color: var(--webcor-green); }
+[data-theme="dark"] .exp-chip { background: var(--hairline-2); }
+[data-theme="dark"] .exp-chip.is-on { background: rgba(0,154,92,0.22); }
 .roster-list { display: flex; flex-direction: column; max-height: 420px; overflow: auto; margin: 0 -8px; padding: 0 8px; }
 .roster-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--hairline); }
 .roster-row:last-child { border-bottom: none; }
@@ -993,10 +1001,14 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
               <div><div class="ds-card__es" lang="es">Exportar reporte</div><h3 class="ds-card__title">Export Report</h3></div>
               <span class="fs-chip fs-chip--marigold">PDF</span>
             </div>
-            <p class="mgr-card__intro">Generate a weekly attendance PDF for the chosen week-ending date.<br/><em>Genera un PDF semanal de asistencia.</em></p>
+            <p class="mgr-card__intro">Generate an attendance PDF for the chosen week and foremen. Pick specific crews below, or leave on All.<br/><em>Genera un PDF de asistencia para la semana y los foremen elegidos.</em></p>
             <div class="exp-row">
               <label class="fs-label"><span class="es" lang="es">Semana terminando</span><span class="en">Week ending</span></label>
               <input type="text" class="fs-input" id="export-week-end" data-fmt="date" readonly inputmode="none" placeholder="Pick week ending" />
+            </div>
+            <div class="exp-row">
+              <label class="fs-label"><span class="es" lang="es">Foremen a incluir</span><span class="en">Foremen to include</span></label>
+              <div class="exp-foremen" id="exp-foremen-list"></div>
             </div>
             <div class="exp-preview">
               <div class="exp-preview__doc">
@@ -1227,6 +1239,7 @@ const T = {
     overwrite_q: 'You already have an entry for this date. Overwrite?',
     pick_week_first: 'Pick a week-ending date first',
     no_entries_week: 'No sign-ins logged for this week',
+    pick_export_foreman: 'Select at least one foreman to include',
     pick_day_prompt: 'Pick a day (1-7):',
     shared_toast: 'Shared', pdf_downloaded: 'PDF downloaded',
     firebase_err: 'Firebase unavailable',
@@ -1276,6 +1289,7 @@ const T = {
     overwrite_q: 'Ya tiene un registro para esta fecha. ¿Sobrescribir?',
     pick_week_first: 'Seleccione una fecha de fin de semana primero',
     no_entries_week: 'No hay registros de entrada para esta semana',
+    pick_export_foreman: 'Seleccione al menos un foreman para incluir',
     pick_day_prompt: 'Seleccione un día (1-7):',
     shared_toast: 'Compartido', pdf_downloaded: 'PDF descargado',
     firebase_err: 'Firebase no disponible',
@@ -1554,7 +1568,7 @@ const state = {
   },
   signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, sigMode: 'drawn' },
   attendanceCache: {},
-  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
+  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
   sigPad: null
 };
 state.signin.date = '';
@@ -1792,7 +1806,8 @@ async function boot() {
     syncProfileFromState();
     renderPicker();
     renderRoster();
-    if (state.manager.weekData) renderWeekGrid();
+    if (state.manager.unlocked) renderExportForemenPicker();
+    if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
     if (state.manager.crewWeekData) renderCrewWeekGrid();
     refreshTabsVisibility();
   });
@@ -2595,8 +2610,8 @@ function initManager() {
   $('#export-week-end').onchange = onWeekEndChange;
   $('#btn-export-week').onclick = () => exportPDF('week');
   $('#btn-export-day').onclick = () => exportPDF('day');
-  if ($('#btn-export-all-csv')) $('#btn-export-all-csv').onclick = () => exportAllTimeCsv({ scope: 'all' });
-  if ($('#btn-export-week-csv')) $('#btn-export-week-csv').onclick = () => exportWeeklyCsv({ scope: 'all', weekEnd: state.manager.weekEnd });
+  if ($('#btn-export-all-csv')) $('#btn-export-all-csv').onclick = () => exportAllTimeCsv({ scope: 'all', foremanIds: state.manager.exportForemanIds });
+  if ($('#btn-export-week-csv')) $('#btn-export-week-csv').onclick = () => exportWeeklyCsv({ scope: 'all', weekEnd: state.manager.weekEnd, foremanIds: state.manager.exportForemanIds });
   $('#btn-add-foreman').onclick = () => openForemanEditor(null);
   $('#btn-save-config').onclick = saveConfig;
   $('#btn-clear-old').onclick = clearOldRecords;
@@ -2630,6 +2645,7 @@ function updateMgrStatus() {
 function refreshManagerView() {
   if (state.manager.unlocked) {
     renderRoster();
+    renderExportForemenPicker();
     renderConfigForm();
     if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
   }
@@ -2637,6 +2653,7 @@ function refreshManagerView() {
 // ── CSV EXPORT ──────────────────────────────────────────────────────────────
 async function exportAllTimeCsv(opts) {
   opts = opts || {};
+  if (opts.foremanIds && opts.foremanIds.size === 0) { toast(t('pick_export_foreman'), 'error'); return; }
   const { scopeIds, scopeLabel } = resolveCsvScope(opts);
   if (opts.scope === 'crew' && !scopeIds) return;
   const all = await fbGet('attendance');
@@ -2657,6 +2674,7 @@ async function exportWeeklyCsv(opts) {
   opts = opts || {};
   const weekEnd = opts.weekEnd;
   if (!weekEnd) { toast(t('pick_week_first'), 'error'); return; }
+  if (opts.foremanIds && opts.foremanIds.size === 0) { toast(t('pick_export_foreman'), 'error'); return; }
   const { scopeIds, scopeLabel, personList } = resolveCsvScope(opts);
   if (opts.scope === 'crew' && !scopeIds) return;
   const days = weekDates(weekEnd);
@@ -2705,6 +2723,17 @@ function resolveCsvScope(opts) {
     if (!fid) { toast(t('pick_foreman_first'), 'error'); return { scopeIds: null, scopeLabel: 'Crew', personList: null }; }
     const ids = [fid, ...membersOf(fid).filter(([_, m]) => m.active).map(([id]) => id)];
     return { scopeIds: new Set(ids), scopeLabel: state.foremen[fid]?.name || 'Crew', personList: ids };
+  }
+  // All-crews scope, optionally narrowed to the foremen chosen in the export picker.
+  if (opts.foremanIds && opts.foremanIds.size) {
+    const chosen = sortedForemen(true).filter(([id]) => opts.foremanIds.has(id));
+    const ids = [];
+    for (const [fid] of chosen) {
+      ids.push(fid);
+      for (const [mid] of membersOf(fid).filter(([_, m]) => m.active)) ids.push(mid);
+    }
+    const label = chosen.length === 1 ? (chosen[0][1].name || 'Crew') : `Selected_${chosen.length}`;
+    return { scopeIds: new Set(ids), scopeLabel: label, personList: ids };
   }
   return { scopeIds: null, scopeLabel: 'All', personList: allPersonIds() };
 }
@@ -2928,17 +2957,65 @@ async function loadWeekData() {
   }));
   state.manager.weekData = data;
 }
+// Foremen chosen for the export. null = all active foremen.
+function selectedExportForemen() {
+  const sel = state.manager.exportForemanIds;
+  return sortedForemen(true).filter(([id]) => !sel || sel.has(id));
+}
+function exportIncludeIds() {
+  const ids = new Set();
+  for (const [fid] of selectedExportForemen()) {
+    ids.add(fid);
+    for (const [mid] of membersOf(fid).filter(([_, m]) => m.active)) ids.add(mid);
+  }
+  return ids;
+}
+function exportScopeLabel() {
+  if (!state.manager.exportForemanIds) return 'All';
+  const sel = selectedExportForemen();
+  return sel.length === 1 ? sel[0][1].name : `Selected_${sel.length}`;
+}
+function renderExportForemenPicker() {
+  const wrap = $('#exp-foremen-list');
+  if (!wrap) return;
+  const foremen = sortedForemen(true);
+  const sel = state.manager.exportForemanIds;
+  if (foremen.length === 0) { wrap.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_active_foremen'))}</p>`; return; }
+  const tick = '<span class="exp-chip__tick">✓</span>';
+  let html = `<button class="exp-chip is-all ${!sel ? 'is-on' : ''}" data-expall="1" type="button">${!sel ? tick : ''}<span class="es" lang="es">Todos</span><span class="en">All crews</span></button>`;
+  html += foremen.map(([id, f]) => {
+    const on = !sel || sel.has(id);
+    return `<button class="exp-chip ${on ? 'is-on' : ''}" data-expfm="${id}" type="button">${on ? tick : ''}${escapeHtml(f.name)}</button>`;
+  }).join('');
+  wrap.innerHTML = html;
+  wrap.querySelector('[data-expall]').onclick = () => {
+    state.manager.exportForemanIds = null;
+    renderExportForemenPicker();
+    renderExportMeta();
+  };
+  wrap.querySelectorAll('[data-expfm]').forEach(b => { b.onclick = () => toggleExportForeman(b.dataset.expfm); });
+}
+function toggleExportForeman(id) {
+  const all = sortedForemen(true).map(([fid]) => fid);
+  const sel = state.manager.exportForemanIds ? new Set(state.manager.exportForemanIds) : new Set(all);
+  if (sel.has(id)) sel.delete(id); else sel.add(id);
+  // Collapse a full selection back to the "All" state.
+  state.manager.exportForemanIds = (sel.size >= all.length) ? null : sel;
+  renderExportForemenPicker();
+  renderExportMeta();
+}
 function renderExportMeta() {
   if (!state.manager.weekData) return;
-  const activeForemen = Object.values(state.foremen).filter(f => f.active).length;
+  const include = exportIncludeIds();
   let totalHours = 0, injuries = 0;
   for (const day of Object.values(state.manager.weekData)) {
-    for (const e of Object.values(day)) {
+    for (const [pid, e] of Object.entries(day)) {
+      if (!include.has(pid)) continue;
       totalHours += e.totalHours || 0;
       if (e.injured) injuries++;
     }
   }
-  $('#exp-meta-foremen').textContent = String(activeForemen);
+  $('#exp-meta-foremen').textContent = String(selectedExportForemen().length);
   $('#exp-meta-hours').textContent = totalHours.toFixed(1);
   $('#exp-meta-injuries').textContent = String(injuries);
 }
@@ -3050,8 +3127,10 @@ async function clearOldRecords() {
 // ── PDF EXPORT ──────────────────────────────────────────────────────────────
 async function exportPDF(mode) {
   if (!state.manager.weekEnd) { toast(t('pick_week_first'), 'error'); return; }
+  const sel = state.manager.exportForemanIds;
+  if (sel && sel.size === 0) { toast(t('pick_export_foreman'), 'error'); return; }
   await loadWeekData();
-  await runPdfExport(mode, { weekEnd: state.manager.weekEnd, weekData: state.manager.weekData, label: 'All' });
+  await runPdfExport(mode, { weekEnd: state.manager.weekEnd, weekData: state.manager.weekData, label: exportScopeLabel(), foremanIds: sel });
 }
 async function runPdfExport(mode, opts) {
   const weekEnd = opts.weekEnd || state.manager.weekEnd;
@@ -3069,10 +3148,12 @@ async function runPdfExport(mode, opts) {
   // Otherwise (super export), render one block per foreman per day.
   const groups = opts.personIds
     ? [{ label: opts.label || 'Crew', ids: opts.personIds }]
-    : sortedForemen(true).map(([fid, f]) => ({
-        label: f.name,
-        ids: [fid, ...membersOf(fid).filter(([_, m]) => m.active).map(([id]) => id)]
-      }));
+    : sortedForemen(true)
+        .filter(([fid]) => !opts.foremanIds || opts.foremanIds.has(fid))
+        .map(([fid, f]) => ({
+          label: f.name,
+          ids: [fid, ...membersOf(fid).filter(([_, m]) => m.active).map(([id]) => id)]
+        }));
 
   // For the super / all-crew export, omit pages for crews with no sign-ins that day
   // so the PDF shows the logged hours instead of dozens of blank daily sheets.
