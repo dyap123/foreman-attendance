@@ -1029,16 +1029,6 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
             </div>
           </section>
 
-          <!-- Role assignment -->
-          <section class="fs-card mgr-card">
-            <div class="mgr-card__head">
-              <div><div class="ds-card__es" lang="es">Asignaci&oacute;n de rol</div><h3 class="ds-card__title">Role Assignment</h3></div>
-              <span class="fs-chip fs-chip--teal">Super only</span>
-            </div>
-            <p class="mgr-card__intro">Toggle Super role. Supers can see overall view, assign roles, and export all-time reports.<br/><em>Solo los Super pueden asignar este rol.</em></p>
-            <div class="roster-list" id="role-list"></div>
-          </section>
-
           <!-- Roster -->
           <section class="fs-card mgr-card">
             <div class="mgr-card__head">
@@ -1112,6 +1102,7 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
         <option value="foreman">Foreman</option>
         <option value="super">Super (overall view + assign roles)</option>
       </select>
+      <p class="modal-sub" style="margin-top:6px">Set to Super to give overall view &amp; role control. <em lang="es">Elija Super para dar vista general y control de roles.</em></p>
     </div>
     <div class="modal-actions">
       <button class="fs-btn fs-btn--danger" id="fm-delete" type="button">Delete</button>
@@ -1235,6 +1226,7 @@ const T = {
     error_saving: 'Error saving: ',
     overwrite_q: 'You already have an entry for this date. Overwrite?',
     pick_week_first: 'Pick a week-ending date first',
+    no_entries_week: 'No sign-ins logged for this week',
     pick_day_prompt: 'Pick a day (1-7):',
     shared_toast: 'Shared', pdf_downloaded: 'PDF downloaded',
     firebase_err: 'Firebase unavailable',
@@ -1283,6 +1275,7 @@ const T = {
     error_saving: 'Error al guardar: ',
     overwrite_q: 'Ya tiene un registro para esta fecha. ¿Sobrescribir?',
     pick_week_first: 'Seleccione una fecha de fin de semana primero',
+    no_entries_week: 'No hay registros de entrada para esta semana',
     pick_day_prompt: 'Seleccione un día (1-7):',
     shared_toast: 'Compartido', pdf_downloaded: 'PDF descargado',
     firebase_err: 'Firebase no disponible',
@@ -2637,50 +2630,10 @@ function updateMgrStatus() {
 function refreshManagerView() {
   if (state.manager.unlocked) {
     renderRoster();
-    renderRoleList();
     renderConfigForm();
     if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
   }
 }
-function renderRoleList() {
-  const wrap = $('#role-list');
-  if (!wrap) return;
-  const list = sortedForemen(false);
-  const supers = list.filter(([_, f]) => f.role === 'super').length;
-  if (list.length === 0) { wrap.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_foremen_mgr'))}</p>`; return; }
-  wrap.innerHTML = list.map(([id, f]) => {
-    const isSuper = f.role === 'super';
-    const disabled = isSuper && supers <= 1;
-    return `<div class="roster-row">
-      <div class="roster-row__avatar">${escapeHtml(initialsOf(f.name))}</div>
-      <div>
-        <div class="roster-row__name">${escapeHtml(f.name)} ${isSuper ? '<span class="fs-chip fs-chip--teal" style="font-size:10px;height:20px;margin-left:4px">'+escapeHtml(t('super_label'))+'</span>' : ''}</div>
-        <div class="roster-row__role">${escapeHtml(f.classification || '')}</div>
-      </div>
-      <div class="roster-row__toggle">
-        <button class="roster-toggle ${isSuper ? 'is-on' : ''}" data-roleid="${id}" type="button" ${disabled ? 'disabled aria-disabled=true' : ''} aria-label="Super role"><span class="roster-toggle__dot"></span></button>
-      </div>
-    </div>`;
-  }).join('');
-  wrap.querySelectorAll('button[data-roleid]').forEach(btn => {
-    btn.onclick = () => toggleRole(btn.dataset.roleid);
-  });
-}
-async function toggleRole(id) {
-  const f = state.foremen[id];
-  if (!f) return;
-  if (f.role === 'super') {
-    const supers = Object.values(state.foremen).filter(x => x.role === 'super').length;
-    if (supers <= 1) { toast(t('last_super_blocked'), 'error'); return; }
-    if (!confirm(t('confirm_demote').replace('{name}', f.name))) return;
-    await fbUpdate(`foremen/${id}`, { role: 'foreman' });
-  } else {
-    if (!confirm(t('confirm_promote').replace('{name}', f.name))) return;
-    await fbUpdate(`foremen/${id}`, { role: 'super' });
-  }
-  toast(t('saved_toast'), 'success');
-}
-
 // ── CSV EXPORT ──────────────────────────────────────────────────────────────
 async function exportAllTimeCsv(opts) {
   opts = opts || {};
@@ -2817,7 +2770,7 @@ function renderRoster() {
     <div class="roster-row ${f.active ? '' : 'is-inactive'}">
       <div class="roster-row__avatar">${escapeHtml(initialsOf(f.name))}</div>
       <div>
-        <div class="roster-row__name">${escapeHtml(f.name)}</div>
+        <div class="roster-row__name">${escapeHtml(f.name)} ${f.role === 'super' ? '<span class="fs-chip fs-chip--teal" style="font-size:10px;height:20px;margin-left:4px">'+escapeHtml(t('super_label'))+'</span>' : ''}</div>
         <div class="roster-row__role">${escapeHtml(f.classification || '')}</div>
       </div>
       <div class="roster-row__toggle">
@@ -2861,7 +2814,7 @@ function openForemanEditor(id) {
   $('#fm-cls').value = f.classification || '';
   $('#fm-active').value = String(f.active ?? true);
   $('#fm-role').value = f.role || 'foreman';
-  $('#fm-role-wrap').style.display = isSuperProfile() && state.manager.unlocked ? '' : 'none';
+  $('#fm-role-wrap').style.display = state.manager.unlocked ? '' : 'none';
   $('#fm-delete').style.display = id ? '' : 'none';
   $('#overlay-foreman').classList.add('show');
 }
@@ -3121,14 +3074,21 @@ async function runPdfExport(mode, opts) {
         ids: [fid, ...membersOf(fid).filter(([_, m]) => m.active).map(([id]) => id)]
       }));
 
+  // For the super / all-crew export, omit pages for crews with no sign-ins that day
+  // so the PDF shows the logged hours instead of dozens of blank daily sheets.
+  // The single-crew foreman export keeps every day (blank rows are for collecting signatures).
+  const skipEmpty = !opts.personIds;
   let firstPage = true;
   for (const day of targetDays) {
+    const dayEntries = weekData[ymd(day)] || {};
     for (const g of groups) {
+      if (skipEmpty && !g.ids.some(id => dayEntries[id])) continue;
       if (!firstPage) doc.addPage();
       firstPage = false;
       renderPdfPage(doc, day, weekEnd, weekData, g.ids, g.label);
     }
   }
+  if (firstPage) { toast(t('no_entries_week'), 'error'); return; }
 
   const fname = (mode === 'day'
     ? `Sign-In_${(opts.label || 'All').replace(/\s+/g,'_')}_${ymd(targetDays[0])}`
