@@ -2481,6 +2481,7 @@ async function loadHistory() {
   table.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('loading'))}</p>`;
   const entries = await fetchHistory({ startDate, endDate, foremanFilter });
   renderHistStats(entries);
+  updateAttendanceStat(startDate, endDate, foremanFilter);
   if (mgr) renderManagerHistory(entries);
   else renderPersonalHistory(entries);
 }
@@ -2488,13 +2489,42 @@ function renderHistStats(entries) {
   const totalHrs = entries.reduce((s, e) => s + (e.totalHours || 0), 0);
   const fullDays = entries.filter(e => e.signatureType !== 'off' && (e.totalHours || 0) > 0).length;
   const injuries = entries.filter(e => e.injured).length;
-  const present = entries.filter(e => e.signatureType !== 'off').length;
-  const off = entries.filter(e => e.signatureType === 'off').length;
-  const pct = (present + off) ? Math.round(present / (present + off) * 100) : 100;
   $('#hist-stat-hours').textContent = totalHrs.toFixed(1);
   $('#hist-stat-days').textContent = String(fullDays);
   $('#hist-stat-injuries').textContent = String(injuries);
-  $('#hist-stat-attendance').innerHTML = `${pct}<span style="font-size:18px">%</span>`;
+}
+// People the current history filter covers — the attendance denominator.
+function scopeIdsForFilter(foremanFilter) {
+  if (foremanFilter === 'all') return allPersonIds();
+  // A foreman selected → the foreman plus their active crew members.
+  if (state.foremen[foremanFilter]) {
+    return [foremanFilter, ...membersOf(foremanFilter).filter(([_, m]) => m.active).map(([id]) => id)];
+  }
+  // An individual member, or the signed-in person's own view.
+  return [foremanFilter];
+}
+// Real attendance % scoped to the picked date range.
+// expected = (#people in scope) × (#working days), where a working day is any
+// date in the range on which at least one active person signed in. actual =
+// scoped sign-ins on those days. A no-show leaves no record, so it correctly
+// drags the rate below 100% — unlike the old calc, which only counted records
+// that already existed and was therefore pinned at 100%.
+async function updateAttendanceStat(startDate, endDate, foremanFilter) {
+  const el = $('#hist-stat-attendance');
+  el.innerHTML = '…';
+  const scopeIds = scopeIdsForFilter(foremanFilter);
+  const dates = dateRangeInclusive(startDate, endDate);
+  const dayData = await Promise.all(dates.map(d => fbGet(`attendance/${d}`).then(v => v || {})));
+  const signedIn = e => !!(e && e.signatureType !== 'off' && e.timeIn);
+  let workingDays = 0, present = 0;
+  for (const day of dayData) {
+    if (!Object.values(day).some(signedIn)) continue; // nobody worked → not a working day
+    workingDays++;
+    for (const pid of scopeIds) if (signedIn(day[pid])) present++;
+  }
+  const expected = scopeIds.length * workingDays;
+  const pct = expected ? Math.min(100, Math.round(present / expected * 100)) : 100;
+  el.innerHTML = `${pct}<span style="font-size:18px">%</span>`;
 }
 function tableHeadHtml() {
   return `<div class="hist-row hist-row--head"><span>Date</span><span>In</span><span>Out</span><span>Hours</span><span>Status</span><span></span></div>`;
