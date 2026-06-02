@@ -1140,7 +1140,8 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
         <option value="foreman">Foreman</option>
         <option value="super">Super (overall view + assign roles)</option>
       </select>
-      <p class="modal-sub" style="margin-top:6px">Set to Super to give overall view &amp; role control. <em lang="es">Elija Super para dar vista general y control de roles.</em></p>
+      <p class="modal-sub" style="margin-top:6px" id="fm-role-hint">Set to Super to give overall view &amp; role control. <em lang="es">Elija Super para dar vista general y control de roles.</em></p>
+      <p class="modal-sub" style="margin-top:6px;display:none" id="fm-role-locked">🔒 Permanent Super &mdash; cannot be changed. <em lang="es">Super permanente &mdash; no se puede cambiar.</em></p>
     </div>
     <div class="modal-actions">
       <button class="fs-btn fs-btn--danger" id="fm-delete" type="button">Delete</button>
@@ -1309,6 +1310,7 @@ const T = {
     confirm_promote: 'Promote {name} to Super? Supers can see all crews and assign roles.',
     confirm_demote: 'Remove Super role from {name}?',
     last_super_blocked: 'At least one Super is required',
+    perm_super_blocked: 'Fausto is the permanent Super and cannot be changed',
     export_all_time: 'Export all-time CSV', csv_downloaded: 'CSV downloaded',
     move_to_crew: 'Move to crew', move_to_foreman: 'Make foreman',
     pick_target_foreman: 'Move {name} to which crew?',
@@ -1360,6 +1362,7 @@ const T = {
     confirm_promote: '¿Promover a {name} a Super?',
     confirm_demote: '¿Quitar el rol de Super a {name}?',
     last_super_blocked: 'Al menos un Super es requerido',
+    perm_super_blocked: 'Fausto es el Super permanente y no se puede cambiar',
     export_all_time: 'Exportar CSV total', csv_downloaded: 'CSV descargado',
     move_to_crew: 'Mover a cuadrilla', move_to_foreman: 'Hacer foreman',
     pick_target_foreman: '¿A qué cuadrilla mover a {name}?',
@@ -1974,6 +1977,10 @@ async function onAreaSelectChange(sel, opts) {
   const id = await createArea(name);
   fillAreaSelect(sel, id, opts);
 }
+// Fausto is the permanent Super and cannot be demoted or deleted.
+function isPermanentSuper(f) {
+  return !!f && (f.name || '').trim().toLowerCase() === 'fausto';
+}
 function personById(id) {
   const f = state.foremen[id];
   if (f) return { ...f, id, kind: f.role === 'super' ? 'super' : 'foreman' };
@@ -2184,12 +2191,16 @@ function refreshTabsVisibility() {
   if (!crewTab || !mgrTab) return;
   const isForeman = isForemanProfile();
   const isSuper = isSuperProfile();
+  // Keep the Super tab/panel available while the manager session is unlocked,
+  // even if a role edit momentarily changes who is a super — don't yank the
+  // user back to Sign-In mid-action.
+  const mgrAccess = isSuper || state.manager.unlocked;
   crewTab.hidden = !isForeman;
-  mgrTab.hidden = !isSuper;
+  mgrTab.hidden = !mgrAccess;
   if (!isForeman && $('#panel-crew').classList.contains('active')) {
     $('#tabs .fs-tab[data-tab="signin"]').click();
   }
-  if (!isSuper && $('#panel-manager').classList.contains('active')) {
+  if (!mgrAccess && $('#panel-manager').classList.contains('active')) {
     $('#tabs .fs-tab[data-tab="signin"]').click();
   }
 }
@@ -2890,7 +2901,7 @@ function renderRoster() {
   wrap.innerHTML = list.map(([id, f], idx) => {
     const mem = membersOf(id);
     const isOpen = expanded.has(id);
-    const superChip = f.role === 'super' ? `<span class="fs-chip fs-chip--teal" style="font-size:10px;height:20px;margin-left:4px">${escapeHtml(t('super_label'))}</span>` : '';
+    const superChip = f.role === 'super' ? `<span class="fs-chip fs-chip--teal" style="font-size:10px;height:20px;margin-left:4px">${isPermanentSuper(f) ? '🔒 ' : ''}${escapeHtml(t('super_label'))}</span>` : '';
     const areaChip = f.area && state.areas[f.area] ? `<span class="roster-area">${escapeHtml(state.areas[f.area].name)}</span>` : '';
     const caret = mem.length ? (isOpen ? '▾' : '▸') : '·';
     const crewMeta = mem.length ? ` &middot; ${mem.length} ${mem.length === 1 ? t('crew_one') : t('crew_many')}` : '';
@@ -2980,9 +2991,13 @@ function openForemanEditor(id) {
   $('#fm-cls').value = f.classification || '';
   $('#fm-active').value = String(f.active ?? true);
   fillAreaSelect($('#fm-area'), f.area || '', {});
-  $('#fm-role').value = f.role || 'foreman';
+  const permSuper = !!id && isPermanentSuper(f);
+  $('#fm-role').value = permSuper ? 'super' : (f.role || 'foreman');
+  $('#fm-role').disabled = permSuper;
+  $('#fm-role-hint').style.display = permSuper ? 'none' : '';
+  $('#fm-role-locked').style.display = permSuper ? '' : 'none';
   $('#fm-role-wrap').style.display = state.manager.unlocked ? '' : 'none';
-  $('#fm-delete').style.display = id ? '' : 'none';
+  $('#fm-delete').style.display = (id && !permSuper) ? '' : 'none';
   $('#overlay-foreman').classList.add('show');
 }
 function closeForemanEditor() {
@@ -2998,9 +3013,11 @@ async function saveForemanEditor() {
   if (!name) { toast(t('name_required'), 'error'); return; }
   if (state.manager.editingForemanId) {
     const patch = { name, classification: cls, active, area: area || null };
-    if (roleSelectVisible) {
+    const cur = state.foremen[state.manager.editingForemanId];
+    if (isPermanentSuper(cur)) {
+      patch.role = 'super'; // Fausto stays Super no matter what
+    } else if (roleSelectVisible) {
       const newRole = $('#fm-role').value;
-      const cur = state.foremen[state.manager.editingForemanId];
       if (cur && cur.role === 'super' && newRole !== 'super') {
         const supers = Object.values(state.foremen).filter(f => f.role === 'super').length;
         if (supers <= 1) { toast(t('last_super_blocked'), 'error'); return; }
@@ -3023,6 +3040,7 @@ async function deleteForeman() {
   const id = state.manager.editingForemanId;
   if (!id) return;
   const cur = state.foremen[id];
+  if (isPermanentSuper(cur)) { toast(t('perm_super_blocked'), 'error'); return; }
   if (cur && cur.role === 'super') {
     const supers = Object.values(state.foremen).filter(f => f.role === 'super').length;
     if (supers <= 1) { toast(t('last_super_blocked'), 'error'); return; }
