@@ -604,6 +604,17 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
 .exp-preview__metarow strong { font-family: var(--font-display); font-size: 18px; color: var(--ink); font-variant-numeric: tabular-nums; }
 .exp-actions { display: flex; gap: 8px; }
 .exp-actions .fs-btn--primary { flex: 1; }
+.roster-row__expander { cursor: pointer; }
+.roster-caret { display: inline-block; width: 12px; font-size: 10px; color: var(--ink-mute); }
+.roster-row__main { cursor: pointer; }
+.roster-row__main:hover .roster-row__name { color: var(--webcor-green); }
+.roster-area { display: inline-block; font-size: 10px; height: 20px; line-height: 20px; padding: 0 9px; border-radius: 999px; background: rgba(217,119,6,0.16); color: var(--cocoa); font-weight: 600; margin-left: 4px; vertical-align: middle; }
+[data-theme="dark"] .roster-area { background: rgba(240,168,82,0.22); color: var(--cream); }
+.roster-sub { padding: 2px 4px 12px 30px; display: flex; flex-direction: column; gap: 2px; border-bottom: 1px solid var(--hairline); }
+.roster-sub__row { display: grid; grid-template-columns: 28px 1fr auto; gap: 10px; align-items: center; padding: 7px 0; }
+.roster-sub__row.is-inactive { opacity: 0.5; }
+.roster-row__avatar--sm { width: 28px; height: 28px; font-size: 11px; }
+.roster-sub__add { height: 32px; font-size: 12px; align-self: flex-start; margin-top: 6px; }
 .exp-foremen { display: flex; flex-wrap: wrap; gap: 8px; }
 .exp-chip { display: inline-flex; align-items: center; gap: 5px; padding: 7px 13px; border-radius: 999px; border: 1.5px solid var(--hairline-2); background: var(--cream); font-family: var(--font-body); font-size: 13px; font-weight: 600; color: var(--ink-mute); cursor: pointer; transition: all .12s ease; }
 .exp-chip:hover { border-color: var(--ink-mute); }
@@ -1108,6 +1119,8 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
       <option value="true">Yes &mdash; show in picker</option>
       <option value="false">No &mdash; hide</option>
     </select>
+    <label class="fs-label"><span class="es" lang="es">Área</span><span class="en">Area</span></label>
+    <select class="fs-select" id="fm-area" style="margin-bottom:14px"></select>
     <div id="fm-role-wrap" style="display:none">
       <label class="fs-label"><span class="es" lang="es">Rol</span><span class="en">Role</span></label>
       <select class="fs-select" id="fm-role">
@@ -1134,10 +1147,12 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
     <label class="fs-label"><span class="es" lang="es">Clasificaci&oacute;n de trabajo</span><span class="en">Work classification</span></label>
     <input class="fs-input" type="text" id="mb-cls" placeholder="e.g. Carpenter Journeyman" style="margin-bottom:14px" />
     <label class="fs-label"><span class="es" lang="es">Activo</span><span class="en">Active</span></label>
-    <select class="fs-select" id="mb-active">
+    <select class="fs-select" id="mb-active" style="margin-bottom:14px">
       <option value="true">Yes &mdash; show in picker</option>
       <option value="false">No &mdash; hide</option>
     </select>
+    <label class="fs-label"><span class="es" lang="es">Área</span><span class="en">Area</span></label>
+    <select class="fs-select" id="mb-area"></select>
     <div class="modal-actions">
       <button class="fs-btn fs-btn--danger" id="mb-delete" type="button">Delete</button>
       <button class="fs-btn fs-btn--ghost" id="mb-cancel" type="button">Cancel</button>
@@ -1258,6 +1273,7 @@ const T = {
     edit_member_title: 'Edit Crew Member', add_member_title: 'Add Crew Member',
     add_foreman_btn: '+ Add foreman', add_member_btn: '+ Add crew member',
     foreman_label: 'Foreman', super_label: 'Super', member_of: 'Crew of',
+    crew_one: 'crew', crew_many: 'crew',
     no_members: 'No crew members yet. Tap + to add.',
     my_crew: 'My Crew', overall_view: 'Overall View',
     tab_crew: 'Crew', tab_crew_es: 'Cuadrilla',
@@ -1308,6 +1324,7 @@ const T = {
     edit_member_title: 'Editar Miembro', add_member_title: 'Agregar Miembro',
     add_foreman_btn: '+ Agregar foreman', add_member_btn: '+ Agregar miembro',
     foreman_label: 'Foreman', super_label: 'Super', member_of: 'Cuadrilla de',
+    crew_one: 'miembro', crew_many: 'miembros',
     no_members: 'Sin miembros aún. Toque + para agregar.',
     my_crew: 'Mi Cuadrilla', overall_view: 'Vista General',
     tab_crew: 'Crew', tab_crew_es: 'Cuadrilla',
@@ -1556,6 +1573,7 @@ const state = {
   profile: null,
   foremen: {},
   members: {},
+  areas: {},
   foremenLoaded: false,
   membersLoaded: false,
   pickerForemanId: localStorage.getItem('lastForemanTab') || null,
@@ -1568,7 +1586,7 @@ const state = {
   },
   signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, sigMode: 'drawn' },
   attendanceCache: {},
-  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
+  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, expandedForemen: new Set(), editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
   sigPad: null
 };
 state.signin.date = '';
@@ -1794,6 +1812,11 @@ async function boot() {
   await ensureSeed();
   await ensureFausto();
   await ensureSuper();
+  await ensureAreas();
+  fbListen('areas', a => {
+    state.areas = a || {};
+    if (state.manager.unlocked) { renderRoster(); }
+  });
   fbListen('config', cfg => {
     if (cfg) state.config = Object.assign(state.config, cfg);
     renderBrand();
@@ -1817,6 +1840,7 @@ async function boot() {
     syncProfileFromState();
     renderPicker();
     renderCrewMembersList();
+    if (state.manager.unlocked) renderRoster();
     if (state.manager.weekData) renderWeekGrid();
     if (state.manager.crewWeekData) renderCrewWeekGrid();
   });
@@ -1887,6 +1911,43 @@ async function ensureSuper() {
     const fausto = entries.find(([_, f]) => (f?.name || '').trim().toLowerCase() === 'fausto');
     if (fausto) await fbUpdate(`foremen/${fausto[0]}`, { role: 'super' });
   }
+}
+async function ensureAreas() {
+  const existing = (await fbGet('areas')) || {};
+  if (Object.keys(existing).length) return;
+  // Seed the two default work areas the super can assign foremen/staff to.
+  await fbPush('areas', { name: 'South Hall Works', order: 1 });
+  await fbPush('areas', { name: 'Pico Hall Expansion', order: 2 });
+}
+function sortedAreas() {
+  return Object.entries(state.areas).sort((a, b) => (a[1].order ?? 99) - (b[1].order ?? 99));
+}
+function areaName(id) { return id && state.areas[id] ? state.areas[id].name : ''; }
+async function createArea(name) {
+  const orders = Object.values(state.areas).map(a => a.order ?? 0);
+  const order = (orders.length ? Math.max(...orders) : 0) + 1;
+  const ref = fbPush('areas', { name, order });
+  await ref;
+  return ref.key;
+}
+// Populate an <select> with the area list, an empty option, and a "+ New area" action.
+function fillAreaSelect(sel, currentId, opts) {
+  opts = opts || {};
+  const emptyLabel = opts.inherit ? (state.lang === 'es' ? '(Igual que el foreman)' : '(Same as foreman)')
+                                  : (state.lang === 'es' ? '— Ninguna —' : '— None —');
+  let html = `<option value="">${emptyLabel}</option>`;
+  html += sortedAreas().map(([id, a]) => `<option value="${id}">${escapeHtml(a.name)}</option>`).join('');
+  html += `<option value="__new__">${state.lang === 'es' ? '+ Nueva área…' : '+ New area…'}</option>`;
+  sel.innerHTML = html;
+  sel.value = currentId || '';
+  sel.dataset.prev = sel.value;
+}
+async function onAreaSelectChange(sel, opts) {
+  if (sel.value !== '__new__') { sel.dataset.prev = sel.value; return; }
+  const name = (prompt(state.lang === 'es' ? 'Nombre de la nueva área:' : 'New area name:') || '').trim();
+  if (!name) { sel.value = sel.dataset.prev || ''; return; }
+  const id = await createArea(name);
+  fillAreaSelect(sel, id, opts);
 }
 function personById(id) {
   const f = state.foremen[id];
@@ -2618,9 +2679,11 @@ function initManager() {
   $('#fm-cancel').onclick = closeForemanEditor;
   $('#fm-save').onclick = saveForemanEditor;
   $('#fm-delete').onclick = deleteForeman;
+  $('#fm-area').onchange = () => onAreaSelectChange($('#fm-area'), {});
   $('#mb-cancel').onclick = closeMemberEditor;
   $('#mb-save').onclick = saveMemberEditor;
   $('#mb-delete').onclick = deleteMember;
+  $('#mb-area').onchange = () => onAreaSelectChange($('#mb-area'), { inherit: true });
   $('#entry-cancel').onclick = () => $('#overlay-entry').classList.remove('show');
   $('#entry-save').onclick = saveEntryEditor;
   $('#entry-delete').onclick = deleteEntry;
@@ -2795,12 +2858,20 @@ function renderRoster() {
     wrap.innerHTML = `<p class="wp-foot__meta">${escapeHtml(t('no_foremen_mgr'))}</p>`;
     return;
   }
-  wrap.innerHTML = list.map(([id, f], idx) => `
+  const expanded = state.manager.expandedForemen;
+  wrap.innerHTML = list.map(([id, f], idx) => {
+    const mem = membersOf(id);
+    const isOpen = expanded.has(id);
+    const superChip = f.role === 'super' ? `<span class="fs-chip fs-chip--teal" style="font-size:10px;height:20px;margin-left:4px">${escapeHtml(t('super_label'))}</span>` : '';
+    const areaChip = f.area && state.areas[f.area] ? `<span class="roster-area">${escapeHtml(state.areas[f.area].name)}</span>` : '';
+    const caret = mem.length ? (isOpen ? '▾' : '▸') : '·';
+    const crewMeta = mem.length ? ` &middot; ${mem.length} ${mem.length === 1 ? t('crew_one') : t('crew_many')}` : '';
+    const head = `
     <div class="roster-row ${f.active ? '' : 'is-inactive'}">
-      <div class="roster-row__avatar">${escapeHtml(initialsOf(f.name))}</div>
-      <div>
-        <div class="roster-row__name">${escapeHtml(f.name)} ${f.role === 'super' ? '<span class="fs-chip fs-chip--teal" style="font-size:10px;height:20px;margin-left:4px">'+escapeHtml(t('super_label'))+'</span>' : ''}</div>
-        <div class="roster-row__role">${escapeHtml(f.classification || '')}</div>
+      <div class="roster-row__avatar roster-row__expander" data-act="expand" data-id="${id}">${escapeHtml(initialsOf(f.name))}</div>
+      <div class="roster-row__main" data-act="expand" data-id="${id}">
+        <div class="roster-row__name"><span class="roster-caret">${caret}</span>${escapeHtml(f.name)} ${superChip} ${areaChip}</div>
+        <div class="roster-row__role">${escapeHtml(f.classification || '')}${crewMeta}</div>
       </div>
       <div class="roster-row__toggle">
         <button class="roster-row__ord" data-act="up" data-id="${id}" ${idx === 0 ? 'disabled' : ''} type="button">↑</button>
@@ -2808,13 +2879,51 @@ function renderRoster() {
         <button class="roster-toggle ${f.active ? 'is-on' : ''}" data-act="toggle" data-id="${id}" type="button" aria-label="Active"><span class="roster-toggle__dot"></span></button>
         <button class="roster-row__edit" data-act="edit" data-id="${id}" type="button">Edit</button>
       </div>
-    </div>
-  `).join('');
-  wrap.querySelectorAll('button[data-act]').forEach(btn => {
-    btn.onclick = () => handleRosterAction(btn.dataset.act, btn.dataset.id);
+    </div>`;
+    if (!isOpen) return head;
+    const subRows = mem.map(([mid, m]) => {
+      const mArea = m.area && state.areas[m.area] ? `<span class="roster-area">${escapeHtml(state.areas[m.area].name)}</span>` : '';
+      return `
+      <div class="roster-sub__row ${m.active ? '' : 'is-inactive'}">
+        <div class="roster-row__avatar roster-row__avatar--sm">${escapeHtml(initialsOf(m.name))}</div>
+        <div class="roster-row__main">
+          <div class="roster-row__name">${escapeHtml(m.name)} ${mArea}</div>
+          <div class="roster-row__role">${escapeHtml(m.classification || '')}</div>
+        </div>
+        <div class="roster-row__toggle">
+          <button class="roster-toggle ${m.active ? 'is-on' : ''}" data-mact="toggle" data-id="${mid}" data-fid="${id}" type="button" aria-label="Active"><span class="roster-toggle__dot"></span></button>
+          <button class="roster-row__edit" data-mact="edit" data-id="${mid}" data-fid="${id}" type="button">Edit</button>
+        </div>
+      </div>`;
+    }).join('');
+    const sub = `<div class="roster-sub">
+      ${subRows || `<p class="wp-foot__meta" style="padding:6px 2px">${escapeHtml(t('no_members'))}</p>`}
+      <button class="fs-btn fs-btn--ghost roster-sub__add" data-mact="add" data-fid="${id}" type="button">${escapeHtml(t('add_member_btn'))}</button>
+    </div>`;
+    return head + sub;
+  }).join('');
+  wrap.querySelectorAll('[data-act]').forEach(el => {
+    el.onclick = () => handleRosterAction(el.dataset.act, el.dataset.id);
+  });
+  wrap.querySelectorAll('[data-mact]').forEach(el => {
+    el.onclick = () => handleRosterMemberAction(el.dataset.mact, el.dataset.id, el.dataset.fid);
   });
 }
+async function handleRosterMemberAction(act, mid, fid) {
+  if (act === 'add') return openMemberEditor(null, fid);
+  if (act === 'edit') return openMemberEditor(mid, fid);
+  if (act === 'toggle') {
+    const m = state.members[mid];
+    if (m) await fbUpdate(`members/${mid}`, { active: !m.active });
+  }
+}
 async function handleRosterAction(act, id) {
+  if (act === 'expand') {
+    const s = state.manager.expandedForemen;
+    if (s.has(id)) s.delete(id); else s.add(id);
+    renderRoster();
+    return;
+  }
   if (act === 'edit') return openForemanEditor(id);
   if (act === 'toggle') {
     const f = state.foremen[id];
@@ -2842,6 +2951,7 @@ function openForemanEditor(id) {
   $('#fm-name').value = f.name || '';
   $('#fm-cls').value = f.classification || '';
   $('#fm-active').value = String(f.active ?? true);
+  fillAreaSelect($('#fm-area'), f.area || '', {});
   $('#fm-role').value = f.role || 'foreman';
   $('#fm-role-wrap').style.display = state.manager.unlocked ? '' : 'none';
   $('#fm-delete').style.display = id ? '' : 'none';
@@ -2855,10 +2965,11 @@ async function saveForemanEditor() {
   const name = $('#fm-name').value.trim();
   const cls = $('#fm-cls').value.trim();
   const active = $('#fm-active').value === 'true';
+  const area = $('#fm-area').value === '__new__' ? '' : $('#fm-area').value;
   const roleSelectVisible = $('#fm-role-wrap').style.display !== 'none';
   if (!name) { toast(t('name_required'), 'error'); return; }
   if (state.manager.editingForemanId) {
-    const patch = { name, classification: cls, active };
+    const patch = { name, classification: cls, active, area: area || null };
     if (roleSelectVisible) {
       const newRole = $('#fm-role').value;
       const cur = state.foremen[state.manager.editingForemanId];
@@ -2873,6 +2984,7 @@ async function saveForemanEditor() {
     const orders = Object.values(state.foremen).map(f => f.order ?? 0);
     const nextOrder = (orders.length ? Math.max(...orders) : 0) + 1;
     const payload = { name, classification: cls, active, order: nextOrder, role: 'foreman' };
+    if (area) payload.area = area;
     if (roleSelectVisible) payload.role = $('#fm-role').value || 'foreman';
     await fbPush('foremen', payload);
   }
@@ -2902,6 +3014,7 @@ function openMemberEditor(memberId, foremanId) {
   $('#mb-name').value = m.name || '';
   $('#mb-cls').value = m.classification || '';
   $('#mb-active').value = String(m.active ?? true);
+  fillAreaSelect($('#mb-area'), m.area || '', { inherit: true });
   $('#mb-delete').style.display = memberId ? '' : 'none';
   $('#overlay-member').classList.add('show');
 }
@@ -2914,16 +3027,19 @@ async function saveMemberEditor() {
   const name = $('#mb-name').value.trim();
   const cls = $('#mb-cls').value.trim();
   const active = $('#mb-active').value === 'true';
+  const area = $('#mb-area').value === '__new__' ? '' : $('#mb-area').value;
   const memberId = state.manager.editingMemberId;
   const foremanId = state.manager.editingMemberForemanId;
   if (!name) { toast(t('name_required'), 'error'); return; }
   if (!foremanId) { toast(t('pick_foreman_first'), 'error'); return; }
   if (memberId) {
-    await fbUpdate(`members/${memberId}`, { name, classification: cls, active, foremanId });
+    await fbUpdate(`members/${memberId}`, { name, classification: cls, active, foremanId, area: area || null });
   } else {
     const orders = membersOf(foremanId).map(([_, m]) => m.order ?? 0);
     const nextOrder = (orders.length ? Math.max(...orders) : 0) + 1;
-    await fbPush('members', { name, classification: cls, active, order: nextOrder, foremanId });
+    const payload = { name, classification: cls, active, order: nextOrder, foremanId };
+    if (area) payload.area = area;
+    await fbPush('members', payload);
   }
   closeMemberEditor();
   toast(t('saved_toast'), 'success');
