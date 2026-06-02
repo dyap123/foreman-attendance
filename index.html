@@ -632,6 +632,12 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
 .day7-btn__date { font-size: 12px; color: var(--ink-mute); }
 .day7-btn__badge { font-size: 11px; font-weight: 700; color: #fff; background: var(--webcor-green); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
 .day7-btn__badge--none { background: var(--hairline-2); color: var(--ink-mute); }
+.wk-caret { display: inline-block; width: 11px; font-size: 10px; color: var(--ink-mute); }
+.wk-name__row { display: flex; align-items: center; gap: 8px; }
+.wk-area-pill { font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 999px; border: none; background: rgba(217,119,6,0.16); color: var(--cocoa); cursor: pointer; white-space: nowrap; }
+.wk-area-pill--empty { background: var(--hairline-2); color: var(--ink-mute); font-weight: 600; }
+[data-theme="dark"] .wk-area-pill { background: rgba(240,168,82,0.22); color: var(--cream); }
+[data-theme="dark"] .wk-area-pill--empty { background: var(--hairline-2); color: var(--ink-mute); }
 .roster-list { display: flex; flex-direction: column; max-height: 420px; overflow: auto; margin: 0 -8px; padding: 0 8px; }
 .roster-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--hairline); }
 .roster-row:last-child { border-bottom: none; }
@@ -1080,6 +1086,10 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
               <div><div class="ds-card__es" lang="es">Vista semanal</div><h3 class="ds-card__title">Week View</h3></div>
               <span class="fs-chip" id="week-view-label"></span>
             </div>
+            <div class="exp-row" id="wk-areas-row" style="margin-bottom:12px">
+              <label class="fs-label"><span class="es" lang="es">Filtrar por área</span><span class="en">Filter by area</span></label>
+              <div class="exp-foremen" id="wk-areas-list"></div>
+            </div>
             <div class="week-grid" id="week-grid"><p class="wp-foot__meta" style="padding:16px">Pick a week-ending date above to load.</p></div>
           </section>
 
@@ -1281,6 +1291,8 @@ const T = {
     pick_week_first: 'Pick a week-ending date first',
     no_entries_week: 'No sign-ins logged for this week',
     pick_export_foreman: 'Select at least one foreman to include',
+    no_crews_area: 'No crews in this area for this week.',
+    set_area: 'Set area', use_default_area: 'Use standing area',
     pick_day_prompt: 'Pick a day (1-7):',
     shared_toast: 'Shared', pdf_downloaded: 'PDF downloaded',
     firebase_err: 'Firebase unavailable',
@@ -1333,6 +1345,8 @@ const T = {
     pick_week_first: 'Seleccione una fecha de fin de semana primero',
     no_entries_week: 'No hay registros de entrada para esta semana',
     pick_export_foreman: 'Seleccione al menos un foreman para incluir',
+    no_crews_area: 'No hay cuadrillas en esta área esta semana.',
+    set_area: 'Asignar área', use_default_area: 'Usar área fija',
     pick_day_prompt: 'Seleccione un día (1-7):',
     shared_toast: 'Compartido', pdf_downloaded: 'PDF descargado',
     firebase_err: 'Firebase no disponible',
@@ -1602,6 +1616,7 @@ const state = {
   foremen: {},
   members: {},
   areas: {},
+  weekAreas: {},
   foremenLoaded: false,
   membersLoaded: false,
   pickerForemanId: localStorage.getItem('lastForemanTab') || null,
@@ -1614,7 +1629,7 @@ const state = {
   },
   signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, sigMode: 'drawn' },
   attendanceCache: {},
-  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, exportAreaId: null, expandedForemen: new Set(), editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
+  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, exportAreaId: null, weekAreaFilter: null, expandedForemen: new Set(), editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
   sigPad: null
 };
 state.signin.date = '';
@@ -1843,7 +1858,11 @@ async function boot() {
   await ensureAreas();
   fbListen('areas', a => {
     state.areas = a || {};
-    if (state.manager.unlocked) { renderRoster(); renderExportAreaFilter(); }
+    if (state.manager.unlocked) { renderRoster(); renderExportAreaFilter(); renderWeekAreaFilter(); }
+  });
+  fbListen('weekAreas', wa => {
+    state.weekAreas = wa || {};
+    if (state.manager.unlocked && state.manager.weekData) { renderWeekAreaFilter(); renderWeekGrid(); }
   });
   fbListen('config', cfg => {
     if (cfg) state.config = Object.assign(state.config, cfg);
@@ -1858,7 +1877,7 @@ async function boot() {
     renderPicker();
     renderRoster();
     if (state.manager.unlocked) { renderExportAreaFilter(); renderExportForemenPicker(); }
-    if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
+    if (state.manager.weekData) { renderWeekAreaFilter(); renderWeekGrid(); renderExportMeta(); }
     if (state.manager.crewWeekData) renderCrewWeekGrid();
     refreshTabsVisibility();
   });
@@ -2747,7 +2766,7 @@ function refreshManagerView() {
     renderExportAreaFilter();
     renderExportForemenPicker();
     renderConfigForm();
-    if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
+    if (state.manager.weekData) { renderWeekAreaFilter(); renderWeekGrid(); renderExportMeta(); }
   }
 }
 // ── CSV EXPORT ──────────────────────────────────────────────────────────────
@@ -2956,13 +2975,14 @@ async function handleRosterMemberAction(act, mid, fid) {
     if (m) await fbUpdate(`members/${mid}`, { active: !m.active });
   }
 }
+function toggleForemanExpand(id) {
+  const s = state.manager.expandedForemen;
+  if (s.has(id)) s.delete(id); else s.add(id);
+  renderRoster();
+  if (state.manager.weekData) renderWeekGrid();
+}
 async function handleRosterAction(act, id) {
-  if (act === 'expand') {
-    const s = state.manager.expandedForemen;
-    if (s.has(id)) s.delete(id); else s.add(id);
-    renderRoster();
-    return;
-  }
+  if (act === 'expand') { toggleForemanExpand(id); return; }
   if (act === 'edit') return openForemanEditor(id);
   if (act === 'toggle') {
     const f = state.foremen[id];
@@ -3107,6 +3127,7 @@ async function onWeekEndChange() {
   state.manager.weekEnd = parseYmd(v);
   $('#week-view-label').textContent = `Week ending ${fmtDateUS(v)}`;
   await loadWeekData();
+  renderWeekAreaFilter();
   renderWeekGrid();
   renderExportMeta();
 }
@@ -3216,13 +3237,37 @@ function renderExportMeta() {
   $('#exp-meta-hours').textContent = totalHours.toFixed(1);
   $('#exp-meta-injuries').textContent = String(injuries);
 }
+// Area in effect for a foreman during a specific week: the week's override if
+// set, otherwise the foreman's standing area. Members inherit their foreman.
+function effectiveAreaForWeek(fid, weekEndStr) {
+  const wa = state.weekAreas?.[weekEndStr];
+  if (wa && wa[fid] != null && wa[fid] !== '') return wa[fid];
+  return state.foremen[fid]?.area || '';
+}
+function renderWeekAreaFilter() {
+  const wrap = $('#wk-areas-list');
+  const row = $('#wk-areas-row');
+  if (!wrap) return;
+  const areas = sortedAreas();
+  if (areas.length === 0 || !state.manager.weekData) { if (row) row.style.display = 'none'; return; }
+  if (row) row.style.display = '';
+  const cur = state.manager.weekAreaFilter;
+  const tick = '<span class="exp-chip__tick">✓</span>';
+  let html = `<button class="exp-chip is-all ${!cur ? 'is-on' : ''}" data-wkarea="" type="button">${!cur ? tick : ''}<span class="es" lang="es">Todas</span><span class="en">All areas</span></button>`;
+  html += areas.map(([id, a]) => `<button class="exp-chip ${cur === id ? 'is-on' : ''}" data-wkarea="${id}" type="button">${cur === id ? tick : ''}${escapeHtml(a.name)}</button>`).join('');
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('[data-wkarea]').forEach(b => { b.onclick = () => { state.manager.weekAreaFilter = b.dataset.wkarea || null; renderWeekAreaFilter(); renderWeekGrid(); }; });
+}
 function renderWeekGrid() {
   const grid = $('#week-grid');
   if (!grid || !state.manager.weekData) return;
   const days = weekDates(state.manager.weekEnd);
-  const foremen = sortedForemen(true);
+  const weekEndStr = state.manager.weekEndStr;
+  const areaFilter = state.manager.weekAreaFilter;
+  let foremen = sortedForemen(true);
+  if (areaFilter) foremen = foremen.filter(([fid]) => effectiveAreaForWeek(fid, weekEndStr) === areaFilter);
   if (foremen.length === 0) {
-    grid.innerHTML = `<p class="wp-foot__meta" style="padding:16px">${escapeHtml(t('no_active_foremen'))}</p>`;
+    grid.innerHTML = `<p class="wp-foot__meta" style="padding:16px">${escapeHtml(areaFilter ? t('no_crews_area') : t('no_active_foremen'))}</p>`;
     return;
   }
   const headerCols = days.map(d => `<th>${dayShort(d)}<br><span style="font-weight:400">${d.getMonth()+1}/${d.getDate()}</span></th>`).join('');
@@ -3236,18 +3281,58 @@ function renderWeekGrid() {
     }
     return `<td class="${cls}" data-fid="${personId}" data-date="${k}">${label}</td>`;
   }).join('');
+  const expanded = state.manager.expandedForemen;
   const sections = foremen.map(([fid, f]) => {
     const members = membersOf(fid).filter(([_, m]) => m.active);
-    const fRow = `<tr><td class="name"><span style="color:var(--marigold);font-size:11px;font-style:italic">${escapeHtml(t('foreman_label'))}</span> ${escapeHtml(f.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(f.classification||'')}</span></td>${buildCells(fid)}</tr>`;
-    const mRows = members.map(([mid, m]) =>
-      `<tr><td class="name" style="padding-left:20px"><span style="color:var(--ink-mute);font-size:11px">↳</span> ${escapeHtml(m.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(m.classification||'')}</span></td>${buildCells(mid)}</tr>`
-    ).join('');
+    const isOpen = expanded.has(fid);
+    const caret = members.length ? (isOpen ? '▾' : '▸') : '·';
+    const crewMeta = members.length ? ` <span style="color:var(--ink-mute);font-weight:400">(${members.length})</span>` : '';
+    const eaId = effectiveAreaForWeek(fid, weekEndStr);
+    const eaName = eaId && state.areas[eaId] ? state.areas[eaId].name : (sortedAreas().length ? t('set_area') : '');
+    const areaPill = eaName ? `<button class="wk-area-pill ${eaId ? '' : 'wk-area-pill--empty'}" data-wkareaset="${fid}" type="button">${escapeHtml(eaName)}</button>` : '';
+    const fRow = `<tr><td class="name wk-name"><span class="wk-name__row"><span data-fexpand="${fid}" style="cursor:pointer;flex:1"><span class="wk-caret">${caret}</span> <span style="color:var(--marigold);font-size:11px;font-style:italic">${escapeHtml(t('foreman_label'))}</span> ${escapeHtml(f.name)}${crewMeta}</span>${areaPill}</span><br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(f.classification||'')}</span></td>${buildCells(fid)}</tr>`;
+    const mRows = isOpen ? members.map(([mid, m]) =>
+      `<tr><td class="name" style="padding-left:24px"><span style="color:var(--ink-mute);font-size:11px">↳</span> ${escapeHtml(m.name)}<br><span style="font-weight:400;color:var(--ink-mute)">${escapeHtml(m.classification||'')}</span></td>${buildCells(mid)}</tr>`
+    ).join('') : '';
     return fRow + mRows;
   }).join('');
   grid.innerHTML = `<table><thead><tr><th style="text-align:left">Crew</th>${headerCols}</tr></thead><tbody>${sections}</tbody></table>`;
   grid.querySelectorAll('td.cell').forEach(td => {
     td.onclick = () => openEntryEditor(td.dataset.fid, td.dataset.date);
   });
+  grid.querySelectorAll('[data-fexpand]').forEach(td => {
+    td.onclick = () => toggleForemanExpand(td.dataset.fexpand);
+  });
+  grid.querySelectorAll('[data-wkareaset]').forEach(btn => {
+    btn.onclick = (ev) => { ev.stopPropagation(); openWeekAreaPicker(btn.dataset.wkareaset); };
+  });
+}
+// Pick the area for one foreman for the currently-viewed week. Writes to
+// weekAreas/{weekEnd}/{fid}; clearing falls back to the standing area.
+function openWeekAreaPicker(fid) {
+  const overlay = $('#overlay-day');
+  const list = $('#day-list');
+  const weekEndStr = state.manager.weekEndStr;
+  const f = state.foremen[fid];
+  $('#day-title').textContent = f?.name || t('set_area');
+  $('#day-sub').innerHTML = `Area for week ending ${escapeHtml(fmtDateUS(weekEndStr))} &middot; <span lang="es">Área de la semana</span>`;
+  const cur = effectiveAreaForWeek(fid, weekEndStr);
+  const tick = '<span class="day7-btn__badge">✓</span>';
+  const opts = sortedAreas().map(([id, a]) =>
+    `<button class="day7-btn" data-areaval="${id}" type="button"><span class="day7-btn__day">${escapeHtml(a.name)}</span>${cur === id ? tick : ''}</button>`).join('');
+  const def = `<button class="day7-btn" data-areaval="" type="button"><span class="day7-btn__date">${escapeHtml(t('use_default_area'))}${state.foremen[fid]?.area && state.areas[state.foremen[fid].area] ? ' (' + escapeHtml(state.areas[state.foremen[fid].area].name) + ')' : ''}</span></button>`;
+  list.innerHTML = opts + def;
+  const close = () => overlay.classList.remove('show');
+  list.querySelectorAll('[data-areaval]').forEach(b => {
+    b.onclick = async () => {
+      close();
+      const val = b.dataset.areaval;
+      await fbSet(`weekAreas/${weekEndStr}/${fid}`, val || null);
+      toast(t('saved_toast'), 'success');
+    };
+  });
+  $('#day-cancel').onclick = () => close();
+  overlay.classList.add('show');
 }
 async function openEntryEditor(pid, date) {
   const p = personById(pid);
