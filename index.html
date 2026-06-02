@@ -623,6 +623,15 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
 .exp-chip__tick { font-size: 14px; line-height: 1; color: var(--webcor-green); }
 [data-theme="dark"] .exp-chip { background: var(--hairline-2); }
 [data-theme="dark"] .exp-chip.is-on { background: rgba(0,154,92,0.22); }
+.day7-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+.day7-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; padding: 8px 16px; border-radius: var(--r-md); background: var(--paper-2); border: 1.5px solid var(--hairline); cursor: pointer; transition: all .12s ease; text-align: left; }
+.day7-btn:hover { background: var(--cream); border-color: var(--webcor-green); transform: translateY(-1px); }
+.day7-btn.is-today { border-color: var(--marigold); }
+.day7-btn__day { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--ink); }
+.day7-btn__es { font-style: italic; color: var(--ink-mute); font-weight: 500; font-size: 13px; margin-left: 6px; }
+.day7-btn__date { font-size: 12px; color: var(--ink-mute); }
+.day7-btn__badge { font-size: 11px; font-weight: 700; color: #fff; background: var(--webcor-green); border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.day7-btn__badge--none { background: var(--hairline-2); color: var(--ink-mute); }
 .roster-list { display: flex; flex-direction: column; max-height: 420px; overflow: auto; margin: 0 -8px; padding: 0 8px; }
 .roster-row { display: grid; grid-template-columns: 36px 1fr auto; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--hairline); }
 .roster-row:last-child { border-bottom: none; }
@@ -1017,6 +1026,10 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
               <label class="fs-label"><span class="es" lang="es">Semana terminando</span><span class="en">Week ending</span></label>
               <input type="text" class="fs-input" id="export-week-end" data-fmt="date" readonly inputmode="none" placeholder="Pick week ending" />
             </div>
+            <div class="exp-row" id="exp-areas-row">
+              <label class="fs-label"><span class="es" lang="es">Filtrar por área</span><span class="en">Filter by area</span></label>
+              <div class="exp-foremen" id="exp-areas-list"></div>
+            </div>
             <div class="exp-row">
               <label class="fs-label"><span class="es" lang="es">Foremen a incluir</span><span class="en">Foremen to include</span></label>
               <div class="exp-foremen" id="exp-foremen-list"></div>
@@ -1227,6 +1240,18 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
     <div class="modal-actions">
       <button class="fs-btn fs-btn--ghost" id="dp-cancel" type="button">Cancel</button>
       <button class="fs-btn fs-btn--primary" id="dp-done" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- SINGLE-DAY PICKER OVERLAY -->
+<div class="overlay" id="overlay-day">
+  <div class="modal" style="max-width:420px">
+    <h3 id="day-title">Pick a day</h3>
+    <p class="modal-sub" id="day-sub">Choose a day to export &middot; <span lang="es">Elija un día</span></p>
+    <div class="day7-list" id="day-list"></div>
+    <div class="modal-actions">
+      <button class="fs-btn fs-btn--ghost" id="day-cancel" type="button">Cancel</button>
     </div>
   </div>
 </div>
@@ -1586,7 +1611,7 @@ const state = {
   },
   signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, sigMode: 'drawn' },
   attendanceCache: {},
-  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, expandedForemen: new Set(), editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
+  manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, exportAreaId: null, expandedForemen: new Set(), editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
   sigPad: null
 };
 state.signin.date = '';
@@ -1815,7 +1840,7 @@ async function boot() {
   await ensureAreas();
   fbListen('areas', a => {
     state.areas = a || {};
-    if (state.manager.unlocked) { renderRoster(); }
+    if (state.manager.unlocked) { renderRoster(); renderExportAreaFilter(); }
   });
   fbListen('config', cfg => {
     if (cfg) state.config = Object.assign(state.config, cfg);
@@ -1829,7 +1854,7 @@ async function boot() {
     syncProfileFromState();
     renderPicker();
     renderRoster();
-    if (state.manager.unlocked) renderExportForemenPicker();
+    if (state.manager.unlocked) { renderExportAreaFilter(); renderExportForemenPicker(); }
     if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
     if (state.manager.crewWeekData) renderCrewWeekGrid();
     refreshTabsVisibility();
@@ -2708,6 +2733,7 @@ function updateMgrStatus() {
 function refreshManagerView() {
   if (state.manager.unlocked) {
     renderRoster();
+    renderExportAreaFilter();
     renderExportForemenPicker();
     renderConfigForm();
     if (state.manager.weekData) { renderWeekGrid(); renderExportMeta(); }
@@ -2795,7 +2821,9 @@ function resolveCsvScope(opts) {
       ids.push(fid);
       for (const [mid] of membersOf(fid).filter(([_, m]) => m.active)) ids.push(mid);
     }
-    const label = chosen.length === 1 ? (chosen[0][1].name || 'Crew') : `Selected_${chosen.length}`;
+    const areaId = state.manager.exportAreaId;
+    const label = (areaId && state.areas[areaId]) ? state.areas[areaId].name
+                : (chosen.length === 1 ? (chosen[0][1].name || 'Crew') : `Selected_${chosen.length}`);
     return { scopeIds: new Set(ids), scopeLabel: label, personList: ids };
   }
   return { scopeIds: null, scopeLabel: 'All', personList: allPersonIds() };
@@ -3087,9 +3115,39 @@ function exportIncludeIds() {
   return ids;
 }
 function exportScopeLabel() {
+  const areaId = state.manager.exportAreaId;
+  if (areaId && state.areas[areaId]) return state.areas[areaId].name;
   if (!state.manager.exportForemanIds) return 'All';
   const sel = selectedExportForemen();
   return sel.length === 1 ? sel[0][1].name : `Selected_${sel.length}`;
+}
+// A foreman belongs to an area if assigned to it, or if any active crew member is.
+function foremenInArea(areaId) {
+  return sortedForemen(true).filter(([fid, f]) => {
+    if ((f.area || '') === areaId) return true;
+    return membersOf(fid).some(([_, m]) => m.active && ((m.area || f.area || '') === areaId));
+  }).map(([fid]) => fid);
+}
+function renderExportAreaFilter() {
+  const wrap = $('#exp-areas-list');
+  const row = $('#exp-areas-row');
+  if (!wrap) return;
+  const areas = sortedAreas();
+  if (areas.length === 0) { if (row) row.style.display = 'none'; return; }
+  if (row) row.style.display = '';
+  const cur = state.manager.exportAreaId;
+  const tick = '<span class="exp-chip__tick">✓</span>';
+  let html = `<button class="exp-chip is-all ${!cur ? 'is-on' : ''}" data-exparea="" type="button">${!cur ? tick : ''}<span class="es" lang="es">Todas</span><span class="en">All areas</span></button>`;
+  html += areas.map(([id, a]) => `<button class="exp-chip ${cur === id ? 'is-on' : ''}" data-exparea="${id}" type="button">${cur === id ? tick : ''}${escapeHtml(a.name)}</button>`).join('');
+  wrap.innerHTML = html;
+  wrap.querySelectorAll('[data-exparea]').forEach(b => { b.onclick = () => selectExportArea(b.dataset.exparea || null); });
+}
+function selectExportArea(areaId) {
+  state.manager.exportAreaId = areaId;
+  state.manager.exportForemanIds = areaId ? new Set(foremenInArea(areaId)) : null;
+  renderExportAreaFilter();
+  renderExportForemenPicker();
+  renderExportMeta();
 }
 function renderExportForemenPicker() {
   const wrap = $('#exp-foremen-list');
@@ -3106,6 +3164,8 @@ function renderExportForemenPicker() {
   wrap.innerHTML = html;
   wrap.querySelector('[data-expall]').onclick = () => {
     state.manager.exportForemanIds = null;
+    state.manager.exportAreaId = null;
+    renderExportAreaFilter();
     renderExportForemenPicker();
     renderExportMeta();
   };
@@ -3115,8 +3175,11 @@ function toggleExportForeman(id) {
   const all = sortedForemen(true).map(([fid]) => fid);
   const sel = state.manager.exportForemanIds ? new Set(state.manager.exportForemanIds) : new Set(all);
   if (sel.has(id)) sel.delete(id); else sel.add(id);
+  // Manual fine-tuning means the selection is no longer tied to one area.
+  state.manager.exportAreaId = null;
   // Collapse a full selection back to the "All" state.
   state.manager.exportForemanIds = (sel.size >= all.length) ? null : sel;
+  renderExportAreaFilter();
   renderExportForemenPicker();
   renderExportMeta();
 }
@@ -3293,12 +3356,38 @@ async function runPdfExport(mode, opts) {
   const blob = doc.output('blob');
   await sharePdf(blob, fname);
 }
-async function pickDayFromWeek(days) {
-  const labels = days.map(d => `${dayShort(d)} ${d.getMonth()+1}/${d.getDate()}`);
-  const choice = prompt(`${t('pick_day_prompt')}\n${labels.map((l,i)=>`${i+1}. ${l}`).join('\n')}`);
-  const n = parseInt(choice, 10);
-  if (n >= 1 && n <= 7) return [days[n-1]];
-  return null;
+// Overlay day picker (super single-day export). Resolves to [day] or null.
+function pickDayFromWeek(days) {
+  return new Promise((resolve) => {
+    const overlay = $('#overlay-day');
+    const list = $('#day-list');
+    const include = exportIncludeIds();
+    const wd = state.manager.weekData || {};
+    const todayStr = ymd(new Date());
+    const titleCase = s => s.charAt(0) + s.slice(1).toLowerCase();
+    list.innerHTML = days.map((d, i) => {
+      const k = ymd(d);
+      const entries = wd[k] || {};
+      let hrs = 0, cnt = 0;
+      for (const [pid, e] of Object.entries(entries)) {
+        if (!include.has(pid) || e.signatureType === 'off') continue;
+        hrs += e.totalHours || 0; cnt++;
+      }
+      const badge = cnt
+        ? `<span class="day7-btn__badge">${cnt} · ${hrs.toFixed(1)}h</span>`
+        : `<span class="day7-btn__badge day7-btn__badge--none">—</span>`;
+      return `<button class="day7-btn ${k === todayStr ? 'is-today' : ''}" data-dayidx="${i}" type="button">
+        <span><span class="day7-btn__day">${titleCase(dayOfWeekEn(d))}<span class="day7-btn__es" lang="es">${titleCase(dayOfWeekEs(d))}</span></span><br><span class="day7-btn__date">${fmtDateUS(k)}</span></span>
+        ${badge}
+      </button>`;
+    }).join('');
+    const close = () => overlay.classList.remove('show');
+    list.querySelectorAll('[data-dayidx]').forEach(b => {
+      b.onclick = () => { close(); resolve([days[parseInt(b.dataset.dayidx, 10)]]); };
+    });
+    $('#day-cancel').onclick = () => { close(); resolve(null); };
+    overlay.classList.add('show');
+  });
 }
 function renderPdfPage(doc, date, weekEnd, weekData, personIds, crewLabel) {
   const pageW = doc.internal.pageSize.getWidth();
