@@ -3546,6 +3546,8 @@ function renderPdfPage(doc, date, weekEnd, weekData, personIds, crewLabel) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.text(`Foreman: ${crewLabel || ''}`, 36, 116);
+  doc.setFontSize(16);
+  doc.text(`${dayOfWeekEn(date)} / ${dayOfWeekEs(date)}`, pageW - 36, 116, { align: 'right' });
 
   const people = (personIds || []).map(id => {
     const p = personById(id);
@@ -3615,9 +3617,6 @@ function renderPdfPage(doc, date, weekEnd, weekData, personIds, crewLabel) {
     }
   });
 
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(28);
-  doc.text(`${dayOfWeekEn(date)} / ${dayOfWeekEs(date)}`, pageW/2, pageH - 28, { align: 'center' });
 }
 function isTouchDevice() {
   return (navigator.maxTouchPoints || 0) > 0 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
