@@ -2329,7 +2329,9 @@ async function updateGreetingStatus() {
   }
 }
 function recalcHours() {
-  const h = hoursBetween(state.signin.timeIn, state.signin.timeOut);
+  let h = hoursBetween(state.signin.timeIn, state.signin.timeOut);
+  // a taken 30-min lunch is unpaid → deduct 0.5 hr; the 20-min rest break is paid (no deduction)
+  if (h && state.signin.lunch30) h = Math.max(0, Math.round((h - 0.5) * 100) / 100);
   state.signin.totalHours = h;
   $('#total-hours-num').textContent = h ? h.toFixed(2) : '—';
 }
@@ -2342,6 +2344,7 @@ function setLunch(yes) {
   state.signin.lunch30 = yes;
   $('#lunch-yes').classList.toggle('is-active', yes);
   $('#lunch-no').classList.toggle('is-active', !yes);
+  recalcHours(); // taking lunch deducts 30 min from the total
 }
 function setBreak(yes) {
   state.signin.break20 = yes;
@@ -3454,7 +3457,9 @@ async function saveEntryEditor() {
     signedAt: Date.now(), signedBy
   };
   if (status === 'signed' && entry.timeIn && entry.timeOut && !$('#entry-hours').value) {
-    entry.totalHours = hoursBetween(entry.timeIn, entry.timeOut);
+    let h = hoursBetween(entry.timeIn, entry.timeOut);
+    if (entry.lunch30) h = Math.max(0, Math.round((h - 0.5) * 100) / 100);
+    entry.totalHours = h;
   }
   await fbSet(`attendance/${date}/${pid}`, entry);
   $('#overlay-entry').classList.remove('show');
