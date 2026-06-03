@@ -868,6 +868,36 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
               <div><div class="safety-opt__en">Yes</div><div class="safety-opt__es">Reportar lesi&oacute;n</div></div>
             </button>
           </div>
+
+          <p class="safety-q">
+            <span class="safety-q__es" lang="es">&iquest;Tomaste tu almuerzo de 30 minutos?</span>
+            <span class="safety-q__en">Did you take a 30-minute lunch break?</span>
+          </p>
+          <div class="safety-toggle">
+            <button type="button" class="safety-opt is-active" id="lunch-yes">
+              <span class="safety-opt__mark">&#10003;</span>
+              <div><div class="safety-opt__en">Yes</div><div class="safety-opt__es">S&iacute;, lo tom&eacute;</div></div>
+            </button>
+            <button type="button" class="safety-opt is-danger" id="lunch-no">
+              <span class="safety-opt__mark">!</span>
+              <div><div class="safety-opt__en">No</div><div class="safety-opt__es">No lo tom&eacute;</div></div>
+            </button>
+          </div>
+
+          <p class="safety-q">
+            <span class="safety-q__es" lang="es">&iquest;Tomaste tu descanso de 20 minutos?</span>
+            <span class="safety-q__en">Did you take your 20-minute rest break?</span>
+          </p>
+          <div class="safety-toggle">
+            <button type="button" class="safety-opt is-active" id="break-yes">
+              <span class="safety-opt__mark">&#10003;</span>
+              <div><div class="safety-opt__en">Yes</div><div class="safety-opt__es">S&iacute;, lo tom&eacute;</div></div>
+            </button>
+            <button type="button" class="safety-opt is-danger" id="break-no">
+              <span class="safety-opt__mark">!</span>
+              <div><div class="safety-opt__en">No</div><div class="safety-opt__es">No lo tom&eacute;</div></div>
+            </button>
+          </div>
         </section>
       </div>
 
@@ -1627,7 +1657,7 @@ const state = {
     managerPin: '050103',
     superPin: '050103'
   },
-  signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, sigMode: 'drawn' },
+  signin: { date: '', timeIn: '', timeOut: '', totalHours: 0, injured: false, lunch30: true, break20: true, sigMode: 'drawn' },
   attendanceCache: {},
   manager: { unlocked: false, weekEnd: null, weekEndStr: '', weekData: null, exportForemanIds: null, exportAreaId: null, weekAreaFilter: null, expandedForemen: new Set(), editingForemanId: null, editingEntry: null, editingMemberId: null, editingMemberForemanId: null, crewWeekEnd: null, crewWeekEndStr: '', crewWeekData: null },
   sigPad: null
@@ -2242,6 +2272,10 @@ function initSignInForm() {
   $('#time-out').onchange = e => { state.signin.timeOut = isoOf(e.target); recalcHours(); };
   $('#injured-no').onclick  = () => setInjured(false);
   $('#injured-yes').onclick = () => setInjured(true);
+  $('#lunch-yes').onclick = () => setLunch(true);
+  $('#lunch-no').onclick  = () => setLunch(false);
+  $('#break-yes').onclick = () => setBreak(true);
+  $('#break-no').onclick  = () => setBreak(false);
   $('#sig-mode-draw').onclick = () => setSigMode('drawn');
   $('#sig-mode-type').onclick = () => setSigMode('typed');
   $('#sig-clear').onclick = clearSig;
@@ -2296,6 +2330,16 @@ function setInjured(yes) {
   state.signin.injured = yes;
   $('#injured-no').classList.toggle('is-active', !yes);
   $('#injured-yes').classList.toggle('is-active', yes);
+}
+function setLunch(yes) {
+  state.signin.lunch30 = yes;
+  $('#lunch-yes').classList.toggle('is-active', yes);
+  $('#lunch-no').classList.toggle('is-active', !yes);
+}
+function setBreak(yes) {
+  state.signin.break20 = yes;
+  $('#break-yes').classList.toggle('is-active', yes);
+  $('#break-no').classList.toggle('is-active', !yes);
 }
 
 // ── SIGNATURE ───────────────────────────────────────────────────────────────
@@ -2362,6 +2406,7 @@ async function submitSignIn() {
   await writeEntry({
     timeIn: state.signin.timeIn, timeOut: state.signin.timeOut,
     totalHours: state.signin.totalHours, injured: state.signin.injured,
+    lunch30: state.signin.lunch30, break20: state.signin.break20,
     signatureType, signatureDataUrl: signatureDataUrl || null,
     signatureText: signatureText || null,
     signedAt: Date.now(), signedBy: 'self'
@@ -2371,6 +2416,7 @@ async function markOff() {
   if (!state.profile) { toast(t('pick_name_first'), 'error'); return; }
   await writeEntry({
     timeIn: null, timeOut: null, totalHours: 0, injured: false,
+    lunch30: null, break20: null,
     signatureType: 'off', signatureDataUrl: null, signatureText: null,
     signedAt: Date.now(), signedBy: 'self'
   });
@@ -2848,7 +2894,7 @@ async function exportWeeklyCsv(opts) {
   await downloadCsv(rows, `Attendance_Week_${scopeLabel.replace(/\s+/g,'_')}_${ymd(weekEnd)}.csv`);
 }
 function csvHeader() {
-  return [['Date', 'Foreman', 'Person', 'Kind', 'Classification', 'TimeIn', 'TimeOut', 'Hours', 'Injured', 'SignedBy']];
+  return [['Date', 'Foreman', 'Person', 'Kind', 'Classification', 'TimeIn', 'TimeOut', 'Hours', 'Injured', '30MinLunch', '20MinBreak', 'SignedBy']];
 }
 function csvRowForEntry(date, pid, e) {
   const p = personById(pid);
@@ -2863,6 +2909,8 @@ function csvRowForEntry(date, pid, e) {
     e.timeOut || '',
     e.totalHours != null ? e.totalHours : '',
     e.injured ? 'Yes' : 'No',
+    e.signatureType === 'off' ? '' : (e.lunch30 == null ? '' : (e.lunch30 ? 'Yes' : 'No')),
+    e.signatureType === 'off' ? '' : (e.break20 == null ? '' : (e.break20 ? 'Yes' : 'No')),
     e.signatureType === 'off' ? 'OFF' : (e.signedBy || '')
   ];
 }
@@ -3369,7 +3417,7 @@ async function openEntryEditor(pid, date) {
   let e = state.manager.weekData?.[date]?.[pid] || state.manager.crewWeekData?.[date]?.[pid];
   if (!e) e = (await fbGet(`attendance/${date}/${pid}`)) || {};
   state.manager.editingForemanId = pid;
-  state.manager.editingEntry = { date };
+  state.manager.editingEntry = { date, orig: e };
   $('#entry-title').textContent = p?.name || pid;
   $('#entry-sub').textContent = `${dayOfWeekEn(parseYmd(date))} · ${fmtDateUS(date)}`;
   setIso($('#entry-tin'), e.timeIn || '', { silent: true });
@@ -3391,6 +3439,8 @@ async function saveEntryEditor() {
     timeOut: isoOf($('#entry-tout')) || null,
     totalHours: parseFloat($('#entry-hours').value) || 0,
     injured: $('#entry-injured').value === 'true',
+    lunch30: status === 'off' ? null : (state.manager.editingEntry.orig?.lunch30 ?? true),
+    break20: status === 'off' ? null : (state.manager.editingEntry.orig?.break20 ?? true),
     signatureType: status === 'off' ? 'off' : 'typed',
     signatureDataUrl: null,
     signatureText: status === 'off' ? null : (p?.name || ''),
@@ -3555,6 +3605,7 @@ function renderPdfPage(doc, date, weekEnd, weekData, personIds, crewLabel) {
   }).filter(Boolean);
   const dayEntries = weekData[dateStr] || {};
 
+  const yn = (v) => v == null ? '' : (v ? 'Yes' : 'No');
   const rows = people.map(([pid, p], idx) => {
     const e = dayEntries[pid];
     const isOff = e && e.signatureType === 'off';
@@ -3566,40 +3617,46 @@ function renderPdfPage(doc, date, weekEnd, weekData, personIds, crewLabel) {
       isOff ? 'OFF' : (e?.timeIn || ''),
       isOff ? '' : (e?.timeOut || ''),
       isOff ? '' : (e?.totalHours ? e.totalHours.toFixed(2) : ''),
+      isOff ? '' : yn(e?.lunch30),
+      isOff ? '' : yn(e?.break20),
       e ? (e.injured ? 'Yes' : 'No') : '',
       e || ''
     ];
   });
   while (rows.length < 14) {
-    rows.push([String(rows.length + 1), fmtDateUS(dateStr), '', '', '', '', '', '', '']);
+    rows.push([String(rows.length + 1), fmtDateUS(dateStr), '', '', '', '', '', '', '', '', '']);
   }
 
   doc.autoTable({
     startY: 124,
     head: [[
       '#', 'DATE\nFECHA', 'EMPLOYEE NAME (PRINT)\nNOMBRE DEL EMPLEADO',
-      'EMPLOYEE WORK CLASSIFICATION\nCLASIFICACION DE EMPLEADO',
-      'TIME IN\nHORA DE ENTRADA', 'TIME OUT\nHORA DE SALIDA',
-      'TOTAL WORK HOURS\nTOTALES DEL TRABAJO',
-      'Were you injured today at work?\nTe lastimaste en el trabajo hoy?',
+      'WORK CLASSIFICATION\nCLASIFICACION',
+      'TIME IN\nENTRADA', 'TIME OUT\nSALIDA',
+      'TOTAL HOURS\nHORAS',
+      '30-MIN LUNCH?\nALMUERZO 30 MIN',
+      '20-MIN BREAK?\nDESCANSO 20 MIN',
+      'INJURED?\nLESIONADO?',
       'EMPLOYEE SIGNATURE\nFIRMA DEL EMPLEADO'
     ]],
-    body: rows.map(r => r.slice(0, 8).concat([''])),
+    body: rows.map(r => r.slice(0, 10).concat([''])),
     theme: 'grid',
-    headStyles: { fillColor: [240,240,240], textColor: 30, fontSize: 7, fontStyle: 'bold', halign: 'center', valign: 'middle', lineColor: [120,120,120] },
-    bodyStyles: { fontSize: 9, cellPadding: 4, minCellHeight: 28, valign: 'middle', lineColor: [180,180,180] },
+    headStyles: { fillColor: [240,240,240], textColor: 30, fontSize: 6.5, fontStyle: 'bold', halign: 'center', valign: 'middle', lineColor: [120,120,120] },
+    bodyStyles: { fontSize: 9, cellPadding: 3, minCellHeight: 24, valign: 'middle', lineColor: [180,180,180] },
     columnStyles: {
-      0: { cellWidth: 18, halign: 'center' }, 1: { cellWidth: 58, halign: 'center' },
-      2: { cellWidth: 140 }, 3: { cellWidth: 110 },
-      4: { cellWidth: 58, halign: 'center' }, 5: { cellWidth: 58, halign: 'center' },
-      6: { cellWidth: 58, halign: 'center' }, 7: { cellWidth: 60, halign: 'center' },
-      8: { cellWidth: 160 }
+      0: { cellWidth: 16, halign: 'center' }, 1: { cellWidth: 52, halign: 'center' },
+      2: { cellWidth: 104 }, 3: { cellWidth: 78 },
+      4: { cellWidth: 46, halign: 'center' }, 5: { cellWidth: 46, halign: 'center' },
+      6: { cellWidth: 42, halign: 'center' },
+      7: { cellWidth: 48, halign: 'center' }, 8: { cellWidth: 48, halign: 'center' },
+      9: { cellWidth: 46, halign: 'center' },
+      10: { cellWidth: 184 }
     },
     margin: { left: 36, right: 36 },
     didDrawCell: (data) => {
-      if (data.section !== 'body' || data.column.index !== 8) return;
+      if (data.section !== 'body' || data.column.index !== 10) return;
       const rowIdx = data.row.index;
-      const e = rows[rowIdx]?.[8];
+      const e = rows[rowIdx]?.[10];
       if (!e) return;
       if (e.signatureType === 'drawn' && e.signatureDataUrl) {
         try {
