@@ -2324,9 +2324,29 @@ async function updateGreetingStatus() {
     } else {
       chip.textContent = t('not_signed_in'); chip.className = 'fs-chip fs-chip--marigold';
     }
+    prefillSignInForm(e);  // show what was already logged for this date (or reset if none)
   } catch (_) {
     chip.textContent = t('not_signed_in'); chip.className = 'fs-chip fs-chip--marigold';
   }
+}
+// Load an existing entry for the selected date into the sign-in form so it can be
+// reviewed/edited, instead of showing blank fields. Resets to defaults if none.
+function prefillSignInForm(e) {
+  if (e && e.signatureType !== 'off' && (e.timeIn || e.timeOut)) {
+    state.signin.timeIn = e.timeIn || '';
+    state.signin.timeOut = e.timeOut || '';
+    setIso($('#time-in'), e.timeIn || '', { silent: true });
+    setIso($('#time-out'), e.timeOut || '', { silent: true });
+    setInjured(!!e.injured);
+    setLunch(e.lunch30 == null ? true : !!e.lunch30);
+    setBreak(e.break20 == null ? true : !!e.break20);
+  } else {
+    state.signin.timeIn = ''; state.signin.timeOut = '';
+    setIso($('#time-in'), '', { silent: true });
+    setIso($('#time-out'), '', { silent: true });
+    setInjured(false); setLunch(true); setBreak(true);
+  }
+  recalcHours();
 }
 function recalcHours() {
   let h = hoursBetween(state.signin.timeIn, state.signin.timeOut);
