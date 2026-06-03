@@ -689,14 +689,21 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
 
 /* ---------- Tight / responsive (<1024px) ---------- */
 .is-tight .fs-header__picado { display: none; }
-.is-tight .fs-header__bar { padding: 14px 16px 12px; gap: 12px; flex-wrap: wrap; }
-.is-tight .fs-header__logo { height: 28px; }
-.is-tight .fs-header__project { padding-left: 12px; }
-.is-tight .fs-header__project-name { font-size: 15px; }
-.is-tight .fs-header__project-meta { font-size: 11px; }
-.is-tight .fs-tab { min-width: auto; padding: 6px 12px; }
-.is-tight .fs-header__greca { padding: 0 16px 6px; }
-.is-tight .fs-header__right { gap: 8px; }
+.is-tight .fs-header__bar { padding: 11px 14px 8px; gap: 8px; flex-wrap: wrap; align-items: center; }
+.is-tight .fs-header__logo { height: 26px; }
+.is-tight .fs-header__brand { flex: 1 1 auto; min-width: 0; gap: 10px; }
+.is-tight .fs-header__project { padding-left: 10px; min-width: 0; }
+.is-tight .fs-header__project-name { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.is-tight .fs-header__project-meta { display: none; }
+.is-tight .fs-header__greca { padding: 0 14px 6px; }
+/* App header: put the tabs + actions on their own full-width row so the Sign In
+   tab is never clipped on iPhone; tabs scroll horizontally if the manager has more. */
+.is-tight #screen-app .fs-header__right { flex: 1 1 100%; width: 100%; gap: 8px; justify-content: flex-start; }
+.is-tight .fs-header__nav { flex: 1 1 auto; min-width: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; justify-content: flex-start; scrollbar-width: none; }
+.is-tight .fs-header__nav::-webkit-scrollbar { display: none; }
+.is-tight .fs-tab { min-width: auto; padding: 8px 13px; white-space: nowrap; flex: 0 0 auto; }
+.is-tight .fs-header__switch { flex: 0 0 auto; flex-direction: row; align-items: center; gap: 4px; font-size: 11px; text-align: right; }
+.is-tight .fs-header__switch .es { display: none; }
 .is-tight .wp-main { padding: 18px 16px 24px; }
 .is-tight .wp-grid { grid-template-columns: 1fr; }
 .is-tight .wp-intro__title { font-size: 27px; }
@@ -851,7 +858,7 @@ input.fs-input[data-fmt="date"]::selection { background: transparent; }
 
         <section class="ds-card">
           <header class="ds-card__head">
-            <div><div class="ds-card__es" lang="es">Declaraci&oacute;n de seguridad</div><h3 class="ds-card__title">Safety Declaration</h3></div>
+            <div><div class="ds-card__es" lang="es">Declaraciones</div><h3 class="ds-card__title">Declarations</h3></div>
             <span class="fs-chip fs-chip--teal">OSHA &middot; daily</span>
           </header>
           <p class="safety-q">
